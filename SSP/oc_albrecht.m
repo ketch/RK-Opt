@@ -1,5 +1,5 @@
-function coneq=oc_albrecht(x,class,s,p)
-%function coneq=oc_albrecht(x,class,s,p)
+function coneq=oc_albrecht(A,b,c,p)
+% function coneq=oc_albrecht(A,b,c,p)
 % order conditions for SSP RK Methods
 % This version is based on Albrecht's approach
 
@@ -15,16 +15,10 @@ function coneq=oc_albrecht(x,class,s,p)
 
 min_stage_order = floor((p-1)/2.)
 
-e=es;
-n=set_n_RK(class,s);
 C=diag(c);
 
 %=====================================================
-% Extract Butcher arrays A,b,c from x
-[A,b,c]=unpack_RK(x,class,s,n);
-
-%=====================================================
-% Order conditions
+% Stage order conditions
 
 tau_2 = (c.^2)/factorial(2) - A*c;
 tau_3 = (c.^3)/factorial(3) - A*(c.^2)/factorial(2);

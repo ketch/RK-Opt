@@ -24,43 +24,52 @@ end
 rand('twister', sum(100*clock)); %New random seed every time
 
 %==============================================
-%Editable options:
-solveorderconditions=0;
+% Problem definition:
+% Class of methods to search
+% Available classes:
+%       'erk'   : Explicit Runge-Kutta methods
+%       'irk'   : Implicit Runge-Kutta methods
+%       'dirk'  : Diagonally implicit Runge-Kutta methods
+%       'sdirk' : Singly diagonally implicit Runge-Kutta methods
 class='erk';
-s=9; p=4;
-starttype='random'; %Options: random
+
+%Number of stages:
+s=9; 
+
+%Order of accuracy:
+p=4;
+
 %==============================================
+%Algorithmic options:
+starttype='random'; 
+solveorderconditions=0;
 
 %Set optimization parameters:
 opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','on','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','on'...%);
 ,'Algorithm','sqp');
-%,'Algorithm','interior-point');
 %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
 %For difficult cases, it can be useful to limit the line search step size
 %by appending to the line above (with possibly modified value of RelLineSrchBnd):
 %Also, sometimes something can be gained by adjusting 'Tol*' above.
 %==============================================
 
-%Now set up:
-%The number of unknowns -                     n
-%The linear constraints -                     Aeq*x = beq
-%The upper and lower bounds on the unknowns - ub, lb
 
+%Set the number of decision variables
 n=set_n(s,class);
 
+%Set the linear constraints: Aeq*x = beq
+%and the upper and lower bounds on the unknowns: ub, lb
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 %==============================================
 
 info=-2;
-while (info==-2 || info==0)
-  %==============================================
-  %Set initial guess
-  if restart==1
+while (info==-2 || info==0) % Don't stop until we converge to a solution
+
+  if starttype=='restart'
     x=X;
   else
     x=initial_guess(s,class,starttype);
   end
-  %==============================================
 
   %==============================================
   %Optionally find a feasible (for the order conditions) point to start
@@ -68,9 +77,10 @@ while (info==-2 || info==0)
     x=fsolve(@(x) oc(x,class,s,p),x,opts)
   end
   %==============================================
-  %The optimization call:
+
   [X,FVAL,info]=fmincon(@(x) rk_am_obj(x),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p),opts)
   r=-FVAL;
+
 end %while loop
 %==============================================
 

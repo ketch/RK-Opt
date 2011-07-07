@@ -1,27 +1,24 @@
-function coneq=oc(x,class,s,p)
-%function coneq=oc(x,class,s,p)
-%Order conditions for RKMs
+function coneq=oc_butcher(A,b,c,p)
+% function coneq=oc_butcher(A,b,c,p)
+% Order conditions for RKMs
 % Assumes p>1
-
-es=ones(s,1);
-
-[A,b,c]=unpack_rk(x,s,class);
+% This version is based on Butcher's approach.
 
 coneq(1)=c'*b-1/2;
 
-if p>=3   %3rd order
+if p>=3   
   coneq(2)=c'.^2*b-1/3;
-  coneq(3)=b'*A^2*es-1/6;
+  coneq(3)=b'*A*c-1/6;
 end
 
-if p>=4   %4th order
+if p>=4  
   coneq(4)=c'.^3*b-1/4;
-  coneq(5)=(b'.*c')*A^2*es-1/8;
+  coneq(5)=(b'.*c')*A*c-1/8;
   coneq(6)=b'*A*c.^2-1/12;
   coneq(7)=b'*A^2*c-1/24;
 end
 
-if p>=5   %5th order
+if p>=5 
   coneq(8)=c'.^4*b-1/5;
   coneq(9)=(b.*c.^2)'*A*c-1/10;
   coneq(10)=b'*(A*c).^2-1/20;
@@ -33,7 +30,7 @@ if p>=5   %5th order
   coneq(16)=b'*A^3*c-1/120;
 end
 
-if p>=6   %6th order
+if p>=6
   coneq(17)=c'.^5*b-1/6;
   coneq(18)=b'*diag(c).^3*A*c-1/12;
   coneq(19)=b'*diag(c)*(A*c).^2-1/24;
@@ -54,4 +51,8 @@ if p>=6   %6th order
   coneq(34)=b'*A^2*diag(c)*A*c-1/240;
   coneq(35)=b'*A^3*c.^2-1/360;
   coneq(36)=b'*A^4*c-1/720;
+end
+
+if p>=7
+  disp('Order conditions for p>6 are not coded up yet');
 end

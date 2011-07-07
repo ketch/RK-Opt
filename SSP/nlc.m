@@ -1,7 +1,6 @@
 function [con,coneq]=nlc(x,class,s,p)
 % Nonlinear constraints for SSP RK Methods
 % Including both order conditions and absolute monotonicity conditions
-% Used by optrk
 
 %=====================================================
 es=ones(s,1);
@@ -23,5 +22,7 @@ con=-[con1(:);con2(:)];
 
 %=====================================================
 %Equality constraints: order conditions
-coneq=oc(x,class,s,p);
+% Would be nice to test effectiveness of Butcher and Albrecht formulations
+% against each other.
+coneq=oc_albrecht(A,b,c,p);
 %=====================================================
