@@ -1,4 +1,4 @@
-% Find optimal SSP RK methods 
+% Find optimal RK methods 
 %
 % Variable meanings:
 % s    - # of stages
@@ -14,6 +14,13 @@
 % x=[A b' c']
 % A is stored row-by-row
 %
+global oc_form objective talltree_numbers talltree_values
+
+oc_form = 'albrecht'  % Choices: albrecht or butcher
+objective = 'ssp' % Set to 'ssp' to maximize SSP coefficient 
+                  % Set to 'acc' to minimze leading truncation error coefficients
+talltree_numbers=[]
+talltree_values=[]
 
 restart=0;
 
@@ -32,13 +39,13 @@ rand('twister', sum(100*clock)); %New random seed every time
 %       'irk'   : Implicit Runge-Kutta methods
 %       'dirk'  : Diagonally implicit Runge-Kutta methods
 %       'sdirk' : Singly diagonally implicit Runge-Kutta methods
-class='irk';
+class='erk';
 
 %Number of stages:
-s=9; 
+s=5; 
 
 %Order of accuracy:
-p=6;
+p=4;
 
 %==============================================
 %Algorithmic options:
@@ -81,7 +88,7 @@ while (info==-2 || info==0) % Don't stop until we converge to a solution
   end
   %==============================================
 
-  [X,FVAL,info]=fmincon(@(x) rk_am_obj(x),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p),opts);
+  [X,FVAL,info]=fmincon(@(x) rk_obj(x,class,s,p),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p),opts);
   r=-FVAL
 
 end %while loop
