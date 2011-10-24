@@ -26,14 +26,14 @@ end
 %=====================================================
 % Order conditions
 if strcmp(oc_form,'albrecht')
-    coneq = oc_albrecht(A,b,c);
+    coneq = oc_albrecht(A,b,c,p);
 elseif strcp(oc_form,'butcher')
-    coneq = oc_butcher(A,b,c);
+    coneq = oc_butcher(A,b,c,p);
 end
 %=====================================================
 
 for i=1:length(talltree_numbers)
     %Enforce stability function coefficient constraints
-    j = talltree_numbers[i];
-    coneq[end+1] = b'*A^(j-2)*c - talltree_values[i];
+    j = talltree_numbers(i);
+    coneq(end+1) = b'*A^(j-2)*c - talltree_values(i);
 end

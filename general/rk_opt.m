@@ -14,14 +14,6 @@
 % x=[A b' c']
 % A is stored row-by-row
 %
-global oc_form objective talltree_numbers talltree_values
-
-oc_form = 'albrecht'  % Choices: albrecht or butcher
-objective = 'ssp' % Set to 'ssp' to maximize SSP coefficient 
-                  % Set to 'acc' to minimze leading truncation error coefficients
-talltree_numbers=[]
-talltree_values=[]
-
 restart=0;
 
 if restart==0
@@ -29,7 +21,15 @@ if restart==0
     restart=0;
 end
 
+global oc_form objective talltree_numbers talltree_values
+
 rand('twister', sum(100*clock)); %New random seed every time
+
+oc_form = 'albrecht'  % Choices: albrecht or butcher
+objective = 'ssp' % Set to 'ssp' to maximize SSP coefficient 
+                  % Set to 'acc' to minimize leading truncation error coefficients
+talltree_numbers=[2]
+talltree_values=[0.5]
 
 %==============================================
 % Problem definition:
@@ -42,10 +42,10 @@ rand('twister', sum(100*clock)); %New random seed every time
 class='erk';
 
 %Number of stages:
-s=5; 
+s=2; 
 
 %Order of accuracy:
-p=4;
+p=1;
 
 %==============================================
 %Algorithmic options:

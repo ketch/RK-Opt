@@ -48,7 +48,7 @@ elseif p==5
   tau(19)=b'*A^3*c.^2-1/360;
   tau(20)=b'*A^4*c-1/720;
 elseif p==6
-  disp('Order conditions for p>6 are not coded up yet');
+  disp('Order conditions for p>=6 are not coded up yet');
 end
 
 D=norm(tau);

@@ -13,7 +13,8 @@ function coneq=oc_albrecht(A,b,c,p)
 %         For methods that do not satisfy b>0, this
 %         assumption may be unnecessarily restrictive.
 
-min_stage_order = floor((p-1)/2.);
+%min_stage_order = floor((p-1)/2.);
+min_stage_order = 1;
 
 C=diag(c);
 
