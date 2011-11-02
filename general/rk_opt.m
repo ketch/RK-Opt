@@ -33,14 +33,14 @@ objective = 'acc' % Set to 'ssp' to maximize SSP coefficient
 % =========================================================================
 % Load and read the file containing the stability polynomial coefficients
 % =========================================================================
-readFileName = '~/Desktop/results2ndSD-2D.txt';
+readFileName = 'Specify the file name and its location';
 readFid = fopen(readFileName,'r');
 
 
 % =========================================================================
 % Open file for writing RK Butcher table
 % =========================================================================
-writeFileName = '~/Desktop/RKx2-2DSD.txt';
+writeFileName = 'Specify the file name and its location';
 writeFid = fopen(writeFileName,'w');
 
 % Header
@@ -63,7 +63,7 @@ tline=fgets(readFid);
 % Read White line
 tline=fgets(readFid);
 
-for i_stabPoly = 1:2
+for i_stabPoly = 1:nbrStabPoly
     
     % Read information
     tline=fgets(readFid);
@@ -184,7 +184,7 @@ for i_stabPoly = 1:2
     x = repmat('%5.16E\t',1,(cols-1));
     fprintf(writeFid,[x,'%5.16E\n'],A');
     
-    str = 'b^T';
+    str = 'b';
     fprintf(writeFid,'\n%s\r\n',str);
     [rows cols] = size(b');
     x = repmat('%5.16E\t',1,(cols-1));
