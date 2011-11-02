@@ -26,8 +26,38 @@ global oc_form objective talltree_numbers talltree_values
 rand('twister', sum(100*clock)); %New random seed every time
 
 oc_form = 'albrecht'  % Choices: albrecht or butcher
-objective = 'ssp' % Set to 'ssp' to maximize SSP coefficient 
+objective = 'acc' % Set to 'ssp' to maximize SSP coefficient 
                   % Set to 'acc' to minimize leading truncation error coefficients
+                  
+if strcmp(objective,'ssp')
+    obj_fun = @(x) rk_obj_ssp(x,class,s,p);
+    
+    %Set optimization parameters:
+    opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','on','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
+    ,'Algorithm','sqp');
+    
+    %For difficult cases, it can be useful to limit the line search step size
+    %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
+    %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
+    %Also, sometimes something can be gained by adjusting 'Tol*' above.
+    %==============================================
+else
+    obj_fun = @(x) rk_obj_acc(x,class,s,p);
+    
+    %Set optimization parameters:
+    % In this case the objective function does not return the
+ 	% gradient. Therefore the option 'GradObj' is set to 'off'.
+    opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','off','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
+    ,'Algorithm','sqp');
+    %For difficult cases, it can be useful to limit the line search step size
+    %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
+    %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
+    %Also, sometimes something can be gained by adjusting 'Tol*' above.
+    %==============================================
+end
+    
+    
+                  
 talltree_numbers=[2]
 talltree_values=[0.5]
 
@@ -54,15 +84,6 @@ starttype='random';
 %if set to 1, solve the order conditions first before trying to optimize
 %(in rare cases, this is helpful for high order methods)
 solveorderconditions=0;
-
-%Set optimization parameters:
-opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','on','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
-,'Algorithm','sqp');
-%For difficult cases, it can be useful to limit the line search step size
-%by appending to the line above (possibly with a modified value of RelLineSrchBnd):
-%,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
-%Also, sometimes something can be gained by adjusting 'Tol*' above.
-%==============================================
 
 %Set the number of decision variables
 n=set_n(s,class);
