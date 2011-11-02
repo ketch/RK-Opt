@@ -73,5 +73,12 @@ switch class
     Aeq(end,s:2*s-1)=1; beq(end)=1;
     lb=-5+zeros(1,n); lb(end)=-30;
     ub=5+zeros(1,n); ub(end)=0;% ub(s:2*s-1)=1;
+
+  otherwise
+    % for low-storage classes:
+    Aeq=[]; beq=[];
+    lb=-5+zeros(1,n); lb(end)=-30;
+    ub=5+zeros(1,n); ub(end)=0;
+
 end
 

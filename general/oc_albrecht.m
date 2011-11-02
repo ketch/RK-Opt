@@ -30,6 +30,10 @@ tau_7 = (c.^7)/factorial(7) - A*(c.^6)/factorial(6);
 
 %=====================================================
 % Order conditions
+
+% For most classes, sum(b)=1 is already imposed as a linear constraint
+% But for low-storage methods it has not, and it does no harm
+% to add it here in both cases.
 coneq(1)=sum(b)-1.;
 
 if min_stage_order<2

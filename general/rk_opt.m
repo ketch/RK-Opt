@@ -29,35 +29,24 @@ oc_form = 'albrecht'  % Choices: albrecht or butcher
 objective = 'acc' % Set to 'ssp' to maximize SSP coefficient 
                   % Set to 'acc' to minimize leading truncation error coefficients
                   
+%Set optimization parameters:
+options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
+,'Algorithm','sqp');
+
+%For difficult cases, it can be useful to limit the line search step size
+%by appending to the line above (possibly with a modified value of RelLineSrchBnd):
+%,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
+%Also, sometimes something can be gained by adjusting 'Tol*' above.
+%==============================================
+ 
 if strcmp(objective,'ssp')
     obj_fun = @(x) rk_obj_ssp(x,class,s,p);
-    
-    %Set optimization parameters:
-    opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','on','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
-    ,'Algorithm','sqp');
-    
-    %For difficult cases, it can be useful to limit the line search step size
-    %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
-    %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
-    %Also, sometimes something can be gained by adjusting 'Tol*' above.
-    %==============================================
+    opts = optimset(options,'GradObj','on');
 else
     obj_fun = @(x) rk_obj_acc(x,class,s,p);
-    
-    %Set optimization parameters:
-    % In this case the objective function does not return the
- 	% gradient. Therefore the option 'GradObj' is set to 'off'.
-    opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','off','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
-    ,'Algorithm','sqp');
-    %For difficult cases, it can be useful to limit the line search step size
-    %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
-    %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
-    %Also, sometimes something can be gained by adjusting 'Tol*' above.
-    %==============================================
+    opts = optimset(options,'GradObj','off');
 end
-    
-    
-                  
+                 
 talltree_numbers=[2]
 talltree_values=[0.5]
 
@@ -69,10 +58,11 @@ talltree_values=[0.5]
 %       'irk'   : Implicit Runge-Kutta methods
 %       'dirk'  : Diagonally implicit Runge-Kutta methods
 %       'sdirk' : Singly diagonally implicit Runge-Kutta methods
-class='erk';
+%       '2S', etc. : Low-storage explicit methods
+class='2S';
 
 %Number of stages:
-s=2; 
+s=4; 
 
 %Order of accuracy:
 p=1;
@@ -89,7 +79,7 @@ solveorderconditions=0;
 n=set_n(s,class);
 
 %Set the linear constraints: Aeq*x = beq
-%and the upper and lower bounds on the unknowns: ub, lb
+%and the upper and lower bounds on the unknowns: lb <= x <= ub
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 %==============================================
 
@@ -116,4 +106,8 @@ end %while loop
 %==============================================
 
 %Now extract the Butcher array of the solution from x
-[A,b,c]=unpack_rk(X,s,class);
+if class(1:2)=='2S'
+    [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
+else
+    [A,b,c]=unpack_rk(X,s,class);
+end
