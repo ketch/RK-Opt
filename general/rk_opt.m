@@ -26,21 +26,21 @@ global oc_form objective talltree_numbers talltree_values
 rand('twister', sum(100*clock)); %New random seed every time
 
 oc_form = 'albrecht'  % Choices: albrecht or butcher
-objective = 'ssp' % Set to 'ssp' to maximize SSP coefficient 
+objective = 'acc' % Set to 'ssp' to maximize SSP coefficient 
                   % Set to 'acc' to minimize leading truncation error coefficients
-
+                  
 
 % =========================================================================
 % Load and read the file containing the stability polynomial coefficients
 % =========================================================================
-readFileName = '~/Desktop/results4thSD-2D.txt';
+readFileName = '~/Desktop/results2ndSD-2D.txt';
 readFid = fopen(readFileName,'r');
 
 
 % =========================================================================
 % Open file for writing RK Butcher table
 % =========================================================================
-writeFileName = '~/Desktop/RKx4-2DSD.txt';
+writeFileName = '~/Desktop/RKx2-2DSD.txt';
 writeFid = fopen(writeFileName,'w');
 
 % Header
@@ -108,14 +108,6 @@ for i_stabPoly = 1:2
     %(in rare cases, this is helpful for high order methods)
     solveorderconditions=0;
 
-    %Set optimization parameters:
-    opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','on','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
-    ,'Algorithm','sqp');
-    %For difficult cases, it can be useful to limit the line search step size
-    %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
-    %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
-    %Also, sometimes something can be gained by adjusting 'Tol*' above.
-    %==============================================
 
     %Set the number of decision variables
     n=set_n(s,class);
@@ -140,8 +132,35 @@ for i_stabPoly = 1:2
         x=fsolve(@(x) oc(x,class,s,p),x,opts)
       end
       %==============================================
+      
+      if strcmp(objective,'ssp')
+          obj_func = @(x) rk_obj_ssp(x,class,s,p);
+          
+          %Set optimization parameters:
+          opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','on','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
+          ,'Algorithm','sqp');
+          %For difficult cases, it can be useful to limit the line search step size
+          %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
+          %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
+          %Also, sometimes something can be gained by adjusting 'Tol*' above.
+          %==============================================
+      else
+          obj_func = @(x) rk_obj_acc(x,class,s,p);
+          
+          %Set optimization parameters:
+          % In this case the objective function does not return the
+          % gradient. Therefore the option 'GradObj' is set to 'off'
+          opts=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'GradObj','off','MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
+          ,'Algorithm','sqp');
+          %For difficult cases, it can be useful to limit the line search step size
+          %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
+          %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
+          %Also, sometimes something can be gained by adjusting 'Tol*' above.
+          %==============================================
+      end
 
-      [X,FVAL,info]=fmincon(@(x) rk_obj(x,class,s,p),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p),opts);
+
+      [X,FVAL,info]=fmincon(obj_func,x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p),opts);
       r=-FVAL
 
     end %while loop
