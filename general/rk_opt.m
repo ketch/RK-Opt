@@ -93,7 +93,7 @@ tline=fgets(readFid);
 % Read White line
 tline=fgets(readFid);
 
-for i_stabPoly = 1:1
+for i_stabPoly = 1:2
     
     % Read information
     tline=fgets(readFid);
@@ -115,7 +115,7 @@ for i_stabPoly = 1:1
         talltree_values = []
     else
         talltree_numbers = s-fp+1:s
-        talltree_values = d(6+s-fp+1:6+s)
+        talltree_values = d(6+s-fp+2:length(d))
     end
 
 
