@@ -29,18 +29,48 @@ oc_form = 'albrecht'  % Choices: albrecht or butcher
 objective = 'acc' % Set to 'ssp' to maximize SSP coefficient 
                   % Set to 'acc' to minimize leading truncation error coefficients
                   
+%==============================================
+% Problem definition:
+% Class of methods to search
+% Available classes:
+%       'erk'   : Explicit Runge-Kutta methods
+%       'irk'   : Implicit Runge-Kutta methods
+%       'dirk'  : Diagonally implicit Runge-Kutta methods
+%       'sdirk' : Singly diagonally implicit Runge-Kutta methods
+%       '2S', etc. : Low-storage explicit methods
+class='erk';
+
+
+%==============================================
+%Algorithmic options:
+starttype='random'; 
+
+%Set optimization parameters:
+options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
+,'Algorithm','sqp');
+
+%For difficult cases, it can be useful to limit the line search step size
+%by appending to the line above (possibly with a modified value of RelLineSrchBnd):
+%,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
+%Also, sometimes something can be gained by adjusting 'Tol*' above.
+%==============================================
+
+% If set to 1, solve the order conditions first before trying to optimize
+% (in rare cases, this is helpful for high order methods)
+solveorderconditions=0;
+     
 
 % =========================================================================
 % Load and read the file containing the stability polynomial coefficients
 % =========================================================================
-readFileName = 'Specify the file name and its location';
+readFileName = '/Users/parsanm/Desktop/rk-stab-coeffs/results2ndSD-2D.txt';
 readFid = fopen(readFileName,'r');
 
 
 % =========================================================================
 % Open file for writing RK Butcher table
 % =========================================================================
-writeFileName = 'Specify the file name and its location';
+writeFileName = '/Users/parsanm/Desktop/rk-coeffs/RKx2-2DSD.txt';
 writeFid = fopen(writeFileName,'w');
 
 % Header
@@ -63,7 +93,7 @@ tline=fgets(readFid);
 % Read White line
 tline=fgets(readFid);
 
-for i_stabPoly = 1:nbrStabPoly
+for i_stabPoly = 1:1
     
     % Read information
     tline=fgets(readFid);
@@ -88,26 +118,6 @@ for i_stabPoly = 1:nbrStabPoly
         talltree_values = d(6+s-fp+1:6+s)
     end
 
-    %==============================================
-    % Problem definition:
-    % Class of methods to search
-    % Available classes:
-    %       'erk'   : Explicit Runge-Kutta methods
-    %       'irk'   : Implicit Runge-Kutta methods
-    %       'dirk'  : Diagonally implicit Runge-Kutta methods
-    %       'sdirk' : Singly diagonally implicit Runge-Kutta methods
-    %       '2S', etc. : Low-storage explicit methods
-    class='2S';
-
-
-    %==============================================
-    %Algorithmic options:
-    starttype='random'; 
-
-    %if set to 1, solve the order conditions first before trying to optimize
-    %(in rare cases, this is helpful for high order methods)
-    solveorderconditions=0;
-
 
     %Set the number of decision variables
     n=set_n(s,class);
@@ -115,16 +125,6 @@ for i_stabPoly = 1:nbrStabPoly
     %Set the linear constraints: Aeq*x = beq
     %and the upper and lower bounds on the unknowns: lb <= x <= ub
     [Aeq,beq,lb,ub] = linear_constraints(s,class);
-    %==============================================
-    
-    %Set optimization parameters:
-    options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
-    ,'Algorithm','sqp');
-
-    %For difficult cases, it can be useful to limit the line search step size
-    %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
-    %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
-    %Also, sometimes something can be gained by adjusting 'Tol*' above.
     %==============================================
 
     info=-2;
@@ -198,4 +198,6 @@ for i_stabPoly = 1:nbrStabPoly
 end
 
 
+fclose(readFid);
+fclose(writeFid);
 
