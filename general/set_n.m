@@ -14,4 +14,18 @@ switch class
     n=2*s+s*(s+1)/2+1-s+1;
   case 'erk' % Explicit (A is strictly lower triangular)
     n=2*s+s*(s-1)/2;
+
+  %====================
+  % Low-storage classes
+  %====================
+  case '2S'             %Low-storage 2S methods of Ketcheson
+    n = 3*s - 3;
+  case '2Sstar'         %Low-storage 2S* methods of Ketcheson
+    n = 3*s - 3;
+  case '2Semb'          %Low-storage 2S* embedded pairs of Ketcheson
+    n = 3*s - 1;
+  case '3Sstar'         %Low-storage 3S* methods of Ketcheson
+    n = 4*s - 6;
+  case '3Sstaremb'      %Low-storage 3S* embedded pairs of Ketcheson
+    n = 4*s - 3;
 end

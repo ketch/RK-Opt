@@ -157,6 +157,9 @@ switch class
 %	x=x.*(1+(rand(size(x))-1/2)/100);
 %	x=x.*(1+(rand(size(x))-1/2)/5);
       end
+    otherwise
+      n=set_n(s,class);
+      x=rand(1,n);
 end
 
 
