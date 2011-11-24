@@ -40,7 +40,7 @@ objective = 'acc' % Set to 'ssp' to maximize SSP coefficient
 %       'dirk'  : Diagonally implicit Runge-Kutta methods
 %       'sdirk' : Singly diagonally implicit Runge-Kutta methods
 %       '2S', etc. : Low-storage explicit methods
-class='erk';
+class='2S';
 
 
 %==============================================
@@ -49,7 +49,7 @@ starttype='random';
 
 %Set optimization parameters:
 options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
-,'Algorithm','interior-point');
+,'Algorithm','sqp');
 
 %For difficult cases, it can be useful to limit the line search step size
 %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
