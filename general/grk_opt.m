@@ -40,7 +40,7 @@ objective = 'acc' % Set to 'ssp' to maximize SSP coefficient
 %       'dirk'  : Diagonally implicit Runge-Kutta methods
 %       'sdirk' : Singly diagonally implicit Runge-Kutta methods
 %       '2S', etc. : Low-storage explicit methods
-class='2S';
+class='3Sstar';
 
 
 %==============================================
@@ -48,7 +48,7 @@ class='2S';
 starttype='random'; 
 
 %Set optimization parameters:
-options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
+options=optimset('MaxFunEvals',1000000,'TolCon',1.e-10,'TolFun',1.e-10,'TolX',1.e-10,'MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
 ,'Algorithm','sqp');
 
 %For difficult cases, it can be useful to limit the line search step size
@@ -59,16 +59,16 @@ options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.
 
 % If set to 1, solve the order conditions first before trying to optimize
 % (in rare cases, this is helpful for high order methods)
-solveorderconditions=0;
+solveorderconditions=1;
 
 % Number of starting points
-nsp = 8;
+nsp = 30;
      
 
 % =========================================================================
 % Load and read the file containing the stability polynomial coefficients
 % =========================================================================
-readFileName = '/Users/parsanm/Desktop/results2ndSD-2D.txt';
+readFileName = '/Users/parsanm/Desktop/SD-2.txt';
 readFid = fopen(readFileName,'r')
 
 
@@ -76,7 +76,7 @@ readFid = fopen(readFileName,'r')
 % =========================================================================
 % Open file for writing RK Butcher table
 % =========================================================================
-writeFileName = '/Users/parsanm/Desktop/rk-coeffs/RKx2-2DSD.txt';
+writeFileName = '/Users/parsanm/Desktop/optRK-coefs/RKx2-2DSD.txt';
 writeFid = fopen(writeFileName,'w');
 
 % Header
@@ -99,7 +99,7 @@ tline=fgets(readFid);
 % Read White line
 tline=fgets(readFid);
 
-for i_stabPoly = 1:2
+for i_stabPoly = 1:nbrStabPoly
     
     % Read information
     tline=fgets(readFid);
@@ -132,9 +132,9 @@ for i_stabPoly = 1:2
     %and the upper and lower bounds on the unknowns: lb <= x <= ub
     [Aeq,beq,lb,ub] = linear_constraints(s,class);
     %==============================================
-
-    info=-2;
-    while (info==-2 || info==0) % Don't stop until we converge to a solution
+    maxerrcoeff=8.e-4;
+    r=10.;
+    while r>maxerrcoeff % Don't stop until we converge to a solution
 
       
       %==============================================
@@ -148,8 +148,8 @@ for i_stabPoly = 1:2
 
       %==============================================
       %Optionally find a feasible (for the order conditions) point to start
-      if solveorderconditions==1
-        x=fsolve(@(x) oc(x,class,s,p),x,opts)
+      if solveorderconditions==1         
+        x=fsolve(@(x) oc(x,class,s,p),x)
       end
       %==============================================
       
@@ -161,6 +161,7 @@ for i_stabPoly = 1:2
           opts = optimset(options,'GradObj','off');
       end
 
+      %problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'options',opts);
       
       problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'nonlcon',@(x) nlc(x,class,s,p),'options',opts);
       ms = MultiStart('Display','final','UseParallel','always');
@@ -206,6 +207,13 @@ for i_stabPoly = 1:2
     
     str = '==============================================================';
     fprintf(writeFid,'\n%s\r\n\n',str);
+    
+    
+    clear x
+    clear s
+    clear talltree_numbers
+    clear talltree_values
+    clear n
        
 end
 
