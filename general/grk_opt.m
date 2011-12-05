@@ -62,13 +62,13 @@ options=optimset('MaxFunEvals',1000000,'TolCon',1.e-10,'TolFun',1.e-10,'TolX',1.
 solveorderconditions=1;
 
 % Number of starting points
-nsp = 30;
+nsp = 40;
      
 
 % =========================================================================
 % Load and read the file containing the stability polynomial coefficients
 % =========================================================================
-readFileName = '/Users/parsanm/Desktop/SD-2.txt';
+readFileName = '/Users/parsanm/Desktop/SD-4.txt';
 readFid = fopen(readFileName,'r')
 
 
@@ -76,7 +76,7 @@ readFid = fopen(readFileName,'r')
 % =========================================================================
 % Open file for writing RK Butcher table
 % =========================================================================
-writeFileName = '/Users/parsanm/Desktop/optRK-coefs/RKx2-2DSD.txt';
+writeFileName = '/Users/parsanm/Desktop/optRK-coefs/RKx4-2DSD.txt';
 writeFid = fopen(writeFileName,'w');
 
 % Header
@@ -132,48 +132,48 @@ for i_stabPoly = 1:nbrStabPoly
     %and the upper and lower bounds on the unknowns: lb <= x <= ub
     [Aeq,beq,lb,ub] = linear_constraints(s,class);
     %==============================================
-    maxerrcoeff=8.e-4;
-    r=10.;
-    while r>maxerrcoeff % Don't stop until we converge to a solution
+    
+    
+    %maxerrcoeff=8.e-4;
+    %r=10.;
+    %while r>maxerrcoeff % Don't stop until we converge to a solution
 
-      
-      %==============================================
-      %Set initial guess
-      for i=1:nsp
+    
+    %==============================================
+    %Set initial guess
+    for i=1:nsp
         x(i,:)=rand(1,n);
         tpoints = CustomStartPointSet(x);
-      end
-
-      %==============================================
-
-      %==============================================
-      %Optionally find a feasible (for the order conditions) point to start
-      if solveorderconditions==1         
+    end
+    
+    %==============================================
+    
+    %==============================================
+    %Optionally find a feasible (for the order conditions) point to start
+    if solveorderconditions==1
         x=fsolve(@(x) oc(x,class,s,p),x)
-      end
-      %==============================================
-      
-      if strcmp(objective,'ssp')
-          obj_func = @(x) rk_obj_ssp(x,class,s,p);
-          opts = optimset(options,'GradObj','on');
-      else
-          obj_func = @(x) rk_obj_acc(x,class,s,p);
-          opts = optimset(options,'GradObj','off');
-      end
-
-      %problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'options',opts);
-      
-      problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'nonlcon',@(x) nlc(x,class,s,p),'options',opts);
-      ms = MultiStart('Display','final','UseParallel','always');
-      [X,r,flagg,outputg,manyminsg] = run(ms,problem,tpoints)
+    end
+    %==============================================
+    
+    if strcmp(objective,'ssp')
+        obj_func = @(x) rk_obj_ssp(x,class,s,p);
+        opts = optimset(options,'GradObj','on');
+    else
+        obj_func = @(x) rk_obj_acc(x,class,s,p);
+        opts = optimset(options,'GradObj','off');
+    end
+    
+    problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'nonlcon',@(x) nlc(x,class,s,p),'options',opts);
+    ms = MultiStart('Display','final','UseParallel','always');
+    [X,r,flagg,outputg,manyminsg] = run(ms,problem,tpoints)
 
 
-    end %while loop
+    %end %while loop
     %==============================================
     
 
     %Now extract the Butcher array of the solution from x
-    if class(1:2)=='2S'
+    if class(1:2)=='2S' || class(1:2)='3Sstar'
         [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
     else
         [A,b,c]=unpack_rk(X,s,class);
@@ -185,6 +185,7 @@ for i_stabPoly = 1:nbrStabPoly
     
     fprintf(writeFid, '%u\t %u\n\n',output);
     
+    % Write to file Butcher's coefficients 
     str = 'A';     
     if writeFid ~= -1
         fprintf(writeFid,'%s\r\n',str); 
@@ -204,6 +205,44 @@ for i_stabPoly = 1:nbrStabPoly
     [rows cols] = size(c');
     x = repmat('%5.16E\t',1,(cols-1));
     fprintf(writeFid,[x,'%5.16E\n\n'],c');
+    
+    % Write to file coefficients for low storage formulation 
+    str = 'alpha';
+    fprintf(writeFid,'\n%s\r\n',str);
+    [rows cols] = size(alpha');
+    x = repmat('%5.16E\t',1,(cols-1));
+    fprintf(writeFid,[x,'%5.16E\n'],alpha');
+    
+    str = 'beta';
+    fprintf(writeFid,'\n%s\r\n',str);
+    [rows cols] = size(beta');
+    x = repmat('%5.16E\t',1,(cols-1));
+    fprintf(writeFid,[x,'%5.16E\n'],beta');
+    
+    str = 'gamma1';
+    fprintf(writeFid,'\n%s\r\n',str);
+    [rows cols] = size(gamma1');
+    x = repmat('%5.16E\t',1,(cols-1));
+    fprintf(writeFid,[x,'%5.16E\n'],gamma1');
+    
+    str = 'gamma2';
+    fprintf(writeFid,'\n%s\r\n',str);
+    [rows cols] = size(gamma2');
+    x = repmat('%5.16E\t',1,(cols-1));
+    fprintf(writeFid,[x,'%5.16E\n'],gamma2');
+    
+    str = 'gamma3';
+    fprintf(writeFid,'\n%s\r\n',str);
+    [rows cols] = size(gamma3');
+    x = repmat('%5.16E\t',1,(cols-1));
+    fprintf(writeFid,[x,'%5.16E\n'],gamma3');
+    
+    str = 'delta';
+    fprintf(writeFid,'\n%s\r\n',str);
+    [rows cols] = size(delta');
+    x = repmat('%5.16E\t',1,(cols-1));
+    fprintf(writeFid,[x,'%5.16E\n'],delta');
+    
     
     str = '==============================================================';
     fprintf(writeFid,'\n%s\r\n\n',str);
