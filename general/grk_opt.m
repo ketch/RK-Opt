@@ -68,7 +68,7 @@ nsp = 40;
 % =========================================================================
 % Load and read the file containing the stability polynomial coefficients
 % =========================================================================
-readFileName = '/Users/parsanm/Desktop/SD-4.txt';
+readFileName = '/Users/parsanm/Desktop/SD-2.txt';
 readFid = fopen(readFileName,'r')
 
 
@@ -76,7 +76,7 @@ readFid = fopen(readFileName,'r')
 % =========================================================================
 % Open file for writing RK Butcher table
 % =========================================================================
-writeFileName = '/Users/parsanm/Desktop/optRK-coefs/RKx4-2DSD.txt';
+writeFileName = '/Users/parsanm/Desktop/optRK-coefs/RKx2-2DSD.txt';
 writeFid = fopen(writeFileName,'w');
 
 % Header
@@ -163,6 +163,8 @@ for i_stabPoly = 1:nbrStabPoly
         opts = optimset(options,'GradObj','off');
     end
     
+    
+    
     problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'nonlcon',@(x) nlc(x,class,s,p),'options',opts);
     ms = MultiStart('Display','final','UseParallel','always');
     [X,r,flagg,outputg,manyminsg] = run(ms,problem,tpoints)
@@ -170,10 +172,10 @@ for i_stabPoly = 1:nbrStabPoly
 
     %end %while loop
     %==============================================
-    
+        
 
     %Now extract the Butcher array of the solution from x
-    if class(1:2)=='2S' || class(1:2)='3Sstar'
+    if (class(1:2)=='2S' | class(1:2)=='3S')
         [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
     else
         [A,b,c]=unpack_rk(X,s,class);
@@ -259,4 +261,3 @@ end
 
 fclose(readFid);
 fclose(writeFid);
-
