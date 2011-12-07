@@ -15,6 +15,7 @@
 % A is stored row-by-row
 %
 
+
 % Restart
 restart=0;
 
@@ -48,7 +49,7 @@ class='3Sstar';
 starttype='random'; 
 
 %Set optimization parameters:
-options=optimset('MaxFunEvals',1000000,'TolCon',1.e-10,'TolFun',1.e-10,'TolX',1.e-10,'MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
+options=optimset('MaxFunEvals',1000000,'TolCon',1.e-10,'TolFun',1.e-5,'TolX',1.e-10,'MaxIter',10000,'Diagnostics','on','Display','iter','DerivativeCheck','off'...%);
 ,'Algorithm','sqp');
 
 %For difficult cases, it can be useful to limit the line search step size
@@ -59,7 +60,7 @@ options=optimset('MaxFunEvals',1000000,'TolCon',1.e-10,'TolFun',1.e-10,'TolX',1.
 
 % If set to 1, solve the order conditions first before trying to optimize
 % (in rare cases, this is helpful for high order methods)
-solveorderconditions=0;
+solveorderconditions = 0;
 
 % Number of starting points
 nsp = 40;
@@ -151,7 +152,7 @@ for i_stabPoly = 1:1
     %==============================================
     %Optionally find a feasible (for the order conditions) point to start
     if solveorderconditions==1
-        x=fsolve(@(x) oc(x,class,s,p),x)
+        x=fsolve(@(x) oc(x,class,s,p),x);
     end
     %==============================================
     
@@ -163,16 +164,17 @@ for i_stabPoly = 1:1
         opts = optimset(options,'GradObj','off');
     end
     
+    nonlcon = @(x) nlc(x,class,s,p);
     
     
-    problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'nonlcon',@(x) nlc(x,class,s,p),'options',opts);
+    
+    problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'nonlcon',nonlcon,'options',opts);
     ms = MultiStart('UseParallel','always','Display','iter');
     
-    %matlabpool open 8
+    
 
     [X,r,flagg,outputg,manyminsg] = run(ms,problem,tpoints)
     
-    %matlabpool close
 
 
     %end %while loop

@@ -77,8 +77,8 @@ switch class
   otherwise
     % for low-storage classes:
     Aeq=[]; beq=[];
-    lb=-5+zeros(1,n); lb(end)=-30;
-    ub=5+zeros(1,n); ub(end)=0;
+    lb=-5+zeros(1,n); %lb(end)=-30;
+    ub=5+zeros(1,n); %ub(end)=0;
 
 end
 
