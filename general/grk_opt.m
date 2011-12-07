@@ -59,7 +59,7 @@ options=optimset('MaxFunEvals',1000000,'TolCon',1.e-10,'TolFun',1.e-10,'TolX',1.
 
 % If set to 1, solve the order conditions first before trying to optimize
 % (in rare cases, this is helpful for high order methods)
-solveorderconditions=1;
+solveorderconditions=0;
 
 % Number of starting points
 nsp = 40;
@@ -99,7 +99,7 @@ tline=fgets(readFid);
 % Read White line
 tline=fgets(readFid);
 
-for i_stabPoly = 1:nbrStabPoly
+for i_stabPoly = 1:1
     
     % Read information
     tline=fgets(readFid);
@@ -142,7 +142,7 @@ for i_stabPoly = 1:nbrStabPoly
     %==============================================
     %Set initial guess
     for i=1:nsp
-        x(i,:)=rand(1,n);
+        x(i,:)= rand(1,n);
         tpoints = CustomStartPointSet(x);
     end
     
@@ -166,8 +166,13 @@ for i_stabPoly = 1:nbrStabPoly
     
     
     problem = createOptimProblem('fmincon','x0',x(1,:),'objective',obj_func,'Aeq',Aeq,'beq',beq,'lb',lb,'ub',ub,'nonlcon',@(x) nlc(x,class,s,p),'options',opts);
-    ms = MultiStart('Display','final','UseParallel','always');
+    ms = MultiStart('UseParallel','always','Display','iter');
+    
+    %matlabpool open 8
+
     [X,r,flagg,outputg,manyminsg] = run(ms,problem,tpoints)
+    
+    %matlabpool close
 
 
     %end %while loop
