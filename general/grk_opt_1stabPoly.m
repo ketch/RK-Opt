@@ -2,6 +2,24 @@
 %
 % Find optimal Runge-Kutta coefficients by using the MULTISTART toolbox 
 %
+%
+% Variable meanings:
+% s                : # of stages
+% p                : order of accuracy
+% talltree_numbers : stability function coefficient constraints (positions) 
+% talltree_values  : stability function coefficient constraints (values)  
+%
+% Decision variables:
+% A, b, c -- RK method coefficients
+% A     is s x s
+% b     is s x 1
+%
+%
+% Stored in a single vector x as:
+% x = [A b' c']
+% A is stored row-by-row
+%
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Restart optimization procedure
@@ -55,6 +73,7 @@ options = optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-16,...
                    'TolX',1.e-16,'GradObj','off','MaxIter',5000,...
                    'Diagnostics','on','Display','iter','Algorithm','sqp');
 
+% Define objective function
 if strcmp(objective,'ssp')
     obj_fun = @(x) rk_obj_ssp(x,class,s,p);
     opts = optimset(options,'GradObj','on');
@@ -223,6 +242,9 @@ else
     fprintf(writeFid,[x,'%5.16E\n\n'],c');
 
 end
+
+fclose(writeFid);
+
 
 
 
