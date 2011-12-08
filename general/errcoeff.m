@@ -1,7 +1,10 @@
-function D=errcoeff(x,class,s,p)
-%function D=errcoeff(x,class,s,p)
-%Computes norm of vector of leading error coefficients.
-%For now we just use Butcher's approach.  We could alternatively use Albrecht's.
+function D = errcoeff(x,class,s,p)
+% function D = errcoeff(x,class,s,p)
+%
+% Computes norm of vector of leading error coefficients.
+%
+% Approach available: Butcher 
+% Possible future implementation: Albrecht.
 
 [A,b,c]=unpack_rk(x,s,class);
 
