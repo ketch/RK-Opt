@@ -59,7 +59,7 @@ objective = 'acc'     % Set to 'ssp' to maximize SSP coefficient
 %       'dirk'     : Diagonally implicit Runge-Kutta methods
 %       'sdirk'    : Singly diagonally implicit Runge-Kutta methods
 %       '2S', etc. : Low-storage explicit methods
-class='erk';
+class = 'erk';
 
 
 
