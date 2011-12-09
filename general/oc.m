@@ -3,7 +3,7 @@ function tau=oc(x,class,s,p)
 %Order conditions for RKMs
 %This is just a small wrapper
 
-global oc_form
+oc_form = 'albrecht';
 
 [A,b,c]=unpack_rk(x,s,class);
 

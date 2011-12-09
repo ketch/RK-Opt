@@ -1,8 +1,8 @@
-function [con,coneq]=nlc(x,class,s,p)
+function [con,coneq]=nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val)
 % Nonlinear constraints for SSP RK Methods
 % Including both order conditions and absolute monotonicity conditions
 
-global objective talltree_numbers talltree_values oc_form
+oc_form = 'albrecht';
 
 [A,b,c]=unpack_rk(x,s,class);
 
@@ -32,8 +32,8 @@ elseif strcp(oc_form,'butcher')
 end
 %=====================================================
 
-for i=1:length(talltree_numbers)
+for i=1:length(poly_coeff_ind)
     %Enforce stability function coefficient constraints
-    j = talltree_numbers(i);
-    coneq(end+1) = b'*A^(j-2)*c - talltree_values(i);
+    j = poly_coeff_ind(i);
+    coneq(end+1) = b'*A^(j-2)*c - poly_coeff_val(i);
 end
