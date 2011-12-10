@@ -1,15 +1,17 @@
-function wf=writeFile(A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta,s,p)
-%function wf=writeFile(A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta,s,p)
+function wf=writeFile(rk,p,ls)
+%function wf=writeFile(rk,p,ls)
 %
 % 
 % Write to file Butcher's coefficients and low-storage coefficients if 
 % required.
 
-outputFileName = strcat('ERK-',num2str(p),'-',num2str(s),'.txt');
+szA = size(rk.A);
+
+outputFileName = strcat('ERK-',num2str(p),'-',num2str(szA(1)),'.txt');
 writeFid = fopen(outputFileName,'w');
 
 fprintf(writeFid, '%s\t\t %s\n', '#stage','order');
-output = [s;p];
+output = [szA(1);p];
 fprintf(writeFid, '%u\t \t\t%u\n\n',output);
 
 % Butcher coefficients
@@ -17,65 +19,66 @@ str = 'A';
 if writeFid ~= -1
     fprintf(writeFid,'%s\r\n',str);
 end
-[rows cols] = size(A);
+[rows cols] = size(rk.A);
 x = repmat('%5.16E\t',1,(cols-1));
-fprintf(writeFid,[x,'%5.16E\n'],A');
+fprintf(writeFid,[x,'%5.16E\n'],rk.A');
 
 str = 'b';
 fprintf(writeFid,'\n%s\r\n',str);
-[rows cols] = size(b');
+[rows cols] = size(rk.b');
 x = repmat('%5.16E\t',1,(cols-1));
-fprintf(writeFid,[x,'%5.16E\n'],b');
+fprintf(writeFid,[x,'%5.16E\n'],rk.b');
 
 str = 'c^T';
 fprintf(writeFid,'\n%s\r\n',str);
-[rows cols] = size(c');
+[rows cols] = size(rk.c');
 x = repmat('%5.16E\t',1,(cols-1));
-fprintf(writeFid,[x,'%5.16E\n\n'],c');
+fprintf(writeFid,[x,'%5.16E\n\n'],rk.c');
 
-if isempty(alpha)
+if ls==0
     str = '==============================================================';
     fprintf(writeFid,'\n%s\r\n\n',str);
 else
     % Write to file coefficients for low-storage formulation  
     str = 'alpha';
     fprintf(writeFid,'\n%s\r\n',str);
-    [rows cols] = size(alpha');
+    [rows cols] = size(rk.alpha');
     x = repmat('%5.16E\t',1,(cols-1));
-    fprintf(writeFid,[x,'%5.16E\n'],alpha');
+    fprintf(writeFid,[x,'%5.16E\n'],rk.alpha');
     
     str = 'beta';
     fprintf(writeFid,'\n%s\r\n',str);
-    [rows cols] = size(beta');
+    [rows cols] = size(rk.beta');
     x = repmat('%5.16E\t',1,(cols-1));
-    fprintf(writeFid,[x,'%5.16E\n'],beta');
+    fprintf(writeFid,[x,'%5.16E\n'],rk.beta');
     
     str = 'gamma1';
     fprintf(writeFid,'\n%s\r\n',str);
-    [rows cols] = size(gamma1');
+    [rows cols] = size(rk.gamma1');
     x = repmat('%5.16E\t',1,(cols-1));
-    fprintf(writeFid,[x,'%5.16E\n'],gamma1');
+    fprintf(writeFid,[x,'%5.16E\n'],rk.gamma1');
     
     str = 'gamma2';
     fprintf(writeFid,'\n%s\r\n',str);
-    [rows cols] = size(gamma2');
+    [rows cols] = size(rk.gamma2');
     x = repmat('%5.16E\t',1,(cols-1));
-    fprintf(writeFid,[x,'%5.16E\n'],gamma2');
+    fprintf(writeFid,[x,'%5.16E\n'],rk.gamma2');
     
     str = 'gamma3';
     fprintf(writeFid,'\n%s\r\n',str);
-    [rows cols] = size(gamma3');
+    [rows cols] = size(rk.gamma3');
     x = repmat('%5.16E\t',1,(cols-1));
-    fprintf(writeFid,[x,'%5.16E\n'],gamma3');
+    fprintf(writeFid,[x,'%5.16E\n'],rk.gamma3');
     
     str = 'delta';
     fprintf(writeFid,'\n%s\r\n',str);
-    [rows cols] = size(delta');
+    [rows cols] = size(rk.delta');
     x = repmat('%5.16E\t',1,(cols-1));
-    fprintf(writeFid,[x,'%5.16E\n'],delta');
+    fprintf(writeFid,[x,'%5.16E\n'],rk.delta');
     
     str = '==============================================================';
     fprintf(writeFid,'\n%s\r\n\n',str);
 end
+
 wf= 1;
 
