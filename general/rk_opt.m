@@ -1,4 +1,4 @@
-function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions)
+function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,multi_start)
 %function rk_opt(s,p,objective,restart)
 %
 % Find optimal RK methods using MATLAB's fmincon function.
@@ -37,6 +37,9 @@ function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,
 %       if set to 1, solve the order conditions first before trying to optimize
 %       (in rare cases, this is helpful for high order methods)
 
+if nargin<9 
+    multi_start=0; 
+end
 if nargin<8 
     solveorderconditions=0; 
 end
@@ -69,33 +72,10 @@ end
 %and the upper and lower bounds on the unknowns: lb <= x <= ub
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 
-info=-2;
-while (info==-2 || info==0) % Don't stop until we converge to a solution
 
-if ~ischar(startvec)
-    x=startvec;
-else
-    rand('twister', sum(100*clock)); %New random seed every time
-    x=initial_guess(s,p,class,startvec);
-end
+[X,rk.r,rk.errcoeff]=loop_fmincon(startvec,solveorderconditions,class,s,p,opts,objective,Aeq,beq,lb,ub,poly_coeff_ind,poly_coeff_val);
 
-%Optionally find a feasible (for the order conditions) point to start
-if solveorderconditions==1
-    x=fsolve(@(x) oc(x,class,s,p),x,opts);
-end
-
-% Solve the optimization problem
-[X,FVAL,info]=fmincon(@(x) rk_obj(x,class,s,p,objective),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val),opts);
-if strcmp(objective,'ssp')
-    rk.r=-FVAL;
-elseif strcmp(objective,'acc')
-    rk.errcoeff=FVAL;
-end
-
-end %while loop
-%==============================================
-
-%Now extract the Butcher array of the solution from x
+%Now extract the Butcher array of the solution from sol
 if class(1:2)=='2S'
     [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
 else
