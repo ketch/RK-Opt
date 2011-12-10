@@ -1,6 +1,7 @@
 function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions)
 %function rk_opt(s,p,objective,restart)
-% Find optimal RK methods 
+%
+% Find optimal RK methods using MATLAB's fmincon function.
 %
 % Variable meanings:
 % s    - # of stages
