@@ -2,7 +2,7 @@ function wfls=writeFile_lowstorage(rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma
 %function wfls=writeFile_lowstorage(rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta,class,writeFid)
 %
 % 
-% Write to file coefficients for low storage formulation
+% Write to file coefficients for low-storage formulation
 
 str = 'alpha';
 fprintf(writeFid,'\n%s\r\n',str);

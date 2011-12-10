@@ -29,6 +29,7 @@ end
 %end
 %==============================================
 
+% Open pool of sessions (# is equal to the processors available)
 if parallel == 1
     matlabpool open
 end
@@ -49,6 +50,7 @@ elseif strcmp(objective,'acc')
     r=[];
 end
 
+% Close pool sessions
 if parallel == 1
     matlabpool close
 end

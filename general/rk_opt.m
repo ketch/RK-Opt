@@ -1,5 +1,5 @@
 function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,multi_start,parallel,writeToFile)
-%function rk_opt(s,p,objective,restart)
+%function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,multi_start,parallel,writeToFile)
 %
 % =========================================================================
 % Find optimal RK methods using MATLAB's fmincon function.
@@ -94,7 +94,7 @@ end
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 
 if multi_start==1
-    % # of starting points
+    % # of starting points for multistart
     nsp = 40;
     [X,rk.r,rk.errcoeff] = multistart_fmincon(startvec,solveorderconditions,class,s,p,opts,objective,Aeq,beq,lb,ub,poly_coeff_ind,poly_coeff_val,nsp,parallel); 
 elseif multi_start==0
