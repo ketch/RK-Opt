@@ -107,25 +107,15 @@ end
 %Now extract the Butcher array of the solution from sol and the low-storage
 %coefficients if request by the class.
 %Then write them to a file.
-outputFileName = strcat('ERK-',num2str(p),'-',num2str(s),'.txt');
-writeFid = fopen(outputFileName,'w');
-
-fprintf(writeFid, '%s\t\t %s\n', '#stage','order');
-output = [s;p];
-fprintf(writeFid, '%u\t \t\t%u\n\n',output);
-
 if (class(1:2)=='2S' | class(1:2)=='3S')
     [rk.A,rk.b,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta]=unpack_lsrk(X,s,class);
     if writeToFile == 1
-        output=writeFile_butcher(rk.A,rk.b,rk.c,class,writeFid);
-        output=writeFile_lowstorage(rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta,class,writeFid);
-        fclose(writeFid);
+        output=writeFile(rk.A,rk.b,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta,s,p);
     end
 else
     [rk.A,rk.b,rk.c]=unpack_rk(X,s,class);
     if writeToFile == 1
-        output=writeFile_butcher(rk.A,rk.b,rk.c,class,writeFid);
-        fclose(writeFid);
+        output=writeFile(rk.A,rk.b,rk.c,[],[],[],[],[],[],s,p);
     end
 end
 
