@@ -1,4 +1,4 @@
-function wf=writeFile(rk,p,ls)
+function wf=writeFile(rk,p,class)
 %function wf=writeFile(rk,p,ls)
 %
 % 
@@ -35,7 +35,7 @@ fprintf(writeFid,'\n%s\r\n',str);
 x = repmat('%5.16E\t',1,(cols-1));
 fprintf(writeFid,[x,'%5.16E\n\n'],rk.c');
 
-if ls==0
+if (class(1:2)=='2S' | class(1:2)=='3S')
     str = '==============================================================';
     fprintf(writeFid,'\n%s\r\n\n',str);
 else

@@ -110,14 +110,12 @@ end
 if (class(1:2)=='2S' | class(1:2)=='3S')
     [rk.A,rk.b,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta]=unpack_lsrk(X,s,class);
     if writeToFile == 1
-        ls = 1;
-        output=writeFile(rk,p,ls);
+        output=writeFile(rk,p,class);
     end
 else
     [rk.A,rk.b,rk.c]=unpack_rk(X,s,class);
     if writeToFile == 1
-        ls = 0;
-        output=writeFile(rk,p,ls);
+        output=writeFile(rk,p,class);
     end
 end
 
