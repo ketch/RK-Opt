@@ -3,6 +3,9 @@ function x=initial_guess(s,p,class,starttype)
 %
 % Set initial guess for RK coefficients
 % Includes some good initial guesses for optimal SSP methods
+if ~ischar(starttype)
+    x=starttype;
+else
 x=[];
 switch class
     case 'irk'
@@ -134,4 +137,4 @@ switch class
         x=rand(1,n);
 end
 
-
+end

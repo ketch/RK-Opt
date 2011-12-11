@@ -72,6 +72,13 @@ if nargin<5
     poly_coeff_val = [];
 end
 
+rand('twister', sum(100*clock)); %New random seed every time
+
+% Open pool of sessions (# is equal to the processors available)
+if parallel == 1
+    matlabpool open;
+end
+
 %Set optimization parameters:
 options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','off','Display','off','DerivativeCheck','off'...%);
 ,'Algorithm','sqp');
@@ -93,16 +100,56 @@ end
 %and the upper and lower bounds on the unknowns: lb <= x <= ub
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 
-if multi_start==1
-    % # of starting points for multistart
-    nsp = 40;
-    [X,rk.r,rk.errcoeff] = multistart_fmincon(startvec,solveorderconditions,class,s,p,opts,objective,Aeq,beq,lb,ub,poly_coeff_ind,poly_coeff_val,nsp,parallel); 
-elseif multi_start==0
-    [X,rk.r,rk.errcoeff]=loop_fmincon(startvec,solveorderconditions,class,s,p,opts,objective,Aeq,beq,lb,ub,poly_coeff_ind,poly_coeff_val);
-else
-    error('multi_start must be 0 or 1');
-end
+max_tries=10;
 
+for i=1:max_tries
+
+    if multi_start==1
+        % # of starting points for multistart
+        nsp = 40;
+        n=set_n(s,class);
+        
+        for i=1:nsp
+            x(i,:)=initial_guess(s,p,class,startvec);
+            tpoints = CustomStartPointSet(x);
+        end
+
+        problem = createOptimProblem('fmincon','x0',x(1,:),'objective', ...
+                  @(x) rk_obj(x,class,s,p,objective),'Aeq',Aeq,'beq',beq,...
+                  'lb',lb,'ub',ub,'nonlcon',...
+                  @(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val), ...
+                  'options',opts);
+        ms = MultiStart('Display','final','UseParallel','always');
+        [X,FVAL,status,outputg,manyminsg] = run(ms,problem,tpoints);
+
+    elseif multi_start==0
+
+        x=initial_guess(s,p,class,startvec);
+
+        %Optionally find a feasible (for the order conditions) point to start
+        if solveorderconditions==1
+            x=fsolve(@(x) oc(x,class,s,p),x,opts);
+        end
+
+        % Solve the optimization problem
+        [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val),opts);
+
+    else
+        error('multi_start must be 0 or 1');
+    end
+    if status>0
+        break;
+    end
+end %while loop
+
+% Set the objective values
+if strcmp(objective,'ssp')
+    rk.r=-FVAL;
+    rk.errcoeff=[];
+elseif strcmp(objective,'acc')
+    rk.errcoeff=FVAL;
+    rk.r=[];
+end
     
 %Now extract the Butcher array of the solution from sol and the low-storage
 %coefficients if request by the class.
@@ -130,4 +177,8 @@ else
     fprintf('Order of accuracy: %d \n\n', order)
 end
 
+% Close pool sessions
+if parallel == 1
+    matlabpool close;
+end
 
