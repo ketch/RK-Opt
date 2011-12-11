@@ -1,5 +1,5 @@
-function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,multi_start,parallel,writeToFile)
-%function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,multi_start,parallel,writeToFile)
+function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,np,max_tries,writeToFile)
+%function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,np,max_tries,writeToFile)
 %
 % =========================================================================
 % Find optimal RK methods using MATLAB's fmincon function.
@@ -11,7 +11,7 @@ function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,
 % - whie loop: fmincon is called inside a "while loop" with some suitable
 % initial guess. The loop does not stop until it converges to a solution.
 %
-% - multistart solver: fmincon is called in combination with the multistart
+% - if np>1: Run in paralle. fmincon is called in combination with the multistart
 % solver (Global Optimization Toolbox). It starts a local solver (in 
 % Optimization Toolbox) from multiple starting points and stores local and 
 % global solutions found during the search process. This approach can be 
@@ -56,10 +56,10 @@ if nargin<11
     writeToFile=0; 
 end
 if nargin<10 
-    parallel=0; 
+    max_tries=10;
 end
 if nargin<9 
-    multi_start=0; 
+    np=1;
 end
 if nargin<8 
     solveorderconditions=0; 
@@ -75,8 +75,8 @@ end
 rand('twister', sum(100*clock)); %New random seed every time
 
 % Open pool of sessions (# is equal to the processors available)
-if parallel == 1
-    matlabpool open;
+if np>1
+    matlabpool('local',np);
 end
 
 %Set optimization parameters:
@@ -100,11 +100,9 @@ end
 %and the upper and lower bounds on the unknowns: lb <= x <= ub
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 
-max_tries=10;
-
 for i=1:max_tries
 
-    if multi_start==1
+    if np>1
         % # of starting points for multistart
         nsp = 40;
         n=set_n(s,class);
@@ -122,8 +120,7 @@ for i=1:max_tries
         ms = MultiStart('Display','final','UseParallel','always');
         [X,FVAL,status,outputg,manyminsg] = run(ms,problem,tpoints);
 
-    elseif multi_start==0
-
+    else
         x=initial_guess(s,p,class,startvec);
 
         %Optionally find a feasible (for the order conditions) point to start
@@ -131,11 +128,7 @@ for i=1:max_tries
             x=fsolve(@(x) oc(x,class,s,p),x,opts);
         end
 
-        % Solve the optimization problem
         [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val),opts);
-
-    else
-        error('multi_start must be 0 or 1');
     end
     if status>0
         break;
@@ -178,7 +171,6 @@ else
 end
 
 % Close pool sessions
-if parallel == 1
+if np>1
     matlabpool close;
 end
-
