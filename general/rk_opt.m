@@ -133,7 +133,7 @@ for i=1:max_tries
     if status>0
         break;
     end
-end %while loop
+end 
 
 % Set the objective values
 if strcmp(objective,'ssp')
@@ -145,20 +145,16 @@ elseif strcmp(objective,'acc')
 end
     
 %Now extract the Butcher array of the solution from sol and the low-storage
-%coefficients if request by the class.
-%Then write them to a file.
+%coefficients (if they exist).
 if (class(1:2)=='2S' | class(1:2)=='3S')
     [rk.A,rk.b,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta]=unpack_lsrk(X,s,class);
-    if writeToFile == 1
-        output=writeFile(rk,p,class);
-    end
 else
     [rk.A,rk.b,rk.c]=unpack_rk(X,s,class);
-    if writeToFile == 1
-        output=writeFile(rk,p,class);
-    end
 end
 
+if writeToFile == 1
+    output=writeFile(rk,p,class);
+end
 
 % Simple check: order of the scheme
 order = check_RK_order(rk.A,rk.b,rk.c);
@@ -166,7 +162,7 @@ if order == p
     fprintf('The RK coefficients satisfy the order conditions. \n')
     fprintf('Order of accuracy: %d \n\n', order)
 else
-    fprintf('The RK coefficients does not satisfy the order conditions. \n');
+    fprintf('The RK coefficients do not satisfy the order conditions. \n');
     fprintf('Order of accuracy: %d \n\n', order)
 end
 
