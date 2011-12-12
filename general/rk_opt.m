@@ -74,7 +74,7 @@ end
 
 rand('twister', sum(100*clock)); %New random seed every time
 
-% Open pool of sessions (# is equal to the processors available)
+% Open pool of sessions (# is equal to the processors specified in np)
 if np>1
     matlabpool('local',np);
 end
@@ -104,7 +104,7 @@ for i=1:max_tries
 
     if np>1
         % # of starting points for multistart
-        nsp = 40;
+        nsp = 30;
         n=set_n(s,class);
         
         for i=1:nsp
@@ -117,6 +117,7 @@ for i=1:max_tries
                   'lb',lb,'ub',ub,'nonlcon',...
                   @(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val), ...
                   'options',opts);
+
         ms = MultiStart('Display','final','UseParallel','always');
         [X,FVAL,status,outputg,manyminsg] = run(ms,problem,tpoints);
 
