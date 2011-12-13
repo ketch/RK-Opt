@@ -1,4 +1,4 @@
-function wf=writeFile(rk,p,order)
+function wf=writeFile(rk)
 %function wf=writeFile(rk,p,ls)
 %
 % 
@@ -13,12 +13,6 @@ writeFid = fopen(outputFileName,'w');
 fprintf(writeFid, '%s\t\t %s\n', '#stage','order');
 output = [szA(1);p];
 fprintf(writeFid, '%u\t \t\t%u\n\n',output);
-
-if (p==order)
-    fprintf(writeFid, 'Order condition satisfied\n');
-else
-    fprintf(writeFid, 'Order condition not satisfied\n'); 
-end
 
 values = struct2cell(rk);
 names  = fieldnames(rk);

@@ -170,8 +170,8 @@ elseif strcmp(objective,'acc')
 end
     
 % Write output to file if required
-if writeToFile == 1
-    output=writeFile(rk,p,order);
+if (writeToFile == 1 && p == order)
+    output=writeFile(rk);
 end
 
 % Close pool sessions
