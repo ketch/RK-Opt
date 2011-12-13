@@ -171,7 +171,7 @@ end
     
 % Write output to file if required
 if (writeToFile == 1 && p == order)
-    output=writeFile(rk);
+    output=writeFile(rk,p);
 end
 
 % Close pool sessions

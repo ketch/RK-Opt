@@ -1,5 +1,5 @@
-function wf=writeFile(rk)
-%function wf=writeFile(rk,p,ls)
+function wf=writeFile(rk,p)
+%function wf=writeFile(rk,p)
 %
 % 
 % Write to file Butcher's coefficients and low-storage coefficients if 
