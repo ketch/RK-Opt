@@ -104,7 +104,7 @@ for i=1:max_tries
 
     if np>1
         % # of starting points for multistart
-        nsp = 30;
+        nsp = 20;
         n=set_n(s,class);
         
         for i=1:nsp
@@ -131,10 +131,34 @@ for i=1:max_tries
 
         [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val),opts);
     end
-    if status>0
+    
+    % Check order of the scheme
+    if (class(1:2)=='2S' | class(1:2)=='3S')
+        [rk.A,rk.b,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta]=unpack_lsrk(X,s,class);
+    else
+        [rk.A,rk.b,rk.c]=unpack_rk(X,s,class);
+    end
+    
+    order = check_RK_order(rk.A,rk.b,rk.c);
+    
+    % Inform the user that the order conditions are satisfied
+    if (status>0 && p==order)
+        fprintf('\n===========================')
+        fprintf('\nConverged to a solution. \n')
+        fprintf('The RK coefficients also satisfy the order conditions. \n')
+        fprintf('Order of accuracy: %d \n', order)
+        fprintf('===========================\n')
         break;
     end
 end 
+
+% Inform the user that the order conditions are not satisfied
+if (order~= p)
+    fprintf('\n===========================')
+    fprintf('The RK coefficients do not satisfy the order conditions. \n');
+    fprintf('Order of accuracy: %d \n\n', order)
+    fprintf('===========================\n')
+end
 
 % Set the objective values
 if strcmp(objective,'ssp')
@@ -145,29 +169,13 @@ elseif strcmp(objective,'acc')
     rk.r=[];
 end
     
-%Now extract the Butcher array of the solution from sol and the low-storage
-%coefficients (if they exist).
-if (class(1:2)=='2S' | class(1:2)=='3S')
-    [rk.A,rk.b,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta]=unpack_lsrk(X,s,class);
-else
-    [rk.A,rk.b,rk.c]=unpack_rk(X,s,class);
-end
-
-if writeToFile == 1
-    output=writeFile(rk,p,class);
-end
-
-% Simple check: order of the scheme
-order = check_RK_order(rk.A,rk.b,rk.c);
-if order == p
-    fprintf('The RK coefficients satisfy the order conditions. \n')
-    fprintf('Order of accuracy: %d \n\n', order)
-else
-    fprintf('The RK coefficients do not satisfy the order conditions. \n');
-    fprintf('Order of accuracy: %d \n\n', order)
+% Write output to file if required
+if (writeToFile == 1 && p == order)
+    output=writeFile(rk);
 end
 
 % Close pool sessions
 if np>1
     matlabpool close;
 end
+
