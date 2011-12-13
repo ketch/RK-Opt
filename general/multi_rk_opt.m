@@ -41,7 +41,7 @@ tline = fgets(readFid);
 
 
 % Loop over the stability polynomial
-for i_stabPoly = 1:1
+for i_stabPoly = 1:nbrStabPoly
     
     % Read information
     tline = fgets(readFid);
