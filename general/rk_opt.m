@@ -154,7 +154,7 @@ end
 
 % Inform the user that the order conditions are not satisfied
 if (order~= p)
-    fprintf('\n===========================')
+    fprintf('\n===========================\n')
     fprintf('The RK coefficients do not satisfy the order conditions. \n');
     fprintf('Order of accuracy: %d \n\n', order)
     fprintf('===========================\n')
@@ -178,4 +178,5 @@ end
 if np>1
     matlabpool close;
 end
+
 
