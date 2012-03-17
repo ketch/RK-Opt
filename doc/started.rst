@@ -23,8 +23,8 @@ You will also need a git client on your system to obtain RK-Opt. itself.
 Obtaining MATLAB?
 +++++++++++++++++
 MATLAB is not free and the act of taking and using software without having paid
-for it is piracy and theft. Its a crime. Since we would like to give you free 
-access to our code without violate the law, we are planning to have a 
+for it is piracy and a crime. Since we would like to give you free 
+access to our code without violate any law, we are planning to have a 
 Python-based version of RK-Opt. 
 
 MATLAB xUnit test framework
@@ -44,8 +44,8 @@ following lines:
    >>>> addpath "path-to-matlab_xunit_3"/matlab_xunit/xunit
 
 
-Installing RK-Opt
------------------
+Installing RK-Opt.
+------------------
 The current method for installing RK-Opt. is to create a local copy of its 
 github-hosted repository::
 
