@@ -14,7 +14,7 @@ MATLAB global optimization toolbox with *Multistart* can be used to exploit the
 benefits of parallel search on multicore machines.
 
 
-The RK-Opt pacakge consists of three mains solvers stored in three different directories:
+The RK-Opt pacakge consists of three main solvers stored in three different directories:
     * **general**: given a stability function :math:`R(z)`, the order of the scheme :math:`p` and its number of stages :math:`s` it can find the optimal RK method in terms of **SSP coefficient** or that has **minimal leading truncation error coefficient**. RK-Opt allows to impose **low-storage properties** for explicit RK schemes and both objective functions.
     * **SSP**: given the order of the scheme :math:`p` and its number of stages :math:`s` it can find the optimal RK method in terms of **SSP coefficient**
     * **low-storage**: given the order of the scheme :math:`p` and its number of stages :math:`s` it can find the optimal RK method that has the **minimal leading truncation error coefficient**
