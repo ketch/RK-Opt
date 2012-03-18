@@ -14,13 +14,25 @@ MATLAB global optimization toolbox with *Multistart* can be used to exploit the
 benefits of parallel search on multicore machines.
 
 
-The RK-Opt pacakge consists of three main solvers stored in three different directories:
-    * **general**: given a stability function :math:`R(z)`, the order of the scheme :math:`p` and its number of stages :math:`s` it can find the optimal RK method in terms of **SSP coefficient** or that has **minimal leading truncation error coefficient**. RK-Opt allows to impose **low-storage properties** for explicit RK schemes and both objective functions.
+The RK-Opt pacakge consists of the following packages:
+    * **RK-coeff-opt**: Find optimal Runge-Kutta method coefficients, for a prescribed order of accuracy and number of stages.  
+                        The objective function
+                        can be chosen as either the **SSP coefficient** or the
+                        **leading truncation error coefficient**.
+                        The method may be constrained to have a **low-storage implementation**
+                        and/or a prescribed **stability polynomial**.
+                        Implicit and diagonally implicit methods can also be optimized.
+    * **am_rad-opt**: Find stability functions with optimal radius of absolute monotonicity.
+                        This includes codes for optimizing stability functions of 
+                        multistep, multistage methods and even methods with downwinding.
+                        The optimization of rational functions is experimental.
+
+The following packages are now deprecated:
     * **SSP**: given the order of the scheme :math:`p` and its number of stages :math:`s` it can find the optimal RK method in terms of **SSP coefficient**
     * **low-storage**: given the order of the scheme :math:`p` and its number of stages :math:`s` it can find the optimal RK method that has the **minimal leading truncation error coefficient**
 
-Currently the solvers are completely separate. However, we will probably merge 
-them in a single entity in the near future.
+Some of the functionality in these deprecated packages has not yet been incorporated
+in **RK-coeff-opt**.
 
 A Python version of the package is also planned.
 
@@ -34,8 +46,6 @@ RK-opt
 
    started
    structure_general
-   structure_SSP
-   structure_lowstorage
    tutorial
    about
    future
