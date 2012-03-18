@@ -1,6 +1,8 @@
 function [con,coneq]=nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val)
-% Nonlinear constraints for SSP RK Methods
-% Including both order conditions and absolute monotonicity conditions
+% Impose nonlinear constraints:
+%   - if objective = 'ssp' : both order conditions and absolute monotonicity 
+%                            conditions
+%   - if objective = 'acc' : order conditions
 
 oc_form = 'albrecht';
 
