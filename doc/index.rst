@@ -2,7 +2,7 @@
 Overview
 ********
 
-`RK-Opt <https://github.com/ketch/RK-opt>`_ is a MATLAB package designed to find 
+`RK-opt <https://github.com/ketch/RK-opt>`_ is a MATLAB package designed to find 
 Runge-Kutta (RK) methods with some optimal time stepping properties for a given stability
 function :math:`R(z)`, the order of accuracy :math:`p` and its 
 number of stages :math:`s` or just the last two parameters (i.e. :math:`p` and 
