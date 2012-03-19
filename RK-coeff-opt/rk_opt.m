@@ -52,7 +52,7 @@ function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,
 %       (in rare cases, this is helpful for high order methods)
 
 if nargin<11
-    writeToFile=0; 
+    writeToFile=1; 
 end
 if nargin<10 
     max_tries=10;
