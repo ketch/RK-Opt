@@ -34,6 +34,7 @@ following lines:
 
    >>>> addpath "path-to-matlab_xunit_3"/matlab_xunit
    >>>> addpath "path-to-matlab_xunit_3"/matlab_xunit/xunit
+   >>>> addpath "path-to-RK-opt"/RK-coeff-opt
 
 
 Obtaining RK-opt
