@@ -51,6 +51,8 @@ function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,
 %       if set to 1, solve the order conditions first before trying to optimize
 %       (in rare cases, this is helpful for high order methods)
 
+% Set default values of the inputs arguments if they are not passed
+% The implementation of this feature in Python will be much easier.
 if nargin<11
     writeToFile=1; 
 end
@@ -70,6 +72,15 @@ if nargin<5
     poly_coeff_ind = [];
     poly_coeff_val = [];
 end
+
+if nargin<4 
+    objective = 'ssp';
+end
+
+if nargin<3 
+    class = 'erk';
+end
+
 
 rand('twister', sum(100*clock)); %New random seed every time
 
@@ -154,6 +165,16 @@ end
 % Inform the user that the order conditions are not satisfied
 if (order~= p)
     fprintf('\n===========================\n')
+    if (status == 0)
+        fprintf('Too many function evaluations or iterations. \n\n');
+    elseif (status == -1)
+        fprintf('Stopped by output/plot function. \n\n');
+    elseif (status == -2)
+        fprintf('No feasible point found. \n\n');
+    elseif (status == -3)
+        fprintf('Problem seems unbounded. \n\n');
+    end
+ 
     fprintf('The RK coefficients do not satisfy the order conditions. \n');
     fprintf('Order of accuracy: %d \n\n', order)
     fprintf('===========================\n')
