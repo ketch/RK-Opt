@@ -8,13 +8,14 @@ function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,
 % Optimization of a single RK method 
 % ==================================
 %
-% - max_tries: maximum number of fmincon function calls.
+% - if np>1: run in parallel. fmincon is called in combination with the 
+% multistart solver (Global Optimization Toolbox). It starts a local solver 
+% (in Optimization Toolbox) from multiple starting points and stores local 
+% and global solutions found during the search process. This approach can 
+% be run in parallel.
 %
-% - if np>1: Run in parallel. fmincon is called in combination with the multistart
-% solver (Global Optimization Toolbox). It starts a local solver (in 
-% Optimization Toolbox) from multiple starting points and stores local and 
-% global solutions found during the search process. This approach can be 
-% run in parallel.
+% - max_tries: maximum number of fmincon/Multistart function calls.
+%
 % =========================================================================
 %
 % Variable meanings:
