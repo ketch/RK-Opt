@@ -151,34 +151,15 @@ for i=1:max_tries
     
     order = check_RK_order(rk.A,rk.b,rk.c);
     
-    % Inform the user that the order conditions are satisfied
+    % If fmincon converged to a solution and the RK scheme satisfies the 
+    % order conditions get out of the loop
     if (status>0 && p==order)
-        fprintf('\n===========================')
-        fprintf('\nConverged to a solution. \n')
-        fprintf('The RK coefficients also satisfy the order conditions. \n')
-        fprintf('Order of accuracy: %d \n', order)
-        fprintf('===========================\n')
         break;
     end
 end 
 
-% Inform the user that the order conditions are not satisfied
-if (order~= p)
-    fprintf('\n===========================\n')
-    if (status == 0)
-        fprintf('Too many function evaluations or iterations. \n\n');
-    elseif (status == -1)
-        fprintf('Stopped by output/plot function. \n\n');
-    elseif (status == -2)
-        fprintf('No feasible point found. \n\n');
-    elseif (status == -3)
-        fprintf('Problem seems unbounded. \n\n');
-    end
- 
-    fprintf('The RK coefficients do not satisfy the order conditions. \n');
-    fprintf('Order of accuracy: %d \n\n', order)
-    fprintf('===========================\n')
-end
+% Print status at screen
+info = print_info(status,p,order);
 
 % Set the objective values
 if strcmp(objective,'ssp')
