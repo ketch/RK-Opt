@@ -6,13 +6,15 @@ RK-opt/general structure solver
 ================================
 The main function of the **general solver** is **rk_opt** which is stored in 
 **RK-opt/general/rk_opt.m**. 
-Given the coefficients of a stability function :math:`R(z)`, the order of 
-accuracy :math:`p` of the scheme and its number of stages :math:`s`, 
+Given the order of 
+accuracy :math:`p` of the scheme, its number of stages :math:`s`, 
 rk_opt setups and calls the MATLAB's 
 `fmincon <http://www.mathworks.com/help/toolbox/optim/ug/fmincon.html>`_ 
 routine to find a Runge-Kutta method that satisfies the order conditions 
 (nonlinear equality constraints) and 
-a combination of inequality constraints and objective functions.
+a combination of inequality constraints and objective functions. The method may 
+be also constrained to have a **low-storage implementation** and/or a prescribed 
+**stability polynomial**.
 
 In this page, the rk_opt function and few other key routines are briefly 
 described.
