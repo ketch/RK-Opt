@@ -91,7 +91,7 @@ if np>1
 end
 
 %Set optimization parameters:
-options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','off','Display','off','DerivativeCheck','off'...%);
+options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','off','Display','notify','DerivativeCheck','off'...%);
 ,'Algorithm','sqp');
 %For difficult cases, it can be useful to limit the line search step size
 %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
@@ -112,6 +112,7 @@ end
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 
 for i=1:max_tries
+    fprintf('Attempt %d\n', i);
 
     if np>1
         % # of starting points for multistart
@@ -129,7 +130,7 @@ for i=1:max_tries
                   @(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val), ...
                   'options',opts);
 
-        ms = MultiStart('Display','final','UseParallel','always');
+        ms = MultiStart('Display','notify','UseParallel','always');
         [X,FVAL,status,outputg,manyminsg] = run(ms,problem,tpoints);
 
     else
@@ -159,26 +160,25 @@ for i=1:max_tries
     end
 end 
 
-% Print status at screen
-info = print_info(status,p,order);
+if (i==max_tries && status<=0)
+    fprintf('Failed to find a solution.\n')
+    rk = -1;
+    return
+end
+fprintf('The method found has order of accuracy: %d \n', order)
 
 % Set the objective values
 if strcmp(objective,'ssp')
     rk.r=-FVAL;
-    rk.errcoeff=[];
+    rk.errcoeff=errcoeff(rk.A,rk.b,rk.c,order);
 elseif strcmp(objective,'acc')
     rk.errcoeff=FVAL;
-    rk.r=[];
+    rk.r=am_radius(rk);
 end
     
-% Write output to file if required
 if (writeToFile == 1 && p == order)
     output=writeFile(rk,p);
 end
 
-% Close pool sessions
-if np>1
-    matlabpool close;
+if np>1 matlabpool close; end
 end
-
-

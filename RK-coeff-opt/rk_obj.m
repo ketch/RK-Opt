@@ -6,6 +6,7 @@ if strcmp(objective,'ssp')
     g=zeros(size(x));
     g(end)=1;
 elseif strcmp(objective,'acc')
-    r=errcoeff(x,class,s,p);
+    [A,b,c]=unpack_rk(x,s,class);
+    r=errcoeff(A,b,c,p);
     g=[];
 end
