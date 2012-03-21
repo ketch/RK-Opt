@@ -91,7 +91,7 @@ if np>1
 end
 
 %Set optimization parameters:
-options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','off','Display','off','DerivativeCheck','off'...%);
+options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','off','Display','notify','DerivativeCheck','off'...%);
 ,'Algorithm','sqp');
 %For difficult cases, it can be useful to limit the line search step size
 %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
@@ -112,6 +112,7 @@ end
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 
 for i=1:max_tries
+    fprintf('Attempt %d\n', i);
 
     if np>1
         % # of starting points for multistart
@@ -152,33 +153,209 @@ for i=1:max_tries
     
     order = check_RK_order(rk.A,rk.b,rk.c);
     
-    % If fmincon converged to a solution and the RK scheme satisfies the 
-    % order conditions get out of the loop
+    % If a solution is found then exit the loop
     if (status>0 && p==order)
         break;
     end
 end 
 
-% Print status at screen
-info = print_info(status,p,order);
-
-% Set the objective values
-if strcmp(objective,'ssp')
-    rk.r=-FVAL;
-    rk.errcoeff=[];
-elseif strcmp(objective,'acc')
-    rk.errcoeff=FVAL;
-    rk.r=[];
+if (i==max_tries && status<=0)
+    fprintf('Failed to find a solution.\n')
+    rk = -1;
+    return
 end
+fprintf('The method found has order of accuracy: %d \n', order)
+
+% Compute properties of the method
+if strcmp(objective,'ssp')
+    rk.r = -FVAL;
+else
+    rk.r=am_radius(rk.A,rk.b,rk.c);
+end
+rk.errcoeff=errcoeff(rk.A,rk.b,rk.c,order);
+[rk.v,rk.alpha,rk.beta] = optimal_shuosher_form(rk.A,rk.b,rk.c);
     
-% Write output to file if required
 if (writeToFile == 1 && p == order)
     output=writeFile(rk,p);
 end
 
-% Close pool sessions
-if np>1
-    matlabpool close;
+if np>1 matlabpool close; end
+end
+% =========================================================================
+
+
+
+% =========================================================================
+function x=initial_guess(s,p,class,starttype)
+%function x=initial_guess(s,p,class,starttype)
+%
+% Set initial guess for RK coefficients
+% Includes some good initial guesses for optimal SSP methods
+if ~ischar(starttype)
+    x=starttype;
+else
+x=[];
+switch class
+    case 'irk'
+        % Implicit Runge-Kutta
+        switch starttype
+            case 'random'
+                x(1:s)=sort(rand(1,s)); 
+                x(s+1:2*s-1)=rand(1,s-1); 
+                x(2*s)=1-sum(x(s+1:2*s-1));
+                x(2*s+1:2*s+s^2)=rand(1,s^2);
+                x(2*s+s^2+1)=-0.01;
+            case 'smart'
+                x(1:s)=(1:s)/s;
+                x(s+1:2*s)=1/s;
+                for i=1:s
+                    x(2*s+s*(i-1)+1:2*s+s*(i-1)+i-1)=1/s;
+                    x(2*s+s*(i-1)+i)=1/(2*s);
+                end
+                x(2*s+s^2+1)=-0.01;
+                x=x.*(1+rand(size(x))/4);
+        end
+
+    case 'irk5'
+        % Implicit SSP methods of order >=5 always have one row of A
+        % equal to zero
+        switch starttype
+            case 'random'
+                x(1:s-1)=sort(rand(1,s-1));    %c's
+                x(s:2*s-2)=rand(1,s-1);        %b's
+                x(2*s-1)=1-sum(x(s:2*s-2)); 
+                x(2*s:2*s-1+s*(s-1))=rand(1,s*(s-1));  %A's
+                x(2*s+s*(s-1))=-0.01;            %r
+            case 'smart'
+                x(1:s-1)=(1:s-1)/s;
+                x(s:2*s-1)=1/s;
+                for i=2:s
+                    x(2*s+s*(i-2):2*s+s*(i-2)+i-2)=1/s;
+                    x(2*s-1+s*(i-2)+i-1)=1/(2*s);
+                end
+                x(2*s+s*(s-1))=-0.1;
+                x=x.*(1+rand(size(x))/4);
+        end
+
+    case 'dirk'
+        %Diagonally implicit Runge-Kutta
+        switch starttype
+            case 'random'
+                x(1:s)=sort(rand(1,s));                     %c's
+                x(s+1:2*s-1)=rand(1,s-1);                   %b's
+                x(2*s)=1-sum(x(s+1:2*s-1));                 %last b
+                x(2*s+1:2*s+s*(s+1)/2)=rand(1,s*(s+1)/2);   %A's
+                x(2*s+s*(s+1)/2+1)=-0.01;                   %r
+            case 'smart'
+                x(1:s)=(1:s)/s;                             %c's
+                x(s+1:2*s)=1/s;                             %b's
+                x(2*s+1:2*s+s*(s+1)/2)=1/s;                 %A's
+                j=0;
+                for i=1:s
+                  j=j+i;
+                  x(2*s+j)=1/(2*s);                          %Diagonal A's (A_ii)
+                end
+                x(2*s+s*(s+1)/2+1)=-(s-(p-2)+sqrt(s^2-(p-2)))/2;                   %r
+                x=x.*(1+rand(size(x))/10);
+        end
+
+    case 'sspdirk5'
+        % Implicit SSP methods of order >=5 always have one row of A
+        % equal to zero
+        switch starttype
+            case 'random'
+                x(1:s-1)=sort(rand(1,s-1));    % c
+                x(s:2*s-2)=rand(1,s-1)/s;      % b
+                x(2*s-1)=1-sum(x(s:2*s-2));    %b(end)
+                x(2*s:2*s-2+s*(s+1)/2)=rand(1,s*(s+1)/2-1)/3.;
+                x(2*s+s*(s+1)/2-1)=-0.01;
+            case 'smart'
+                nbz=4;
+                %modified 2nd order
+                x(1:s-1)=(1:s-1)/s;
+                x(s:2*s-1)=1/(s-nbz);  
+                %Zero some b's:
+                x(2*s-nbz:2*s-1)=0;
+                x(s)=x(s)/2;
+                x(2*s:2*s-2+s*(s+1)/2)=1/s;
+                j=0;
+                for i=2:s
+                  j=j+i;
+                  x(2*s+j-i)=1/(2*s);                          %First column A's (A_i1)
+                  x(2*s+j-i+1)=3/(2*s);                        %Second column A's (A_i2)
+                  x(2*s-1+j)=1/(2*s);                          %Diagonal A's (A_ii)
+                end
+                x(2*s+s*(s+1)/2-1)=-0.01;
+                x=x.*(1+rand(size(x))/10);
+        end
+
+    case 'sdirk'
+        % Singly diagonally implicit Runge-Kutta
+        switch starttype
+            case 'random'
+                x(1:s)=sort(rand(1,s));                     %c's
+                x(s+1:2*s-1)=rand(1,s-1)/s;                   %b's
+                x(2*s)=1-sum(x(s+1:2*s-1));                 %last b
+                x(2*s+1:2*s+1+s*(s-1)/2)=rand(1,s*(s-1)/2+1)/s;   %A's
+                x(2*s+1)=rand/3/s;
+                x(2*s+1+s*(s-1)/2+1)=-0.01;                   %r
+        end
+
+    case 'erk'
+        %Explicit Runge-Kutta
+        switch starttype
+            case 'random'
+                x(1:s-1)=sort(rand(1,s-1)-1/2); 
+                x(s:2*s-2)=rand(1,s-1)-1/2; 
+                x(2*s-1)=1-sum(x(s:2*s-2));
+                x(2*s:2*s-1+s*(s-1)/2)=rand(1,s*(s-1)/2)-1/2;
+                x(2*s+s*(s-1)/2)=-0.01;
+            case 'smart'
+                r=s-(p-3)-sqrt(s-(p-3));
+                x(1:s-1)=(1:s-1)/r;
+                x(s:2*s-2)=1/s;
+                x(2*s-1)=1-sum(x(s:2*s-2));
+                x(2*s:2*s-1+s*(s-1)/2)=1/r;
+                x(2*s+s*(s-1)/2)=-r;
+        end
+
+    otherwise
+        % Low-storage methods
+        n=set_n(s,class);
+        x=rand(1,n);
 end
 
+end
+end
+% =========================================================================
 
+
+% =========================================================================
+function wf=writeFile(rk,p)
+%function wf=writeFile(rk,p)
+%
+% 
+% Write to file Butcher's coefficients and low-storage coefficients if 
+% required.
+
+szA = size(rk.A);
+
+outputFileName = strcat('ERK-',num2str(p),'-',num2str(szA(1)),'.txt');
+writeFid = fopen(outputFileName,'w');
+
+fprintf(writeFid, '%s\t\t %s\n', '#stage','order');
+output = [szA(1);p];
+fprintf(writeFid, '%u\t \t\t%u\n\n',output);
+
+values = struct2cell(rk);
+names  = fieldnames(rk);
+for i=1:length(values)
+    writeField(writeFid,names{i},values{i});
+end
+
+str = '==============================================================';
+fprintf(writeFid,'\n%s\r\n\n',str);
+
+wf= 1;
+end
+% =========================================================================

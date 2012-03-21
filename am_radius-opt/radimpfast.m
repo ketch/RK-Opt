@@ -12,9 +12,12 @@ eps=1.e-10; M=20;
 
 rzero=false; m=length(p)-1; n=length(q)-1;
 
+% evaluate phi = P/Q
 i=1:length(p); P=sum(p(i).*x.^(i-1));
 i=1:length(q); Q=sum(q(i).*x.^(i-1));
 phi=P/Q
+
+% Compute the partial fractions decomposition of phi
 phi=maple('convert',phi,'parfrac','complex');
 phi2=maple('convert',phi,'list');
 sd=0;
