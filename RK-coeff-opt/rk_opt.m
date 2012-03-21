@@ -1,5 +1,5 @@
-function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,np,max_tries,writeToFile)
-%function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,np,max_tries,writeToFile)
+function rk = rk_opt(s,p,class,objective,varargin)
+%function rk = rk_opt(s,p,class,objective,varargin)
 %
 % =========================================================================
 % Find optimal RK methods using MATLAB's fmincon function.
@@ -52,42 +52,20 @@ function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,
 %       if set to 1, solve the order conditions first before trying to optimize
 %       (in rare cases, this is helpful for high order methods)
 
-% Set default values of the inputs arguments if they are not passed
-% The implementation of this feature in Python will be much easier.
-if nargin<11
-    writeToFile=1; 
-end
-if nargin<10 
-    max_tries=10;
-end
-if nargin<9 
-    np=1;
-end
-if nargin<8 
-    solveorderconditions=0; 
-end
-if nargin<7 
-    startvec='random';
-end
-if nargin<5 
-    poly_coeff_ind = [];
-    poly_coeff_val = [];
-end
+% Parse require, optional and param input values with inputParser
+i_p = inputParser;
+i_p.FunctionName = 'rk_opt';
 
-if nargin<4 
-    objective = 'ssp';
-end
-
-if nargin<3 
-    class = 'erk';
-end
+optional_params = varargin;
+setup_params(s,p,class,objective,i_p,optional_params);
 
 
-rand('twister', sum(100*clock)); %New random seed every time
+% New random seed every time
+rand('twister', sum(100*clock)); 
 
 % Open pool of sessions (# is equal to the processors specified in np)
-if np>1
-    matlabpool('local',np);
+if i_p.Results.np>1
+    matlabpool('local',i_p.Results.np);
 end
 
 %Set optimization parameters:
@@ -111,37 +89,37 @@ end
 %and the upper and lower bounds on the unknowns: lb <= x <= ub
 [Aeq,beq,lb,ub] = linear_constraints(s,class);
 
-for i=1:max_tries
+for i=1:i_p.Results.max_tries
     fprintf('Attempt %d\n', i);
 
-    if np>1
+    if i_p.Results.np>1
         % # of starting points for multistart
         nsp = 20;
         n=set_n(s,class);
         
         for i=1:nsp
-            x(i,:)=initial_guess(s,p,class,startvec);
+            x(i,:)=initial_guess(s,p,class,i_p.Results.startvec);
             tpoints = CustomStartPointSet(x);
         end
 
         problem = createOptimProblem('fmincon','x0',x(1,:),'objective', ...
                   @(x) rk_obj(x,class,s,p,objective),'Aeq',Aeq,'beq',beq,...
                   'lb',lb,'ub',ub,'nonlcon',...
-                  @(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val), ...
-                  'options',opts);
+                  @(x) nlc(x,class,s,p,objective,i_p.Results.poly_coeff_ind,...
+                  i_p.Results.poly_coeff_val),'options',opts);
 
         ms = MultiStart('Display','final','UseParallel','always');
         [X,FVAL,status,outputg,manyminsg] = run(ms,problem,tpoints);
 
     else
-        x=initial_guess(s,p,class,startvec);
+        x=initial_guess(s,p,class,i_p.Results.startvec);
 
         %Optionally find a feasible (for the order conditions) point to start
-        if solveorderconditions==1
+        if i_p.Results.solveorderconditions==1
             x=fsolve(@(x) oc(x,class,s,p),x,opts);
         end
-
-        [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val),opts);
+        
+        [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p,objective,i_p.Results.poly_coeff_ind,i_p.Results.poly_coeff_val),opts);
     end
     
     % Check order of the scheme
@@ -159,7 +137,7 @@ for i=1:max_tries
     end
 end 
 
-if (i==max_tries && status<=0)
+if (i==i_p.Results.max_tries && status<=0)
     fprintf('Failed to find a solution.\n')
     rk = -1;
     return
@@ -170,16 +148,62 @@ fprintf('The method found has order of accuracy: %d \n', order)
 if strcmp(objective,'ssp')
     rk.r = -FVAL;
 else
-    rk.r=am_radius(rk.A,rk.b,rk.c);
+   % rk.r=am_radius(rk.A,rk.b,rk.c);
 end
 rk.errcoeff=errcoeff(rk.A,rk.b,rk.c,order);
 [rk.v,rk.alpha,rk.beta] = optimal_shuosher_form(rk.A,rk.b,rk.c);
     
-if (writeToFile == 1 && p == order)
+if (i_p.Results.writeToFile == 1 && p == order)
     output=writeFile(rk,p);
 end
 
-if np>1 matlabpool close; end
+if i_p.Results.np>1 matlabpool close; end
+end
+% =========================================================================
+
+
+% =========================================================================
+function pop_i_p= setup_params(s,p,class,objective,i_p,optional_params)
+%function pop_i_p= setup_params(s,p,class,objective,optional_params,i_p)
+%
+% Set default optional and param values
+
+% Expected values or string
+expected_classes = {'erk','irk','dirk','sdirk','2S','2Sstar','3Sstar'};
+expected_objectives = {'ssp','acc'};
+expected_startvec = {'random','smart'};
+expected_solveorderconditions = [0,1];
+
+% Default values
+default_poly_coeff_ind = [];
+default_poly_coeff_val = [];
+default_startvec = 'random';
+default_solveorderconditions = 0;
+default_np = 1;
+default_max_tries = 10;
+default_writeToFile = 1;
+
+
+% Populate input parser object
+% ----------------------------
+% Required values
+i_p.addRequired('s',@isnumeric);
+i_p.addRequired('p',@isnumeric);
+i_p.addRequired('class',@(x) ischar(x) && any(validatestring(x,expected_classes)));
+i_p.addRequired('objective',@(x) ischar(x) && any(validatestring(x,expected_objectives)));
+
+% Optional values
+i_p.addParamValue('poly_coeff_ind',default_poly_coeff_ind,@isnumeric); 
+i_p.addParamValue('poly_coeff_val',default_poly_coeff_val,@isnumeric);
+i_p.addParamValue('startvec',default_startvec,@(x) ischar(x) && any(validatestring(x,expected_startvec)));
+i_p.addParamValue('solveorderconditions',default_solveorderconditions,@(x) isnumeric(x) && any(x==expected_solveorderconditions))
+i_p.addParamValue('np',default_np,@isnumeric);
+i_p.addParamValue('max_tries',default_max_tries,@isnumeric);
+i_p.addParamValue('writeToFile',default_writeToFile,@isnumeric);
+
+% Parse input arguments
+i_p.parse(s,p,class,objective,optional_params{:});
+
 end
 % =========================================================================
 
