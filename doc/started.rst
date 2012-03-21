@@ -42,6 +42,9 @@ Obtaining RK-opt
 A zip file containing the package can be downloaded from
 https://github.com/ketch/RK-opt/downloads.
 
+After unzipping, you should add the subdirectory RK-opt/RKtools
+to your MATLAB path.
+
 If you wish to contribute back (and we hope you will), we recommend that you
 fork the RK-Opt Github repository, implement your additions, and issue
 a pull request.  You may also simply e-mail a patch to us.

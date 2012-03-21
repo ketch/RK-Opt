@@ -1,10 +1,12 @@
-function D=errcoeff(x,class,s,p)
-%function D=errcoeff(x,class,s,p)
-%Computes norm of vector of leading error coefficients.
+function D=errcoeff(A,b,c,p)
+%function D=errcoeff(A,b,c,p)
+%
+% Inputs: A,b,c -- Butcher tableau
+%         p     -- order of accuracy of the method
+% Computes the norm of the vector of truncation error coefficients
+% for the terms of order p+1.
+%
 %For now we just use Butcher's approach.  We could alternatively use Albrecht's.
-
-[A,b,c]=unpack_rk(x,s,class);
-
 
 if p==1
   tau(1)=c'*b-1/2;
