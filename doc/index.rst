@@ -45,7 +45,7 @@ RK-opt
    :maxdepth: 2
 
    started
-   structure_general
+   structure_RK-coeff-opt
    tutorial
    about
    future

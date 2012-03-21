@@ -37,7 +37,17 @@ The meaning of the arguments is as follow:
     * solveorderconditions: if set to 1, solve the order conditions first before trying to optimize. The default value is 0.
     * np: number of processor to use. If :math:`np > 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
     * max_tries: maximum number of fmincon function calls. The default value is 10.
-    * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 0.
+    * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
+
+.. note::
+
+   Only :math:`s`: , :math:`p`: , class and objective are required inputs.
+   All the other arguments are **parameter name - value arguments to the input 
+   parser scheme**. Therefore they can be specified in a free order.
+   Example::
+
+    >>>> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
+
 
 The fmincon options are set through the **optimset** that creates/alters optimization options structure. By default the following options are used:
     * MaxFunEvals = 1000000

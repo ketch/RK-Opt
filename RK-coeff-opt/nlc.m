@@ -32,7 +32,7 @@ end
 % Order conditions
 if strcmp(oc_form,'albrecht')
     coneq = oc_albrecht(A,b,c,p);
-elseif strcp(oc_form,'butcher')
+elseif strcmp(oc_form,'butcher')
     coneq = oc_butcher(A,b,c,p);
 end
 %=====================================================
