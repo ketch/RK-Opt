@@ -8,13 +8,14 @@ function rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,
 % Optimization of a single RK method 
 % ==================================
 %
-% - max_tries: maximum number of fmincon function calls.
+% - if np>1: run in parallel. fmincon is called in combination with the 
+% multistart solver (Global Optimization Toolbox). It starts a local solver 
+% (in Optimization Toolbox) from multiple starting points and stores local 
+% and global solutions found during the search process. This approach can 
+% be run in parallel.
 %
-% - if np>1: Run in parallel. fmincon is called in combination with the multistart
-% solver (Global Optimization Toolbox). It starts a local solver (in 
-% Optimization Toolbox) from multiple starting points and stores local and 
-% global solutions found during the search process. This approach can be 
-% run in parallel.
+% - max_tries: maximum number of fmincon/Multistart function calls.
+%
 % =========================================================================
 %
 % Variable meanings:
@@ -151,34 +152,15 @@ for i=1:max_tries
     
     order = check_RK_order(rk.A,rk.b,rk.c);
     
-    % Inform the user that the order conditions are satisfied
+    % If fmincon converged to a solution and the RK scheme satisfies the 
+    % order conditions get out of the loop
     if (status>0 && p==order)
-        fprintf('\n===========================')
-        fprintf('\nConverged to a solution. \n')
-        fprintf('The RK coefficients also satisfy the order conditions. \n')
-        fprintf('Order of accuracy: %d \n', order)
-        fprintf('===========================\n')
         break;
     end
 end 
 
-% Inform the user that the order conditions are not satisfied
-if (order~= p)
-    fprintf('\n===========================\n')
-    if (status == 0)
-        fprintf('Too many function evaluations or iterations. \n\n');
-    elseif (status == -1)
-        fprintf('Stopped by output/plot function. \n\n');
-    elseif (status == -2)
-        fprintf('No feasible point found. \n\n');
-    elseif (status == -3)
-        fprintf('Problem seems unbounded. \n\n');
-    end
- 
-    fprintf('The RK coefficients do not satisfy the order conditions. \n');
-    fprintf('Order of accuracy: %d \n\n', order)
-    fprintf('===========================\n')
-end
+% Print status at screen
+info = print_info(status,p,order);
 
 % Set the objective values
 if strcmp(objective,'ssp')
