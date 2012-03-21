@@ -1,14 +1,14 @@
-function r = am_radius(rk,eps,rmax)
+function r = am_radius(A,b,c,eps,rmax)
 %begin_html
-%function r = am_radius(rk,eps,rmax)
+%function r = am_radius(A,b,c,eps,rmax)
 %
 %By David Ketcheson
 %
 %Evaluates the Radius of absolute monotonicity
 %of a Runge-Kutta method, given the Butcher array.
 %
-%For an m-stage method, rk.A should be an m x m matrix
-%and rk.b should be a column vector of length m.
+%For an m-stage method, A should be an m x m matrix
+%and b should be a column vector of length m.
 %
 %Accuracy can be changed by modifying the value of eps (default 10^-10)
 %Methods with very large radii of a.m. (>50) will require
@@ -24,16 +24,16 @@ function r = am_radius(rk,eps,rmax)
 %end_html
 
 
-if nargin<3 rmax=50; end
-if nargin<2 eps=1.e-10; end
+if nargin<5 rmax=50; end
+if nargin<4 eps=1.e-10; end
 
-m=length(rk.b); e=ones(m,1);
-K=[rk.A;rk.b'];
+m=length(b); e=ones(m,1);
+K=[A;b'];
 rlo=0; rhi=rmax;
 
 while rhi-rlo>eps  %use bisection
   r=0.5*(rhi+rlo);
-  X=eye(m)+r*rk.A; beta=K/X; ech=r*K*(X\e);
+  X=eye(m)+r*A; beta=K/X; ech=r*K*(X\e);
   if (min(beta(:))<-3.e-16 || max(ech(:))>1.+3.e-16)
     rhi=r;
   else

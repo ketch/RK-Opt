@@ -130,7 +130,7 @@ for i=1:max_tries
                   @(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val), ...
                   'options',opts);
 
-        ms = MultiStart('Display','notify','UseParallel','always');
+        ms = MultiStart('Display','final','UseParallel','always');
         [X,FVAL,status,outputg,manyminsg] = run(ms,problem,tpoints);
 
     else
@@ -153,8 +153,7 @@ for i=1:max_tries
     
     order = check_RK_order(rk.A,rk.b,rk.c);
     
-    % If fmincon converged to a solution and the RK scheme satisfies the 
-    % order conditions get out of the loop
+    % If a solution is found then exit the loop
     if (status>0 && p==order)
         break;
     end
@@ -167,14 +166,14 @@ if (i==max_tries && status<=0)
 end
 fprintf('The method found has order of accuracy: %d \n', order)
 
-% Set the objective values
+% Compute properties of the method
 if strcmp(objective,'ssp')
-    rk.r=-FVAL;
-    rk.errcoeff=errcoeff(rk.A,rk.b,rk.c,order);
-elseif strcmp(objective,'acc')
-    rk.errcoeff=FVAL;
-    rk.r=am_radius(rk);
+    rk.r = -FVAL;
+else
+    rk.r=am_radius(rk.A,rk.b,rk.c);
 end
+rk.errcoeff=errcoeff(rk.A,rk.b,rk.c,order);
+[rk.v,rk.alpha,rk.beta] = optimal_shuosher_form(rk.A,rk.b,rk.c);
     
 if (writeToFile == 1 && p == order)
     output=writeFile(rk,p);
