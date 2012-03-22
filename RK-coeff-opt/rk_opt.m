@@ -52,10 +52,8 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %       if set to 1, solve the order conditions first before trying to optimize
 %       (in rare cases, this is helpful for high order methods)
 
-optional_params = varargin;
 [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,writeToFile]= setup_params(optional_params);
-
+    solveorderconditions,writeToFile,algorithm,display]= setup_params(varargin);
 
 % New random seed every time
 rand('twister', sum(100*clock)); 
@@ -66,8 +64,8 @@ if np>1
 end
 
 %Set optimization parameters:
-options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-13,'MaxIter',10000,'Diagnostics','off','Display','notify','DerivativeCheck','off'...%);
-,'Algorithm','sqp');
+options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-15,'MaxIter',10000,'Diagnostics','off','Display',display,'DerivativeCheck','off'...%);
+,'Algorithm',algorithm);
 %For difficult cases, it can be useful to limit the line search step size
 %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
 %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
@@ -84,7 +82,7 @@ end
                  
 %Set the linear constraints: Aeq*x = beq
 %and the upper and lower bounds on the unknowns: lb <= x <= ub
-[Aeq,beq,lb,ub] = linear_constraints(s,class);
+[Aeq,beq,lb,ub] = linear_constraints(s,class,objective);
 
 for i=1:max_tries
     fprintf('Attempt %d\n', i);
@@ -92,7 +90,6 @@ for i=1:max_tries
     if np>1
         % # of starting points for multistart
         nsp = 20;
-        n=set_n(s,class);
         
         for i=1:nsp
             x(i,:)=initial_guess(s,p,class,startvec);
@@ -113,10 +110,12 @@ for i=1:max_tries
 
         %Optionally find a feasible (for the order conditions) point to start
         if solveorderconditions==1
-            x=fsolve(@(x) oc(x,class,s,p),x,opts);
+            x=fsolve(@(x) oc(x,class,s,p,Aeq,beq),x);
         end
-        
-        [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),x,[],[],Aeq,beq,lb,ub,@(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val),opts);
+
+        [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),...
+                                x,[],[],Aeq,beq,lb,ub,...  
+                                @(x) nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val),opts);
     end
     
     % Check order of the scheme
@@ -162,9 +161,9 @@ end
 % =========================================================================
 
 function [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,writeToFile]= setup_params(optional_params);
+    solveorderconditions,writeToFile,algorithm,display]= setup_params(optional_params);
 %function [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-%    solveorderconditions,writeToFile]= setup_params(optional_params);
+%    solveorderconditions,writeToFile,algorithm,display]= setup_params(optional_params);
 %
 % Set default optional and param values
 
@@ -173,6 +172,8 @@ i_p.FunctionName = 'setup_params';
 
 expected_startvec = {'random','smart'};
 expected_solveorderconditions = [0,1];
+expected_algorithms = {'sqp', 'interior-point'};
+expected_displays = {'notify', 'iter', 'final'};
 
 % Default values
 default_poly_coeff_ind = [];
@@ -182,6 +183,8 @@ default_solveorderconditions = 0;
 default_np = 1;
 default_max_tries = 10;
 default_writeToFile = 1;
+default_algorithm = 'sqp';
+default_display = 'notify';
 
 % Populate input parser object
 % ----------------------------
@@ -193,6 +196,8 @@ i_p.addParamValue('solveorderconditions',default_solveorderconditions,@(x) isnum
 i_p.addParamValue('np',default_np,@isnumeric);
 i_p.addParamValue('max_tries',default_max_tries,@isnumeric);
 i_p.addParamValue('writeToFile',default_writeToFile,@isnumeric);
+i_p.addParamValue('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
+i_p.addParamValue('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
 
 i_p.parse(optional_params{:});
 
@@ -203,6 +208,8 @@ poly_coeff_ind       = i_p.Results.poly_coeff_ind;
 poly_coeff_val       = i_p.Results.poly_coeff_val;
 solveorderconditions = i_p.Results.solveorderconditions;
 writeToFile          = i_p.Results.writeToFile;
+algorithm            = i_p.Results.algorithm;
+display              = i_p.Results.display;
 end
 % =========================================================================
 
@@ -219,6 +226,24 @@ if ~ischar(starttype)
 else
 x=[];
 switch class
+    case 'erk'
+        %Explicit Runge-Kutta
+        switch starttype
+            case 'random'
+                x(1:s-1)=sort(rand(1,s-1)-1/2); 
+                x(s:2*s-2)=rand(1,s-1)-1/2; 
+                x(2*s-1)=1-sum(x(s:2*s-2));
+                x(2*s:2*s-1+s*(s-1)/2)=rand(1,s*(s-1)/2)-1/2;
+                x(2*s+s*(s-1)/2)=-0.01;
+            case 'smart'
+                r=s-(p-3)-sqrt(s-(p-3));
+                x(1:s-1)=(1:s-1)/r;
+                x(s:2*s-2)=1/s;
+                x(2*s-1)=1-sum(x(s:2*s-2));
+                x(2*s:2*s-1+s*(s-1)/2)=1/r;
+                x(2*s+s*(s-1)/2)=-r;
+        end
+
     case 'irk'
         % Implicit Runge-Kutta
         switch starttype
@@ -322,24 +347,6 @@ switch class
                 x(2*s+1:2*s+1+s*(s-1)/2)=rand(1,s*(s-1)/2+1)/s;   %A's
                 x(2*s+1)=rand/3/s;
                 x(2*s+1+s*(s-1)/2+1)=-0.01;                   %r
-        end
-
-    case 'erk'
-        %Explicit Runge-Kutta
-        switch starttype
-            case 'random'
-                x(1:s-1)=sort(rand(1,s-1)-1/2); 
-                x(s:2*s-2)=rand(1,s-1)-1/2; 
-                x(2*s-1)=1-sum(x(s:2*s-2));
-                x(2*s:2*s-1+s*(s-1)/2)=rand(1,s*(s-1)/2)-1/2;
-                x(2*s+s*(s-1)/2)=-0.01;
-            case 'smart'
-                r=s-(p-3)-sqrt(s-(p-3));
-                x(1:s-1)=(1:s-1)/r;
-                x(s:2*s-2)=1/s;
-                x(2*s-1)=1-sum(x(s:2*s-2));
-                x(2*s:2*s-1+s*(s-1)/2)=1/r;
-                x(2*s+s*(s-1)/2)=-r;
         end
 
     otherwise
