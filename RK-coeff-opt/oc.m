@@ -1,4 +1,4 @@
-function tau=oc(x,class,s,p)
+function tau=oc(x,class,s,p,Aeq,beq)
 %function tau=oc(x,class,s,p)
 %Order conditions for RKMs
 %This is just a small wrapper
@@ -12,3 +12,6 @@ if strcmp(oc_form,'albrecht')
 elseif strcp(oc_form,'butcher')
     tau = oc_butcher(A,b,c,p);
 end
+
+lin_tau = Aeq*x'-beq';
+tau = [tau lin_tau'];

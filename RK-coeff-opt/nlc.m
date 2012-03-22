@@ -4,9 +4,6 @@ function [con,coneq]=nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val)
 %                            conditions
 %   - if objective = 'acc' : order conditions
 
-clear coneq
-clear con
-
 oc_form = 'albrecht';
 
 [A,b,c]=unpack_rk(x,s,class);
