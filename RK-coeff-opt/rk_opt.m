@@ -1,5 +1,4 @@
 function rk = rk_opt(s,p,class,objective,varargin)
-varargin{:}
 %function rk = rk_opt(s,p,class,objective,varargin)
 %
 % =========================================================================
