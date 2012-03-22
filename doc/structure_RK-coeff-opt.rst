@@ -24,20 +24,23 @@ rk_opt function
 ---------------
 The rk_opt function signature is ::
 
-     rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,np,max_tries,writeToFile).
+     rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,np,max_tries,writeToFile,algorithm,display).
 
 The meaning of the arguments is as follow:
-    * :math:`s`: number of stages
-    * :math:`p`: order of the Runge-Kutta (RK) scheme
-    * class: class of method to search (erk = explicit RK; irk = implicit RK; dirk = diagonally implicit RK; sdirk = singly diagonally implicit RK; 2S, 3S, 2S*, 3S* = low-storage formulations, see *Ketcheson, "Runge-Kutta methods with minimum storage implementations". J. Comput. Phys. 229(5):1763 - 1773, 2010*)
-    * objective: objective function (acc = minimize leading truncation error coefficient; ssp = maximize SSP coefficient)
-    * poly_coeff_ind: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`  (j denotes the index of the )
-    * poly_coeff_val: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights)
-    * startvec: vector of the initial guess. By default is initialize with random numbers.
+    * :math:`s`: number of stages.
+    * :math:`p`: order of the Runge-Kutta (RK) scheme.
+    * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations, see *Ketcheson, "Runge-Kutta methods with minimum storage implementations". J. Comput. Phys. 229(5):1763 - 1773, 2010*)
+    * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient)
+    * poly_coeff_ind: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`  (j denotes the index of the ). The default value is an empty array.
+    * poly_coeff_val: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights). The default value is an empty array.
+    * startvec: vector of the initial guess ('random' = random approach; 'smart' = smart approach; alternatively, the user can provide the startvec array. By default startvec is initialize with random numbers.
     * solveorderconditions: if set to 1, solve the order conditions first before trying to optimize. The default value is 0.
-    * np: number of processor to use. If :math:`np > 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
+    * np: number of processor to use. If np :math:`> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
     * max_tries: maximum number of fmincon function calls. The default value is 10.
     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
+    * algorithm: which algorithm to use in fmincon (sqp or interior-point). By default sqp is used.
+    * display: level of display of fmincon solver ('off', 'iter', 'notify' or 'final'). The default value is 'notify'.
+
 
 .. note::
 
@@ -49,17 +52,16 @@ The meaning of the arguments is as follow:
     >>>> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
 
 
-The fmincon options are set through the **optimset** that creates/alters optimization options structure. By default the following options are used:
+The fmincon options are set through the **optimset** that creates/alters optimization options structure. By default the following additional options are used:
     * MaxFunEvals = 1000000
     * TolCon = 1.e-13
     * TolFun = 1.e-13
     * TolX = 1.e-13
     * MaxIter = 10000
     * Diagnostics = off
-    * Display = off
     * DerivativeCheck = off
-    * Algorithm = sqp
-    * GradObj = on, if the objective is set equal to ssp
+    * GradObj = on, if the objective is set equal to 'ssp'
+
 
 The rk_opt function is also in charge to setup the objective function and both 
 linear equality and nonlinear inequality constraints. This is achieved by 
@@ -74,26 +76,27 @@ The rk_obj function signature is ::
     [r,g]=rk_obj(x,class,s,p,objective)
 
 The meaning of the input arguments is as follow:
-    * :math:`x`: vector of the unknowns
-    * class: class of method to search (erk = explicit RK; irk = implicit RK; dirk = diagonally implicit RK; sdirk = singly diagonally implicit RK; 2S, 3S, 2S*, 3S* = low-storage formulations)
-    * :math:`s`:number of stages
-    * :math:`p`: order of the RK scheme
-    * objective: objective function (acc = minimize leading truncation error coefficient; ssp = maximize SSP coefficient)
+    * :math:`x`: vector of the unknowns.
+    * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations).
+    * :math:`s`:number of stages.
+    * :math:`p`: order of the RK scheme.
+    * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).
 
 The meaning of the output arguments is as follow:
-    * r: it is a scalar and contains the value of the leading truncation error coefficient if objective = acc or the radius of absolute monotonicity if objective = ssp
-    * g: it is a vector and contains the gradient of the objective function respect to the unknowns. It is empty if objective = acc or it is a vector with all zero elements except for the last component which is equal to one.  
+    * r: it is a scalar containing the radius of absolute monotonicity if objective = 'ssp' or the value of the leading truncation error coefficient if objective = 'acc'.
+    * g: it is a vector and contains the gradient of the objective function respect to the unknowns.  It is an array with all zero elements except for the last component which is equal to one if objective = 'ssp' or it is an empty array if objective = 'acc'. 
 
 
 linear_constraints function
 ---------------------------
 The linear_constraints function signature is ::
     
-    [Aeq,beq,lb,ub] = linear_constraints(s,class)
+    [Aeq,beq,lb,ub] = linear_constraints(s,class,objective)
 
 The meaning of the input arguments is as follow:
-    * :math:`s`: number of stages
-    * class: class of method to search (erk = explicit RK; irk = implicit RK; dirk = diagonally implicit RK; sdirk = singly diagonally implicit RK; 2S, 3S, 2S*, 3S* = low-storage formulations)
+    * :math:`s`: number of stages.
+    * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations).
+    * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).
 
 The meaning of the output arguments is as follow:
     * Aeq, beq: linear constraints Aeq*x = beq. These constraints depends on the class of RK scheme.
@@ -108,16 +111,16 @@ The **nlc** function signature is ::
     [con,coneq]=nlc(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val)
 
 The meaning of the input arguments is as follow:
-    * :math:`x`: vector of the unknowns
-    * class: class of method to search (erk = explicit RK; irk = implicit RK; dirk = diagonally implicit RK; sdirk = singly diagonally implicit RK; 2S, 3S, 2S*, 3S* = low-storage formulations)
-    * :math:`s`:number of stages
-    * :math:`p`: order of the RK scheme
-    * objective: objective function (acc = minimize leading truncation error coefficient; ssp = maximize SSP coefficient)
-    * poly_coeff_ind: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`
-    * poly_coeff_val: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights)
+    * :math:`x`: vector of the unknowns.
+    * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations).
+    * :math:`s`:number of stages.
+    * :math:`p`: order of the RK scheme.
+    * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).
+    * poly_coeff_ind: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`.
+    * poly_coeff_val: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights).
 
 The meaning of the output arguments is as follow:
-    * con: inequality constraints, i.e. absolute monotonicity conditions if objective = ssp or nothing if objective = acc
+    * con: inequality constraints, i.e. absolute monotonicity conditions if objective = 'ssp' or nothing if objective = 'acc'
     * coneq: order conditions plus stability function coefficients constraints (tall-tree elementary weights)
 
 Two forms of the order conditions are implemented: one based on **Butcher's 
@@ -138,8 +141,7 @@ implemented in the **unpack_x** routines.
 
 Currently two unpack_x routines are available: unpack_lsrk (lsrk = low-storage
 RK) and unpack_rk. The first one computes both low-storage formulation prescribed
-in class (2S, 3S, 2S*, 3S*, see *Ketcheson, "Runge-Kutta methods with minimum 
-storage implementations". J. Comput. Phys. 229(5):1763 - 1773, 2010*) and the
+in class ('2S', '3S', '2S*', '3S*) and the
 Butcher's tableau; the second one just calculates the Butcher's tableau.
 
 

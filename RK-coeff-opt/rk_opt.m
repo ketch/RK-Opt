@@ -1,4 +1,5 @@
 function rk = rk_opt(s,p,class,objective,varargin)
+varargin{:}
 %function rk = rk_opt(s,p,class,objective,varargin)
 %
 % =========================================================================
@@ -170,7 +171,6 @@ function [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
 i_p = inputParser;
 i_p.FunctionName = 'setup_params';
 
-expected_startvec = {'random','smart'};
 expected_solveorderconditions = [0,1];
 expected_algorithms = {'sqp', 'interior-point'};
 expected_displays = {'notify', 'iter', 'final'};
