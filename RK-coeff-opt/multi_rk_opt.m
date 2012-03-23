@@ -1,5 +1,5 @@
-function multi_rk = multi_rk_opt(inputFileName,class,objective,startvec,solveorderconditions,np,max_tries,writeToFile)
-%function multi_rk = multi_rk_opt(inputFileName,class,objective,startvec,solveorderconditions,np,max_tries,writeToFile)
+function multi_rk = multi_rk_opt(inputFileName,class,objective,varargin)
+%function multi_rk = multi_rk_opt(inputFileName,class,objective,varargin)
 %
 %
 % This function calls the rk_opt.m function inside a loop for optimizing
@@ -89,7 +89,7 @@ for i_stabPoly = 1:nbrStabPoly
         poly_coeff_val = d(7+p+1:length(d))
     end
             
-    rk = rk_opt(s,p,class,objective,poly_coeff_ind,poly_coeff_val,startvec,solveorderconditions,np,max_tries,writeToFile)
+    rk = rk_opt(s,p,class,objective,'poly_coeff_ind',poly_coeff_ind,'poly_coeff_val',poly_coeff_val,varargin{:})
     
 end
 
