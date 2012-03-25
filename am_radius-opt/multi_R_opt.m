@@ -37,6 +37,9 @@ output_file_name = strcat(class,'.txt');
 % Open output file
 write_fid = fopen(output_file_name,'w');
 
+% Write to file number of optimization runs
+number_runs = write_number_runs(k,p,s,class,write_fid);
+
 
 % Call optimization function
 switch class
@@ -122,6 +125,24 @@ s = i_p.Results.s;
 end
 % =========================================================================
 
+% =========================================================================
+
+function number_runs = write_number_runs(k,p,s,class,write_fid)
+%function  number_runs = write_number_runs(k,p,s,class,write_fid)
+%
+if strcmp(class,'skp')
+    number_runs = length(p)*length(k)*length(s);
+else
+    number_runs = length(p)*length(k);
+end
+
+fprintf(write_fid,'%u\n',number_runs);
+str = '=======================================================================';
+fprintf(write_fid,'\n%s\r\n\n',str);
+
+end
+% =========================================================================
+
 
 % =========================================================================
 
@@ -164,6 +185,7 @@ function a = gamma2monomial_coeffs(gamma,R)
 %function a = gamma2monomial_coeffs(gamma,R)
 %
 % gamma = coefficients of the stability polynomials using the basis (1+z/R)^j 
+%
 % a = coefficients in the monomial basis
 % 
 % Transformation: 
