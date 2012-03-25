@@ -47,7 +47,8 @@ switch class
                     glm.order = p(i);
                     glm.step = k(j);
                     glm.stage = s(l);
-                    [glm.R,glm.gamma] = Rskp(s,k,p);
+                    [glm.R,glm.gamma] = Rskp(glm.stage,glm.step,glm.order);
+                    glm.coeffs_monomial = gamma2monomial_coeffs(glm.gamma,glm.R);
                     wf = write_output_to_file(write_fid,glm);
                 end
             end
@@ -58,7 +59,7 @@ switch class
             for j = 1:length(k)
                 glm.order = p(i);
                 glm.step = k(j);
-                [glm.R,glm.alpha,glm.beta]=Rkp_imp(k,p);
+                [glm.R,glm.alpha,glm.beta]=Rkp_imp(glm.step,glm.order);
                 wf = write_output_to_file(write_fid,glm);
             end
         end
@@ -68,7 +69,7 @@ switch class
             for j = 1:length(k)
                 glm.order = p(i);
                 glm.step = k(j);
-                [glm.R,glm.alpha,glm.beta,glm.tbeta]=Rkp_dw(k,p);
+                [glm.R,glm.alpha,glm.beta,glm.tbeta]=Rkp_dw(glm.step,glm.order);
                 wf = write_output_to_file(write_fid,glm);
             end
         end
@@ -78,7 +79,7 @@ switch class
             for j = 1:length(k)
                 glm.order = p(i);
                 glm.step = k(j);
-                [glm.R,glm.alpha,glm.beta,glm.tbeta]=Rkp_imp_dw(k,p); 
+                [glm.R,glm.alpha,glm.beta,glm.tbeta]=Rkp_imp_dw(glm.step,glm.order); 
                 wf = write_output_to_file(write_fid,glm);
             end
         end
@@ -137,7 +138,7 @@ for i=1:length(values)
     write_field(write_fid,names{i},values{i});
 end
 
-str = '==============================================================';
+str = '=======================================================================';
 fprintf(write_fid,'\n%s\r\n\n',str);
 
 
@@ -153,11 +154,38 @@ function wf = write_field(write_fid,name,value)
 %
 
 fprintf(write_fid,'\n%s\n',name);
-fprintf(write_fid, [repmat('%5.6E\t', 1, size(value,1)),'\n'], value');
+fprintf(write_fid, [repmat('%5.16E\t', 1, size(value,1)),'\n'], value');
 
 wf = 1;
 end
 % =========================================================================
+
+function a = gamma2monomial_coeffs(gamma,R)
+%function a = gamma2monomial_coeffs(gamma,R)
+%
+% gamma = coefficients of the stability polynomials using the basis (1+z/R)^j 
+% a = coefficients in the monomial basis
+% 
+% Transformation: 
+%    
+%    a_i = 1/(i!*R^i) * sum_{j=0}^m (gamma_j prod_{n=0}^{i-1}(j-n))
+%
+
+for i = 0:length(gamma)-1 % loop over coefficients of the monomial basis
+    sm = 0;
+    for j = 0:length(gamma)-1 % summation over gamma_j
+        pr = 1;
+        for n = 0:i-1 % product (j-n)
+            pr = pr*(j-n);
+        end
+        sm = sm + gamma(j+1)*pr; 
+    end
+    a(i+1) = 1/(factorial(i)*R^i)*sm;
+end
+
+a = a'; % Transpose for pretty output
+
+end
 
 
 
