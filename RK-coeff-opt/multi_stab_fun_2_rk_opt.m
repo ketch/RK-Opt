@@ -1,9 +1,9 @@
-function multi_rk = multi_rk_opt(inputFileName,class,objective,varargin)
-%function multi_rk = multi_rk_opt(inputFileName,class,objective,varargin)
+function multi_rk = multi_stab_fun_2_rk_opt(inputFileName,class,objective,varargin)
+%function multi_rk = multi_stab_fun_2_rk_opt(inputFileName,class,objective,varargin)
 %
 %
 % This function calls the rk_opt.m function inside a loop for optimizing
-% multiple RK methods give their stability function coefficients.
+% multiple RK methods given their stability function coefficients.
 %
 %
 %
