@@ -53,7 +53,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %       (in rare cases, this is helpful for high order methods)
 
 [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,writeToFile,algorithm,display]= setup_params(varargin);
+    solveorderconditions,write_to_file,algorithm,display]= setup_params(varargin);
 
 % New random seed every time
 rand('twister', sum(100*clock)); 
@@ -149,8 +149,8 @@ end
 rk.errcoeff=errcoeff(rk.A,rk.b,rk.c,order);
 [rk.v,rk.alpha,rk.beta] = optimal_shuosher_form(rk.A,rk.b,rk.c);
     
-if (writeToFile == 1 && p == order)
-    output=writeFile(rk,p);
+if (write_to_file == 1 && p == order)
+    output=write_file(rk,p);
 end
 
 if np>1 matlabpool close; end
@@ -161,9 +161,9 @@ end
 % =========================================================================
 
 function [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,writeToFile,algorithm,display]= setup_params(optional_params);
+    solveorderconditions,write_to_file,algorithm,display]= setup_params(optional_params);
 %function [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-%    solveorderconditions,writeToFile,algorithm,display]= setup_params(optional_params);
+%    solveorderconditions,write_to_file,algorithm,display]= setup_params(optional_params);
 %
 % Set default optional and param values
 
@@ -181,7 +181,7 @@ default_startvec = 'random';
 default_solveorderconditions = 0;
 default_np = 1;
 default_max_tries = 10;
-default_writeToFile = 1;
+default_write_to_file = 1;
 default_algorithm = 'sqp';
 default_display = 'notify';
 
@@ -194,7 +194,7 @@ i_p.addParamValue('startvec',default_startvec);
 i_p.addParamValue('solveorderconditions',default_solveorderconditions,@(x) isnumeric(x) && any(x==expected_solveorderconditions))
 i_p.addParamValue('np',default_np,@isnumeric);
 i_p.addParamValue('max_tries',default_max_tries,@isnumeric);
-i_p.addParamValue('writeToFile',default_writeToFile,@isnumeric);
+i_p.addParamValue('write_to_file',default_write_to_file,@isnumeric);
 i_p.addParamValue('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
 i_p.addParamValue('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
 
@@ -206,7 +206,7 @@ startvec             = i_p.Results.startvec;
 poly_coeff_ind       = i_p.Results.poly_coeff_ind;
 poly_coeff_val       = i_p.Results.poly_coeff_val;
 solveorderconditions = i_p.Results.solveorderconditions;
-writeToFile          = i_p.Results.writeToFile;
+write_to_file          = i_p.Results.write_to_file;
 algorithm            = i_p.Results.algorithm;
 display              = i_p.Results.display;
 end
@@ -360,8 +360,8 @@ end
 
 
 % =========================================================================
-function wf=writeFile(rk,p)
-%function wf=writeFile(rk,p)
+function wf=write_file(rk,p)
+%function wf=write_file(rk,p)
 %
 % 
 % Write to file Butcher's coefficients and low-storage coefficients if 
@@ -369,21 +369,21 @@ function wf=writeFile(rk,p)
 
 szA = size(rk.A);
 
-outputFileName = strcat('ERK-',num2str(p),'-',num2str(szA(1)),'.txt');
-writeFid = fopen(outputFileName,'w');
+output_file_name = strcat('ERK-',num2str(p),'-',num2str(szA(1)),'.txt');
+write_fid = fopen(output_file_name,'w');
 
-fprintf(writeFid, '%s\t\t %s\n', '#stage','order');
+fprintf(write_fid, '%s\t\t %s\n', '#stage','order');
 output = [szA(1);p];
-fprintf(writeFid, '%u\t \t\t%u\n\n',output);
+fprintf(write_fid, '%u\t \t\t%u\n\n',output);
 
 values = struct2cell(rk);
 names  = fieldnames(rk);
 for i=1:length(values)
-    writeField(writeFid,names{i},values{i});
+    write_field(write_fid,names{i},values{i});
 end
 
 str = '==============================================================';
-fprintf(writeFid,'\n%s\r\n\n',str);
+fprintf(write_fid,'\n%s\r\n\n',str);
 
 wf= 1;
 end
