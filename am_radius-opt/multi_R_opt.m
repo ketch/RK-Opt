@@ -136,9 +136,12 @@ else
     number_runs = length(p)*length(k);
 end
 
+str = 'stability polynomials';
+fprintf(write_fid,'%s\r\n',str);
+
 fprintf(write_fid,'%u\n',number_runs);
 str = '=======================================================================';
-fprintf(write_fid,'\n%s\r\n\n',str);
+fprintf(write_fid,'%s\r\n',str);
 
 end
 % =========================================================================
