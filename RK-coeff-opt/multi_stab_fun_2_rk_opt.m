@@ -1,5 +1,5 @@
-function multi_rk = multi_stab_fun_2_rk_opt(inputFileName,class,objective,varargin)
-%function multi_rk = multi_stab_fun_2_rk_opt(inputFileName,class,objective,varargin)
+function multi_rk = multi_stab_fun_2_rk_opt(input_file_name,class,objective,varargin)
+%function multi_rk = multi_stab_fun_2_rk_opt(input_file_name,class,objective,varargin)
 %
 %
 % This function calls the rk_opt.m function inside a loop for optimizing
@@ -7,14 +7,14 @@ function multi_rk = multi_stab_fun_2_rk_opt(inputFileName,class,objective,vararg
 %
 %
 %
-% inputFileName: name of the file where the coefficients of the stability 
-%                polynomial function can be found. This file must have a
-%                specific header. For instance:
+% input_file_name: name of the file where the coefficients of the stability 
+%                  polynomial function can be found. This file must have a
+%                  specific header. For instance:
 %   
-%                #stability poly.
-%                18
+%                  #stability poly.
+%                  18
 %
-%                #stage	 order	 free params. h	 h/s  iter poly. coeffs.
+%                  #stage	 order	 free params. h	 h/s  iter poly. coeffs.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -22,35 +22,34 @@ function multi_rk = multi_stab_fun_2_rk_opt(inputFileName,class,objective,vararg
 % =========================================================================
 % Load and read the file containing the stability polynomial coefficients
 % =========================================================================
-readFid = fopen(inputFileName,'r');
-inputFileName;
+read_fid = fopen(input_file_name,'r');
 
 % Header
-tline = fgets(readFid); 
+tline = fgets(read_fid); 
 
 % Read number of stability polynomial written in the file 
-tline = fgets(readFid);
+tline = fgets(read_fid);
 
 % Convert string to floating numbers
 d = sscanf(tline,'%f');
-nbrStabPoly = sscanf(tline,'%f');
-nbrStabPoly = floor(nbrStabPoly);
+number_stab_poly = sscanf(tline,'%f');
+number_stab_poly = floor(number_stab_poly);
 
 % Read White line
-tline = fgets(readFid);
+tline = fgets(read_fid);
  
 % Header
-tline = fgets(readFid);
+tline = fgets(read_fid);
 
 % Read White line
-tline = fgets(readFid);
+tline = fgets(read_fid);
 
 
 % Loop over the stability polynomial
-for i_stabPoly = 1:nbrStabPoly
+for i_stab_poly = 1:number_stab_poly
     
     % Read information
-    tline = fgets(readFid);
+    tline = fgets(read_fid);
     
     % Convert string to floating numbers
     d = sscanf(tline,'%f');
@@ -73,8 +72,8 @@ for i_stabPoly = 1:nbrStabPoly
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
     % Check if the minimum number of stages is consistent with the order of
-    % the Runge-Kutta method.
-    if strcmp(class,'erk') 
+    % the explicit Runge-Kutta method.
+    if (strcmp(class,'erk') | strcmp(class(1:2),'2S') | strcmp(class(1:2),'3S'))
         if ((p <= 4) & (s-p)<0)
             disp('Exit from the code.')
             disp('The number of stages must be at least equal to the order of the Runge-Kutta scheme!')
@@ -84,21 +83,19 @@ for i_stabPoly = 1:nbrStabPoly
             disp('The number of stages must be at least equal to the order of the Runge-Kutta scheme plus one!')
             break;
         end
-        
-        poly_coeff_ind = p+1:s
-        poly_coeff_val = d(7+p+1:length(d))
     end
-            
+    
+    % Polynomial coefficients position 
+    poly_coeff_ind = p+1:s
+
+    % Polynomial coefficients value
+    poly_coeff_val = d(7+p+1:length(d))
+
+    % Call to rk_opt
     rk = rk_opt(s,p,class,objective,'poly_coeff_ind',poly_coeff_ind,'poly_coeff_val',poly_coeff_val,varargin{:})
     
 end
 
 multi_rk = 1;
 
-
-
-
-
-
-
-
+end
