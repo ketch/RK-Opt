@@ -11,7 +11,7 @@ function multi_rk = multi_stab_fun_2_rk_opt(input_file_name,class,objective,vara
 %                  specific header. For instance:
 %   
 %                  #stability poly.
-%                  18
+%                  xxx
 %
 %                  #stage	 order	 free params. h	 h/s  iter poly. coeffs.
 %
@@ -50,7 +50,7 @@ for i_stab_poly = 1:number_stab_poly
     % Polynomial coefficients indices
     poly_coeff_ind = p+1:s;
 
-    % Polynomial coefficients value
+    % Polynomial coefficients values
     poly_coeff_val = d(7+p+1:length(d));
 
     % Call to rk_opt
