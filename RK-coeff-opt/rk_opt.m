@@ -53,7 +53,8 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %       (in rare cases, this is helpful for high order methods)
 
 [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,write_to_file,algorithm,display]= setup_params(varargin);
+    solveorderconditions,write_to_file,algorithm,display,problem_class]=...
+    setup_params(varargin);
 
 % New random seed every time
 rand('twister', sum(100*clock)); 
@@ -125,7 +126,7 @@ for i=1:max_tries
         [rk.A,rk.b,rk.c]=unpack_rk(X,s,class);
     end
     
-    order = check_RK_order(rk.A,rk.b,rk.c);
+    order = check_RK_order(rk.A,rk.b,rk.c,problem_class);
     
     % If a solution is found then exit the loop
     if (status>0 && p==order)
@@ -161,9 +162,11 @@ end
 % =========================================================================
 
 function [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,write_to_file,algorithm,display]= setup_params(optional_params);
+    solveorderconditions,write_to_file,algorithm,display,problem_class]=...
+    setup_params(optional_params)
 %function [np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-%    solveorderconditions,write_to_file,algorithm,display]= setup_params(optional_params);
+%    solveorderconditions,write_to_file,algorithm,display,problem_class]=...
+%    setup_params(optional_params)
 %
 % Set default optional and param values
 
@@ -173,6 +176,7 @@ i_p.FunctionName = 'setup_params';
 expected_solveorderconditions = [0,1];
 expected_algorithms = {'sqp', 'interior-point'};
 expected_displays = {'notify', 'iter', 'final'};
+expected_problem_class = {'linear', 'nonlinear'};
 
 % Default values
 default_poly_coeff_ind = [];
@@ -184,6 +188,8 @@ default_max_tries = 10;
 default_write_to_file = 1;
 default_algorithm = 'sqp';
 default_display = 'notify';
+default_problem_class = 'nonlinear';
+
 
 % Populate input parser object
 % ----------------------------
@@ -197,6 +203,8 @@ i_p.addParamValue('max_tries',default_max_tries,@isnumeric);
 i_p.addParamValue('write_to_file',default_write_to_file,@isnumeric);
 i_p.addParamValue('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
 i_p.addParamValue('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
+i_p.addParamValue('problem_class',default_problem_class,@(x) iscahr(x) && any(validatestring(x,expected_problem_class))); 
+
 
 i_p.parse(optional_params{:});
 
@@ -209,6 +217,7 @@ solveorderconditions = i_p.Results.solveorderconditions;
 write_to_file          = i_p.Results.write_to_file;
 algorithm            = i_p.Results.algorithm;
 display              = i_p.Results.display;
+problem_class        = i_p.Results.problem_class;
 end
 % =========================================================================
 

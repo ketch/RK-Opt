@@ -40,6 +40,7 @@ The meaning of the arguments is as follow:
     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
     * algorithm: which algorithm to use in fmincon (sqp or interior-point). By default sqp is used.
     * display: level of display of fmincon solver ('off', 'iter', 'notify' or 'final'). The default value is 'notify'.
+    * problem_class: class of problems for which the RK is designed ('linear' or 'nonlinear' problems). This option changes the type of order conditions check, i.e. linear or nonlinear order conditions controll. The default value is 'nonlinear'.
 
 
 .. note::

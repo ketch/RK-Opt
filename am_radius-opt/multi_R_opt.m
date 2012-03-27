@@ -208,6 +208,12 @@ for i = 0:length(gamma)-1 % loop over coefficients of the monomial basis
         for n = 0:i-1 % product (j-n)
             pr = pr*(j-n);
         end
+        % The algorithm is limited by numerical conditioning of the 
+        % constraint matrix. Nagative (hopefully very small) gamma_j are 
+        % due to this limitation. We set them to zero.
+        if (gamma(j+1) < 0.0)
+            gamma(j+1) = 0.0;
+        end
         sm = sm + gamma(j+1)*pr; 
     end
     a(i+1) = 1/(factorial(i)*R^i)*sm;

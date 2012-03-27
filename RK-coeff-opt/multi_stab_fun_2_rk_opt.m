@@ -15,6 +15,10 @@ function multi_rk = multi_stab_fun_2_rk_opt(input_file_name,class,objective,vara
 %
 %                  #stage	 order	 free params. h	 h/s  iter poly. coeffs.
 %
+% varargin: can contains the input parameters that will override the 
+%           default parameters values in rk_opt. See rk_opt function for 
+%           more details.
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

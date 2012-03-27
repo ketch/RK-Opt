@@ -29,7 +29,7 @@ end
 %Set options for linprog
 opts=optimset('TolX',1.e-15,'TolFun',1.e-15,'MaxIter',1000000,...
                'LargeScale','off','Simplex','off','Display','off');
-acc=1.e-12; %Accuracy of bisection search
+acc=1.e-15; %Accuracy of bisection search
 
 M=k*(s+1);
 rmax=s+0.0001;
