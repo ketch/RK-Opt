@@ -31,14 +31,18 @@ The meaning of the arguments is as follow:
     * :math:`p`: order of the Runge-Kutta (RK) scheme.
     * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations, see *Ketcheson, "Runge-Kutta methods with minimum storage implementations". J. Comput. Phys. 229(5):1763 - 1773, 2010*)
     * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient)
-    * poly_coeff_ind: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`  (j denotes the index of the ). The default value is an empty array.  Note that one should not include any indices `i \le p`, since those are determined by the order conditions.
+    * poly_coeff_ind: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`  (j denotes the index of the stage). The default value is an empty array.  Note that one should not include any indices :math:`i \le p`, since those are determined by the order conditions.
     * poly_coeff_val: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights). The default value is an empty array.
     * startvec: vector of the initial guess ('random' = random approach; 'smart' = smart approach; alternatively, the user can provide the startvec array. By default startvec is initialize with random numbers.
     * solveorderconditions: if set to 1, solve the order conditions first before trying to optimize. The default value is 0.
     * np: number of processor to use. If np :math:`> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
     * max_tries: maximum number of fmincon function calls. The default value is 10.
     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
-    * algorithm: which algorithm to use in fmincon (sqp or interior-point). By default sqp is used.
+    * algorithm: which algorithm to use in fmincon ('sqp' or 'interior-point'). By default sqp is used.
+
+    .. note::
+       **numerical experiments have shown that when the objective function is the minimization of the leading truncation error coefficient, the interior-point algorithm performs much better than the sqp one.**
+    
     * display: level of display of fmincon solver ('off', 'iter', 'notify' or 'final'). The default value is 'notify'.
 
 
