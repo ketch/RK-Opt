@@ -56,7 +56,7 @@ elseif p==5
   tau(18) = (b'*A^2*diag(c)*A*c - 1/240)/1; 
   tau(19) = (b'*A^3*diag(c)*c - 1/360)/2; 
   tau(20) = (b'*A^4*c - 1/720)/1; 
-elseif disp('Calculation of the principal error norm for p > 5 is not implemented yet')
+else disp('Calculation of the principal error norm for p > 5 is not implemented yet')
 end
 
 D=norm(tau);
