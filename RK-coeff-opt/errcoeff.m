@@ -27,7 +27,7 @@ elseif p==4
   % order 5 conditions:
   tau(1) = (b'*diag(c)^3*c - 1/5)/24;
   tau(2) = (b'*diag(c)^2*A*c - 1/10)/2;
-  tau(3) = (b'*diag(c)*A*diag(c)*c - 1/15)/2
+  tau(3) = (b'*diag(c)*A*diag(c)*c - 1/15)/2;
   tau(4) = (b'*diag(c)*A^2*c - 1/30)/1;
   tau(5) = (b'*diag(A*c)*A*c - 1/20)/2;
   tau(6) = (b'*A*diag(c)^2*c - 1/20)/6
