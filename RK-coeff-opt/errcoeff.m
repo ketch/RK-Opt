@@ -30,7 +30,7 @@ elseif p==4
   tau(3) = (b'*diag(c)*A*diag(c)*c - 1/15)/2;
   tau(4) = (b'*diag(c)*A^2*c - 1/30)/1;
   tau(5) = (b'*diag(A*c)*A*c - 1/20)/2;
-  tau(6) = (b'*A*diag(c)^2*c - 1/20)/6
+  tau(6) = (b'*A*diag(c)^2*c - 1/20)/6;
   tau(7) = (b'*A*diag(c)*A*c - 1/40)/1;
   tau(8) = (b'*A^2*diag(c)*c - 1/60)/2;
   tau(9) = (b'*A^3*c - 1/120)/1;
