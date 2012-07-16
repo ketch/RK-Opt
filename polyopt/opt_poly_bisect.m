@@ -5,7 +5,7 @@ function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,varargin)
 % lam in the interval (h_min,h_max) to precision eps.
 
 [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true] = setup_params(s,lam,varargin);
+        h_true] = opt_poly_params(s,lam,varargin);
 
 diagnostics_init;
 
@@ -71,6 +71,7 @@ function [status,poly_coeffs,v,diag] = ...
 %            least_deviation(h,lam,s,p,basis,solver,row_scaling,diag_on,precision)
 %
 % Solve the least deviation problem \min |R(h\lambda)|
+%   for specified set of \lambda, with order constraints: R(z)\approx \exp(z)
 %
 % Note that poly_coeffs contains the polynomial coefficients
 % in the modified/scaled basis!
@@ -227,34 +228,23 @@ end
 
 %==============================================================
 function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true] = setup_params(s,lam,optional_params);
+        h_true] = opt_poly_params(s,lam,optional_params);
 % function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-%        h_true] = setup_params(s,lam,optional_params);
+%        h_true] = opt_poly_params(s,lam,optional_params);
 %
-% Set default optional and param values
+% Set default optional and parameter values
 i_p = inputParser;
-i_p.FunctionName = 'setup_params';
+i_p.FunctionName = 'opt_poly_params';
 
-% Default values
-default_lam_func = 0;
-default_tol_bisect = 1.e-3;
-default_tol_feasible = 1.e-9;
-default_h_min = 0;
-default_h_max = 2.01*s^2*max(abs(lam)); 
-default_max_steps = 1000;
-default_h_true = [];
+default_h_max        = 2.01*s^2*max(abs(lam)); 
 
-
-% Populate input parser object
-% ----------------------------
-% Parameter values
-i_p.addParamValue('lam_func',default_lam_func);
-i_p.addParamValue('tol_bisect',default_tol_bisect,@isnumeric);
-i_p.addParamValue('tol_feasible',default_tol_feasible,@isnumeric);
-i_p.addParamValue('h_min',default_h_min,@isnumeric);
+i_p.addParamValue('lam_func',0);
+i_p.addParamValue('tol_bisect',1.e-3,@isnumeric);
+i_p.addParamValue('tol_feasible',1.e-9,@isnumeric);
+i_p.addParamValue('h_min',0,@isnumeric);
 i_p.addParamValue('h_max',default_h_max,@isnumeric);
-i_p.addParamValue('max_steps',default_max_steps,@isnumeric);
-i_p.addParamValue('h_true',default_h_true);
+i_p.addParamValue('max_steps',1000,@isnumeric);
+i_p.addParamValue('h_true',[]);
 
 i_p.parse(optional_params{:});
 
