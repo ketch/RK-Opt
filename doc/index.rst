@@ -2,15 +2,15 @@
 Overview
 ********
 
-`RK-opt <https://github.com/ketch/RK-opt>`_ is a MATLAB package designed to find 
-Runge-Kutta (RK) methods with some optimal time stepping properties for a given stability
-function :math:`R(z)`, the order of accuracy :math:`p` and its 
-number of stages :math:`s` or just the last two parameters (i.e. :math:`p` and 
-:math:`s`). It can compute the coefficients of explicit, 
-diagonally implicit and fully implicit RK schemes. This package 
-uses the MATLAB's fmincon function to handle nonlinear optimization problems. 
+`RK-opt <https://github.com/ketch/RK-opt>`_ is a MATLAB package for designing
+Runge-Kutta (RK) methods and stability polynomials.  
+Supported objective functions include the principal
+error norm and the SSP coefficient.  Supported constraints include stability
+polynomial coefficients, low-storage formulations, and structural constraints
+(explicit, diagonally implicit, etc.)
+RK-opt uses MATLAB's optimization toolbox, in particular `fmincon` and `linprog`.
 
-MATLAB global optimization toolbox with *Multistart* can be used to exploit the 
+MATLAB's global optimization toolbox function `Multistart` can be used to exploit the 
 benefits of parallel search on multicore machines.
 
 
@@ -49,3 +49,11 @@ RK-opt
    tutorial
    about
    future
+
+Contributing
+-------------
+If you wish to contribute, we recommend that you
+fork the RK-Opt Github repository, implement your additions, and issue
+a pull request.  You may also simply e-mail a patch to us.
+
+
