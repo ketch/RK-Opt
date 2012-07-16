@@ -1,28 +1,20 @@
-function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,initial_scaling,h_true)
-%function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,initial_scaling,h_true)
+function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,varargin)
+% function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,varargin)
 %
 % Finds an optimally stable polynomial of degree s and order p for the spectrum
 % lam in the interval (h_min,h_max) to precision eps.
 
-if nargin<4; basis='monomial'; end
-if nargin<5; lam_func=0; end
-if nargin<6; tol_bisect=1.e-3; end
-if nargin<7; tol_feasible=1.e-9; end
-if nargin<8; h_min=0; end
-if nargin<9  h_max=2.01*s^2*max(abs(lam)); end
-if nargin<10; max_steps=1000; end
-if nargin<11 
-    if strcmp(basis,'monomial')
-        initial_scaling = factorial(0:s);
-    else
-        initial_scaling = ones(1,s+1);
-    end
-end
-if nargin<12; h_true=[]; end
+[lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
+        h_true] = setup_params(s,lam,varargin);
 
 diagnostics_init;
 
-scale=initial_scaling;
+if strcmp(basis,'monomial')
+    row_scale = factorial(0:s);
+else
+    row_scale = ones(1,s+1);
+end
+
 for i_step=1:max_steps
     %Stop bisecting when relative tolerance is achieved
     if ((h_max-h_min)/h_min < tol_bisect) || (h_max < tol_bisect)
@@ -35,10 +27,10 @@ for i_step=1:max_steps
         lam = lam_func(h)/h;
     end
     
-    [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sdpt3',diag_on,scale);
+    [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sdpt3',row_scale,diag_on);
     if strcmp(status,'Failed') || v==Inf
         disp('sdpt3 failed!');
-        [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sedumi',diag_on,scale);
+        [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sedumi',row_scale,diag_on);
         if strcmp(status,'Failed') || isnan(v)
             disp('sedumi failed!'); 
         end
@@ -51,8 +43,8 @@ for i_step=1:max_steps
         if v<=tol_feasible
             h_min = h;
             if strcmp(basis,'monomial')
-                poly_coeff = [1./factorial(0:p) a'./scale(p+2:end)];
-                scale(p+2:end)=scale(p+2:end)./a';
+                poly_coeff = [1./factorial(0:p) a'./row_scale(p+2:end)];
+                row_scale(p+2:end)=row_scale(p+2:end)./a';
             else
                 poly_coeff = a;
             end
@@ -74,9 +66,9 @@ h=h_min; % Return the largest known feasible value
 
 %====================================================
 function [status,poly_coeffs,v,diag] = ...
-            least_deviation(h,lam,s,p,basis,solver,diag_on,row_scaling,precision)
+            least_deviation(h,lam,s,p,basis,solver,row_scaling,diag_on,precision)
 % function [status,poly_coeffs,v,diag] = ...
-%            least_deviation(h,lam,s,p,basis,solver,diag_on,row_scaling,precision,diag_on)
+%            least_deviation(h,lam,s,p,basis,solver,row_scaling,diag_on,precision)
 %
 % Solve the least deviation problem \min |R(h\lambda)|
 %
@@ -85,8 +77,8 @@ function [status,poly_coeffs,v,diag] = ...
 % Perhaps we should return monomial basis coefficients instead.
 
 if nargin<9; precision='best'; end
-if nargin<8; row_scaling=ones(1,s+1); end
-if nargin<7, diag_on=0; end
+if nargin<8, diag_on=0; end
+if nargin<7; row_scaling=ones(1,s+1); end
 if nargin<6; solver = 'sdpt3'; end
 if nargin<5; basis = 'chebyshev'; end
 
@@ -143,3 +135,133 @@ cvx_end
 status=cvx_status;
 v = cvx_optval;
 diagnostics_least_deviation;
+
+
+
+%====================================================
+function [b,c] = scaled_binomial_basis(N,r,z)
+% function [b,c] = scaled_binomial_basis(N,r,z)
+% Given an arbitrary radius r, scaled_binomial generates a basis of polynomials (1+z/r)^j. 
+% N is the order of polynomial basis desired.  
+%
+% Returns:
+%  1. A matrix b, whose jth row contains the coefficients of the jth basis function
+%     with the coefficients in order of ascending degree
+%
+%  2. A matrix c, whose jth column contains the values of the jth basis function
+%     evaluated at the points z.
+%
+% Some of the loops could be vectorized, but since this routine isn't a bottleneck we've
+% opted for clarity.
+
+b = zeros(N+1,N+1);
+
+for j=0:N
+    for k=0:j
+        b(j+1,k+1) = nchoosek(j,k)/r^k;
+    end
+end
+
+if nargin < 3
+    return
+end
+
+c = zeros(length(z),N+1);
+
+for j=0:N
+    for i=1:length(z)
+        c(i,j+1) = (1+z(i)/r)^j;
+    end
+end
+
+
+
+%====================================================
+function [b,c] = scaled_chebyshev_basis(N,zmin,zmax,z)
+% function [b,c] = scaled_chebyshev_basis(N,zmin,zmax,z)
+% Given an arbitrary domain on the real axis [zmin,zmax], scaled_chebyshev generates a basis of Chebyshev Polynomials of
+% the first kind scaled and shifted by the affine mapping: m(x)=m1*x+m0 where m1=2/(zmax-zmin) and m0=-(1+zmin) so m([zmin,zmax]) -> [-1,1]
+% N is the order of polynomial basis desired.  
+%
+% Returns:
+%  1. A matrix b, whose ith row contains the coefficients of the ith basis function
+%     with the coefficients in order of ascending degree
+%
+%  2. A matrix c, whose ith column contains the values of the ith basis function
+%     evaluated at the points z.
+%
+% Some of the loops could be vectorized, but since this routine isn't a bottleneck we've
+% opted for clarity.
+
+b = zeros(N+1,N+1);
+
+m1 = 2/(zmax-zmin);
+m0 = -(1+zmin*m1);
+
+% T_0' = 1
+b(1,1) = 1;
+
+% T_1' = m1*x + m0
+b(2,1) = m0;
+b(2,2) = m1;
+
+% T_{n+1}' = 2*(m1*x + m0)*T_{n} - T_{n-1} 
+for k=1:N-1 
+    b(k+2,:) = 2*(m1*[0 b(k+1,1:end-1)] + m0*b(k+1,:)) - b(k,:);
+end
+
+if nargin < 4
+    return
+end
+
+c = zeros(length(z),N+1);
+
+c(:,1) = 1;
+c(:,2) = m1*z+m0;
+
+for k=1:N-1 
+    c(:,k+2) = 2*(m1*c(:,k+1).*z + m0*c(:,k+1)) - c(:,k);
+end
+
+
+
+%==============================================================
+function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
+        h_true] = setup_params(s,lam,optional_params);
+% function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
+%        h_true] = setup_params(s,lam,optional_params);
+%
+% Set default optional and param values
+i_p = inputParser;
+i_p.FunctionName = 'setup_params';
+
+% Default values
+default_lam_func = 0;
+default_tol_bisect = 1.e-3;
+default_tol_feasible = 1.e-9;
+default_h_min = 0;
+default_h_max = 2.01*s^2*max(abs(lam)); 
+default_max_steps = 1000;
+default_h_true = [];
+
+
+% Populate input parser object
+% ----------------------------
+% Parameter values
+i_p.addParamValue('lam_func',default_lam_func);
+i_p.addParamValue('tol_bisect',default_tol_bisect,@isnumeric);
+i_p.addParamValue('tol_feasible',default_tol_feasible,@isnumeric);
+i_p.addParamValue('h_min',default_h_min,@isnumeric);
+i_p.addParamValue('h_max',default_h_max,@isnumeric);
+i_p.addParamValue('max_steps',default_max_steps,@isnumeric);
+i_p.addParamValue('h_true',default_h_true);
+
+i_p.parse(optional_params{:});
+
+lam_func          = i_p.Results.lam_func;
+tol_bisect        = i_p.Results.tol_bisect;
+tol_feasible      = i_p.Results.tol_feasible;
+h_min             = i_p.Results.h_min;
+h_max             = i_p.Results.h_max;
+max_steps         = i_p.Results.max_steps;
+h_true            = i_p.Results.h_true;

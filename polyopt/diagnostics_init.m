@@ -1,5 +1,5 @@
 if nargout >3           %Diagnostics requested
-    if nargin < 12
+    if isempty(h_true)
         error('Enabling diagnostics assumes h_true is given!');
     end
     diag_on=true;

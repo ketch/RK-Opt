@@ -12,7 +12,7 @@ function tol = setup
 function test_realaxis_monomial(tol)
     lamda = spectrum('realaxis',100);
     s=randi(6); p=1;
-    [h,poly_coeff]=opt_poly_bisect(lamda,s,p)
+    [h,poly_coeff]=opt_poly_bisect(lamda,s,p,'monomial')
     assertElementsAlmostEqual(h,2*s^2,'relative',tol);
 
 function test_realaxis_chebyshev(tol)
