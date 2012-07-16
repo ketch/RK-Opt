@@ -1,41 +1,44 @@
-function [basis,evalX] = scaled_chebyshev_basis(N,a,b,X)
-% Given an arbitrary domain on the real axis [a,b], scaled_chebyshev generates a basis of Chebyshev Polynomials of
-% the first kind scaled and shifted by the affine mapping: m(x)=m1*x+m0 where m1=2/(b-a) and m0=-(1+a) so m([a,b]) -> [-1,1]
+function [b,c] = scaled_chebyshev_basis(N,zmin,zmax,z)
+% Given an arbitrary domain on the real axis [zmin,zmax], scaled_chebyshev generates a basis of Chebyshev Polynomials of
+% the first kind scaled and shifted by the affine mapping: m(x)=m1*x+m0 where m1=2/(zmax-zmin) and m0=-(1+zmin) so m([zmin,zmax]) -> [-1,1]
 % N is the order of polynomial basis desired.  
 %
 % Returns:
-%  1. A matrix basis, whose ith row contains the coefficients of the ith basis function
+%  1. A matrix b, whose ith row contains the coefficients of the ith basis function
 %     with the coefficients in order of ascending degree
 %
-%  2. A matrix evalX, whose ith column contains the values of the ith basis function
-%     evaluated at the points X.
+%  2. A matrix c, whose ith column contains the values of the ith basis function
+%     evaluated at the points z.
+%
+% Some of the loops could be vectorized, but since this routine isn't a bottleneck we've
+% opted for clarity.
 
-basis = zeros(N+1,N+1);
+b = zeros(N+1,N+1);
 
-m1 = 2/(b-a);
-m0 = -(1+a*m1);
+m1 = 2/(zmax-zmin);
+m0 = -(1+zmin*m1);
 
 % T_0' = 1
-basis(1,1) = 1;
+b(1,1) = 1;
 
 % T_1' = m1*x + m0
-basis(2,1) = m0;
-basis(2,2) = m1;
+b(2,1) = m0;
+b(2,2) = m1;
 
 % T_{n+1}' = 2*(m1*x + m0)*T_{n} - T_{n-1} 
 for k=1:N-1 
-    basis(k+2,:) = 2*(m1*[0 basis(k+1,1:end-1)] + m0*basis(k+1,:)) - basis(k,:);
+    b(k+2,:) = 2*(m1*[0 b(k+1,1:end-1)] + m0*b(k+1,:)) - b(k,:);
 end
 
 if nargin < 4
     return
 end
 
-evalX = zeros(length(X),N+1);
+c = zeros(length(z),N+1);
 
-evalX(:,1) = 1;
-evalX(:,2) = m1*X+m0;
+c(:,1) = 1;
+c(:,2) = m1*z+m0;
 
 for k=1:N-1 
-    evalX(:,k+2) = 2*(m1*evalX(:,k+1).*X + m0*evalX(:,k+1)) - evalX(:,k);
+    c(:,k+2) = 2*(m1*c(:,k+1).*z + m0*c(:,k+1)) - c(:,k);
 end
