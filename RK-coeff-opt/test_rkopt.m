@@ -57,6 +57,14 @@ assertElementsAlmostEqual(rk.errcoeff,1./6);
 assertElementsAlmostEqual(rk.b,b,'absolute',1.e-5);
 
 
+% Multistep RK tests
+function test_SSPTSRK2
+tol = 1.e-14;
+s=randi(3)+1;
+rk=rk_opt(s,2,'emsrk2','ssp','k',2,'write_to_file',0,'min_amrad',s-1);
+assertElementsAlmostEqual(rk.r,sqrt(s*(s-1)));
+
+
 
 % Check the solution obtained with fmincon called by multistart solver
 % both in serial and in parallel.

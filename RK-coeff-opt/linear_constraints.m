@@ -1,11 +1,11 @@
-function [Aeq,beq,lb,ub] = linear_constraints(s,class,objective)
-%function [Aeq,beq,lb,ub] = linear_constraints(s,class,objective)
+function [Aeq,beq,lb,ub] = linear_constraints(s,class,objective,k)
+%function [Aeq,beq,lb,ub] = linear_constraints(s,class,objective,k)
 %
 %This sets up:
 %The linear constraints -                     Aeq*x = beq
 %The upper and lower bounds on the unknowns - ub, lb
 
-n=set_n(s,class);
+n=set_n(s,class,k);
 
 switch class
   case 'erk' % Explicit RK (A is strictly lower triangular)
@@ -75,10 +75,11 @@ switch class
     ub=2+zeros(1,n); ub(s+1:2*s)=1;
 
   otherwise
-    % for low-storage classes:
+    % for low-storage and multistep-RK classes:
     Aeq=[]; beq=[];
     lb=-5+zeros(1,n);
     ub=5+zeros(1,n);
+    lb(end)=-s*2.5;
 
 end
 

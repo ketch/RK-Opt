@@ -5,7 +5,7 @@ if strcmp(objective,'ssp')
     r=x(end);
     g=zeros(size(x));
     g(end)=1;
-elseif strcmp(objective,'acc')
+elseif strcmp(objective,'acc') % Will fail for multistep-RK methods
     [A,b,c]=unpack_rk(x,s,class);
     r=errcoeff(A,b,c,p);
     g=[];
