@@ -133,6 +133,11 @@ cvx_begin
     minimize max(R)
 cvx_end
 
+% Here we convert to the monomial basis, for convenience of plotting.
+% But for high-degree polynomials, it's numerically better to work in the adapted basis.
+if ~strcmp(basis,'monomial')
+    poly_coeffs = poly_coeffs'*b;
+end
 status=cvx_status;
 v = cvx_optval;
 diagnostics_least_deviation;

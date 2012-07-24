@@ -185,7 +185,7 @@ i_p = inputParser;
 i_p.FunctionName = 'setup_params';
 
 expected_solveorderconditions = [0,1];
-expected_algorithms = {'sqp', 'interior-point'};
+expected_algorithms = {'sqp', 'interior-point','active-set'};
 expected_displays = {'notify', 'iter', 'final'};
 expected_problem_class = {'linear', 'nonlinear'};
 
