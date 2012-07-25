@@ -28,10 +28,10 @@ for i_step=1:max_steps
     end
     
     [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sdpt3',row_scale,diag_on);
-    if strcmp(status,'Failed') || v==Inf
+    if strcmp(status,'Failed') || v==Inf || isnan(v)
         disp('sdpt3 failed!');
         [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sedumi',row_scale,diag_on);
-        if strcmp(status,'Failed') || isnan(v)
+        if strcmp(status,'Failed') || v==Inf || isnan(v)
             disp('sedumi failed!'); 
         end
     end
