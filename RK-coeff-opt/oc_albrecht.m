@@ -89,6 +89,10 @@ if min_stage_order<2
         coneq(37)=b'*(tau_2.*(A*tau_2));
     end
 
+    if p>6
+        disp('Albrecht-form order conditions for p>6 not coded yet')
+    end
+
 elseif min_stage_order<3 % min stage order == 2
       coneq(2)=b'*c-1./2;
       coneq(3)=b'*c.^2-1./3;
@@ -110,6 +114,10 @@ elseif min_stage_order<3 % min stage order == 2
         coneq(17)=b'*C^2*tau_3;
     end
     coneq=[coneq tau_2'];
+
+    if p>6
+        disp('Albrecht-form order conditions for p>6 not coded yet')
+    end
 
 elseif min_stage_order==3
       coneq(2)=b'*c   -1./2;
@@ -185,6 +193,9 @@ elseif min_stage_order==3
     end
 
     coneq=[coneq tau_2' tau_3'];
-else disp('Order conditions for p>9 are not coded up yet');
+    if p>9
+        disp('Albrecht-form order conditions for p>6 not coded yet')
+    end
+else disp('Order conditions for stage_order>3 are not coded up yet');
 end
 end

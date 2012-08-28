@@ -56,8 +56,10 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %       if set to 1, solve the order conditions first before trying to optimize
 %       (in rare cases, this is helpful for high order methods)
 
+s
+
 [k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,write_to_file,algorithm,display,problem_class,min_amrad]=...
+    solveorderconditions,write_to_file,algorithm,display,min_amrad]=...
     setup_params(varargin);
 
 % New random seed every time
@@ -127,10 +129,10 @@ for i=1:max_tries
     % Check order of the scheme
     if (class(1:2)=='2S' | class(1:2)=='3S')
         [rk.A,rk.b,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta]=unpack_lsrk(X,s,class);
-        order = check_RK_order(rk.A,rk.b,rk.c,problem_class);
+        order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
     elseif k==1
         [rk.A,rk.b,rk.c]=unpack_rk(X,s,class);
-        order = check_RK_order(rk.A,rk.b,rk.c,problem_class);
+        order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
     else
         [rk.A,rk.Ahat,rk.b,rk.bhat,rk.rk.D,rk.theta] =  unpack_msrk(X,s,k,class);
         order=p; %HACK
@@ -173,10 +175,10 @@ end
 % =========================================================================
 
 function [k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,write_to_file,algorithm,display,problem_class,min_amrad]=...
+    solveorderconditions,write_to_file,algorithm,display,min_amrad]=...
     setup_params(optional_params)
 %function [k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-%    solveorderconditions,write_to_file,algorithm,display,problem_class,min_amrad]=...
+%    solveorderconditions,write_to_file,algorithm,display,min_amrad]=...
 %    setup_params(optional_params)
 %
 % Set default optional and param values
@@ -214,7 +216,6 @@ i_p.addParamValue('max_tries',default_max_tries,@isnumeric);
 i_p.addParamValue('write_to_file',default_write_to_file,@isnumeric);
 i_p.addParamValue('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
 i_p.addParamValue('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
-i_p.addParamValue('problem_class',default_problem_class,@(x) iscahr(x) && any(validatestring(x,expected_problem_class))); 
 
 
 i_p.parse(optional_params{:});
@@ -230,7 +231,6 @@ solveorderconditions = i_p.Results.solveorderconditions;
 write_to_file        = i_p.Results.write_to_file;
 algorithm            = i_p.Results.algorithm;
 display              = i_p.Results.display;
-problem_class        = i_p.Results.problem_class;
 end
 % =========================================================================
 
