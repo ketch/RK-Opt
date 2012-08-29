@@ -1,6 +1,6 @@
-%van de Griend's algorithm
-%Assuming multiplicity one for all roots
-%Uses high precision arithmetic
+% van de Griend's algorithm
+% Assuming multiplicity one for all roots
+% Uses high precision arithmetic
 function rad=radimpfast(p,q)
 
 syms x P Q phi

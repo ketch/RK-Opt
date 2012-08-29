@@ -1,5 +1,5 @@
 function multi_R = multi_R_opt(k,p,class,varargin)
-%multi_R = multi_R_opt(k,p,class,varargin)
+% function multi_R = multi_R_opt(k,p,class,varargin)
 %
 % This function is an interface to Rskp or Rkp_dw or Rkp_imp and 
 % Rkp_imp_dw for running multiple consecutive optimization problems with 

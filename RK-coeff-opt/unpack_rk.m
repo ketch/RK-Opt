@@ -1,10 +1,13 @@
 function [A,b,c]=unpack_rk(X,s,class)
 % function [A,b,c]=unpack_rk(X,s,class)
 %
-% Extracts the coefficient arrays from the optimization vector
-% Stored in a single vector x as:
-% x=[A b' c']
-% A is stored row-by-row
+% Extracts the coefficient arrays from the optimization vector.
+%
+% The coefficients are tored in a single vector x as::
+%
+%       x=[A b' c']
+%
+% A is stored row-by-row.
 
 A=zeros(s);
 %Generate Butcher coefficients (for RK) or Shu-Osher coefficients (for lsRK)

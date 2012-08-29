@@ -1,8 +1,10 @@
 function coneq=oc_butcher(A,b,c,p)
 % function coneq=oc_butcher(A,b,c,p)
-% Order conditions for RKMs
-% Assumes p>1
+%
+% Order conditions for RKMs.
 % This version is based on Butcher's approach.
+%
+% Assumes `p>1`.
 
 coneq(1)=c'*b-1/2;
 

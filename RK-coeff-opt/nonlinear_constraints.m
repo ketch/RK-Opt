@@ -1,8 +1,29 @@
 function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k)
+% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k)
 % Impose nonlinear constraints:
-%   - if objective = 'ssp' : both order conditions and absolute monotonicity 
-%                            conditions
+%   - if objective = 'ssp' : both order conditions and absolute monotonicity conditions
 %   - if objective = 'acc' : order conditions
+% The meaning of the input arguments is as follow:
+%     * :math:`x`: vector of the unknowns.
+%     * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations).
+%     * :math:`s`:number of stages.
+%     * :math:`p`: order of the RK scheme.
+%     * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).
+%     * poly_coeff_ind: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`.
+%     * poly_coeff_val: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights).
+% 
+% The meaning of the output arguments is as follow:
+%     * con: inequality constraints, i.e. absolute monotonicity conditions if objective = 'ssp' or nothing if objective = 'acc'
+%     * coneq: order conditions plus stability function coefficients constraints (tall-tree elementary weights)
+% 
+% Two forms of the order conditions are implemented: one based on **Butcher's
+% approach**, and one based on **Albrecht's approach**. One or the other may lead 
+% to a more tractable optimization problem in some cases, but this has not been 
+% explored carefully. The Albrecht order conditions are implemented up to order 9, assuming
+% a certain stage order, while the Butcher order conditions are implemented up to order 9 but
+% do not assume anything about the stage order. Albrecht's approach is used
+% by default.
+
 
 oc_form = 'albrecht';
 

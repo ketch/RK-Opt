@@ -1,10 +1,12 @@
-function D=errcoeff(A,b,c,p)
-% function D=errcoeff(A,b,c,p)
+function D = errcoeff(A,b,c,p)
+% function D = errcoeff(A,b,c,p)
 %
-% Inputs: A,b,c -- Butcher tableau
-%         p     -- order of accuracy of the method
+% **Inputs**:
+%    - `A`, `b`, `c` -- Butcher tableau
+%    - `p`         -- order of accuracy of the method
+%
 % Computes the norm of the vector of truncation error coefficients
-% for the terms of order p+1: 
+% for the terms of order `p+1`: 
 % (elementary weight - 1/(density of the tree)/(symmetry of the tree)
 % 
 %

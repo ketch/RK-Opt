@@ -3,10 +3,21 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %
 % Find optimal RK and multistep RK methods.
 % The meaning of the arguments is as follows:
+%
 %     * :math:`s`: number of stages.
 %     * :math:`k`: number of steps (1 for RK methods)
 %     * :math:`p`: order of the Runge-Kutta (RK) scheme.
-%     * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations, see *Ketcheson, "Runge-Kutta methods with minimum storage implementations". J. Comput. Phys. 229(5):1763 - 1773, 2010*)
+%     * class: class of method to search %       Available classes:
+%
+%       * 'erk'      : Explicit Runge-Kutta methods
+%       * 'irk'      : Implicit Runge-Kutta methods
+%       * 'dirk'     : Diagonally implicit Runge-Kutta methods
+%       * 'sdirk'    : Singly diagonally implicit Runge-Kutta methods
+%       * '2S', etc. : Low-storage explicit methods; see *Ketcheson, "Runge-Kutta methods with minimum storage implementations". J. Comput. Phys. 229(5):1763 - 1773, 2010*)
+%       * 'emsrk1/2'    : Explicit multistep-Runge-Kutta methods
+%       * 'imsrk1/2'    : Implicit multistep-Runge-Kutta methods
+%       * 'dimsrk1/2'   : Diagonally implicit multistep-Runge-Kutta methods
+%
 %     * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient)
 %       Accuracy optimization is not currently supported for multistep RK methods
 %     * poly_coeff_ind: index of the polynomial coefficients to constrain (:math:`\beta_j`) for :math:`j > p`  (j denotes the index of the stage). The default value is an empty array.  Note that one should not include any indices :math:`i \le p`, since those are determined by the order conditions.
@@ -16,8 +27,8 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * np: number of processor to use. If np :math:`> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
 %     * max_tries: maximum number of fmincon function calls. The default value is 10.
 %     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
-%     * algorithm: which algorithm to use in fmincon ('sqp' or 'interior-point'). By default sqp is used.
-
+%     * algorithm: which algorithm to use in fmincon: 'sqp','interior-point', or 'active-set'. By default sqp is used.
+%
 %     .. note::
 %        **numerical experiments have shown that when the objective function is the minimization of the leading truncation error coefficient, the interior-point algorithm performs much better than the sqp one.**
 %     
@@ -29,35 +40,22 @@ function rk = rk_opt(s,p,class,objective,varargin)
 % 
 %    Only :math:`s`: , :math:`p`: , class and objective are required inputs.
 %    All the other arguments are **parameter name - value arguments to the input 
-%    parser scheme**. Therefore they can be specified in a free order.
-%    Example::
+%    parser scheme**. Therefore they can be specified in any order.
+%
+%    **Example**::
 % 
-%     >>>> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
-% =========================================================================
-% Implementation notes
-% =========================================================================
+%     >>> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
 %
-% Decision variables:
-% A, b, c -- Method coefficients
-% A     is s x s
-% b     is s x 1
-%
-% The decision variables are stored in a single vector x as:
-% x=[A b' c']
-% A is stored row-by-row
-%
-% Problem definition:
-% Class of methods to search
-% Available classes:
-%       'erk'      : Explicit Runge-Kutta methods
-%       'irk'      : Implicit Runge-Kutta methods
-%       'dirk'     : Diagonally implicit Runge-Kutta methods
-%       'sdirk'    : Singly diagonally implicit Runge-Kutta methods
-%       '2S', etc. : Low-storage explicit methods
-%       'emsrk1/2'    : Explicit multistep-Runge-Kutta methods
-%       'imsrk1/2'    : Implicit multistep-Runge-Kutta methods
-%       'dimsrk1/2'   : Diagonally implicit multistep-Runge-Kutta methods
-%
+% The fmincon options are set through the **optimset** that creates/alters optimization options structure. By default the following additional options are used:
+%     * MaxFunEvals = 1000000
+%     * TolCon = 1.e-13
+%     * TolFun = 1.e-13
+%     * TolX = 1.e-13
+%     * MaxIter = 10000
+%     * Diagnostics = off
+%     * DerivativeCheck = off
+%     * GradObj = on, if the objective is set equal to 'ssp'
+
 
 [k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
     solveorderconditions,write_to_file,algorithm,display,min_amrad]=...

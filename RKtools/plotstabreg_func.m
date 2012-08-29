@@ -1,20 +1,18 @@
 function [dummy] = plotstabreg_func(p,q,bounds,ls,lw)
-%begin_html
-%function [dummy] = plotstabreg_func(p,q,bounds,ls,lw)
+% function [dummy] = plotstabreg_func(p,q,bounds,ls,lw)
 %
-%plot the absolute stability region of a one-step method,
-%given the stability function
+% plot the absolute stability region of a one-step method,
+% given the stability function
 %
-%Inputs:
-%  p: coefficients of the numerator   of the stability function
-%  q: coefficients of the denominator of the stability function 
+% Inputs:
+%       * p: coefficients of the numerator   of the stability function
+%       * q: coefficients of the denominator of the stability function 
+%
 %  if q is omitted, it is assumed that the function is a polynomial
-%Remaining inputs are optional:
-%  bounds: bounds for region to compute and plot (default [-9 1 -5 5])
-%  ls:   line style (default '-r')
-%  lw:   line width (default 2)
-%end_html
-
+% Remaining inputs are optional:
+%       * bounds: bounds for region to compute and plot (default [-9 1 -5 5])
+%       * ls:   line style (default '-r')
+%       * lw:   line width (default 2)
 
 if nargin<5 lw=2; end
 if nargin<4 ls='-r'; end

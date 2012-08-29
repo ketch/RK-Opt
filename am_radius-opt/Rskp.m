@@ -1,22 +1,23 @@
 function [R,gamma]=Rskp(s,k,p)
-%function [R,gamma]=Rskp(s,k,p)
-%Author: David Ketcheson
+% function [R,gamma]=Rskp(s,k,p)
 %
-%Finds the optimal contractive k-step, s-stage GLM with order of accuracy p
-%for linear problems
+% Finds the optimal contractive k-step, s-stage GLM with order of accuracy p
+% for linear problems
 %
-%Inputs: s = # of stages
-%        k = # of steps
-%        p = order of accuracy
-%Outputs: 
+% Inputs: s = # of stages
+%         k = # of steps
+%         p = order of accuracy
+%
+% Outputs: 
 %        R = threshold factor
 %        gamma = coefficients of the polynomials
 %         
 %        for k=1, the resulting polynomial is
-%        \sum_{j=0}^m (1+z/R)^j
+%        `\sum_{j=0}^m (1+z/R)^j`
 %
 %        in general, the resulting stability function is
-%        ...
+%        (Fill in)
+%
 %Depends on MATLAB's optimization toolbox for the LP solver
     
 %=========================================================

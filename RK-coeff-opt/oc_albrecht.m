@@ -1,15 +1,18 @@
 function coneq=oc_albrecht(A,b,c,p)
 % function coneq=oc_albrecht(A,b,c,p)
-% order conditions for SSP RK Methods
+%
+% Order conditions for SSP RK Methods.
+%
 % This version is based on Albrecht's approach
 
-% WARNING: here we assume a certain minimum stage order,
+% ..warning:: 
+%
+%         Here we assume a certain minimum stage order,
 %         which is necessarily true for methods with
 %         strictly positive abscissae (b>0).
 %         This assumption dramatically reduces the
 %         number of order conditions that must be
 %         considered for high-order methods.
-%
 %         For methods that do not satisfy b>0, this
 %         assumption may be unnecessarily restrictive.
 

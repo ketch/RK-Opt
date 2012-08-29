@@ -1,5 +1,5 @@
 function [v,alpha,beta] = optimal_shuosher_form(A,b,c)
-%function [v,alpha,beta] = optimal_shuosher_form(A,b,c)
+% function [v,alpha,beta] = optimal_shuosher_form(A,b,c)
 
 
 s = length(b);

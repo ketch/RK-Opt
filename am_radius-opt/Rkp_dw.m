@@ -1,18 +1,19 @@
 function [R,alpha,beta,tbeta]=Rkp_dw(k,p)
-%function [R,alpha,beta,tbeta]=Rkp_dw(k,p)
-%Author: David Ketcheson
+% function [R,alpha,beta,tbeta]=Rkp_dw(k,p)
 %
-%Finds the optimal SSP k-step explicit LMM with order of accuracy p
-%allowing downwind operators
+% Finds the optimal SSP k-step explicit LMM with order of accuracy p
+% allowing downwind operators
 %
-%Inputs: k = # of steps
-%        p = order of accuracy
-%Outputs: alpha, beta, tbeta = the coefficients of the method
-%The method is given by
-% u_n = \sum_{j=0}^{k-1} (alpha[j] + beta[j] F(u_{n-k+j} + tbeta[j] tF(u_{n-k+j}))
-%where tF(u) is the negated downwind operator.
+% Inputs: k = # of steps
+%         p = order of accuracy
 %
-%Depends on MATLAB's optimization toolbox for the LP solver
+% Outputs: alpha, beta, tbeta = the coefficients of the method
+%
+% The method is given by
+% `u_n = \sum_{j=0}^{k-1} (\alpha[j] + \beta[j] F(u_{n-k+j} + tbeta[j] tF(u_{n-k+j}))`
+% where tF(u) is the negated downwind operator.
+%
+% Depends on MATLAB's optimization toolbox for the LP solver
     
 %=========================================================
 %Set options for linprog

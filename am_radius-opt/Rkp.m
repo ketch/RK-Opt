@@ -1,15 +1,16 @@
-function [R,alpha,beta]=Rkp_imp(k,p)
-% function [R,alpha,beta]=Rkp_imp(k,p)
+function [R,alpha,beta]=Rkp(k,p)
+% function [R,alpha,beta]=Rkp(k,p)
 %
-% Find the optimal SSP k-step implicit LMM with order of accuracy p
+% Find the optimal SSP k-step explicit LMM with order of accuracy p.
 %
 % Inputs: 
-%       * k = # of steps
-%       * p = order of accuracy
+%       * `k` = # of steps
+%       * `p` = order of accuracy
 %
-% Outputs: alpha, beta = the coefficients of the method
+% Outputs: 
+%       * `\alpha, \beta` = the coefficients of the method
 %
-% Depends on MATLAB's optimization toolbox for the LP solver
+% Requires MATLAB's optimization toolbox for the LP solver.
     
 %=========================================================
 %Initialize
@@ -24,7 +25,7 @@ opts=optimset('TolX',1.e-15,'TolFun',1.e-15,'MaxIter',10000000,...
                'LargeScale','off','Simplex','off','Display','off');
 acc=1.e-15; %Accuracy of bisection search
 
-M=2*k+1;              %Number of decision variables (coefficients)
+M=2*k;              %Number of decision variables (coefficients)
 rmax=2.0001; rmin=0;  %Upper and lower bounds for R
 r=rmax;               %Initial guess
 c=zeros(M,1); d=zeros(p+1,1); B=zeros(p+1,M);
@@ -43,9 +44,10 @@ while (rmax-rmin>acc)
       else
         B(i+1,j+1)=(r*j + i)*(j/k)^(i-1) / k;
       end %if
-      B(i+1,k+j+2)=(j/k)^i;
+      %B(i+1,k+j+2)=(j/k)^i;
+      B(i+1,k+j+1)=(j/k)^i;
     end
-    B(i+1,k+1)=i/k;
+    %B(i+1,k+1)=i/k;
   end
   %Test feasibility for this value of r
   [x,lambda,exitflag]=linprog(c,[],[],B,d,zeros(M,1),zeros(M,1)+1.e6,c,opts);
@@ -67,13 +69,18 @@ for i=0:p
     else
       B(i+1,j+1)=(r*j + i)*(j/k)^(i-1) / k;
     end %if
-    B(i+1,k+j+2)=(j/k)^i;
+    %B(i+1,k+j+2)=(j/k)^i;
+    B(i+1,k+j+1)=(j/k)^i;
   end
-  B(i+1,k+1)=i/k;
+  %B(i+1,k+1)=i/k;
 end
 [g,lambda,exitflag]=linprog(c,[],[],B,d,zeros(M,1),zeros(M,1)+1.e6,c,opts);
 %=========================================================
 
 %Prepare outputs
 R=r;
-beta=g(1:k+1); alpha=g(k+2:end)+r*beta(1:end-1);
+beta=g(1:k); alpha=g(k+1:end)+r*beta;
+g
+d;
+B(:,[1 2 6]);
+B;

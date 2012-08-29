@@ -1,27 +1,23 @@
 function r = am_radius(A,b,c,eps,rmax)
-%begin_html
-%function r = am_radius(A,b,c,eps,rmax)
+% function r = am_radius(A,b,c,eps,rmax)
 %
-%By David Ketcheson
+% Evaluates the Radius of absolute monotonicity
+% of a Runge-Kutta method, given the Butcher array.
 %
-%Evaluates the Radius of absolute monotonicity
-%of a Runge-Kutta method, given the Butcher array.
+% For an m-stage method, A should be an m x m matrix
+% and b should be a column vector of length m.
 %
-%For an m-stage method, A should be an m x m matrix
-%and b should be a column vector of length m.
-%
-%Accuracy can be changed by modifying the value of eps (default 10^-10)
-%Methods with very large radii of a.m. (>50) will require
-%the default value of rmax to be increased.
+% Accuracy can be changed by modifying the value of eps (default 10^-10)
+% Methods with very large radii of a.m. (>50) will require
+% the default value of rmax to be increased.
 %
 % The radius of absolute monotonicity is the largest value of $r$
 % such that
-%\begin{eqnarray}
-%K(I+rA)^{-1} &     \ge & 0 \\
-%rK(I+rA)^{-1}e_m & \le & e_{m+1} 
-%\end{eqnarray}
-%where $$ K = \left(\begin{array}{c} A \\ b^T \end{array}\right) $$
-%end_html
+% \begin{eqnarray}
+% K(I+rA)^{-1} &     \ge & 0 \\
+% rK(I+rA)^{-1}e_m & \le & e_{m+1} 
+% \end{eqnarray}
+% where $$ K = \left(\begin{array}{c} A \\ b^T \end{array}\right) $$
 
 
 if nargin<5 rmax=50; end

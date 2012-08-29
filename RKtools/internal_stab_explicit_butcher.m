@@ -1,20 +1,19 @@
 function [stability] = internal_stab_explicit_butcher(A,b,c,p,spectrum,one_step_dt)
-%function [stability] = internal_stab_explicit_butcher(A,b,c,spectrum,one_step_dt,p)
+% function [stability] = internal_stab_explicit_butcher(A,b,c,spectrum,one_step_dt,p)
 %
 %
-% This function compute and plots both intermediate and one-step internal 
+% This function computes and plots both intermediate and one-step internal 
 % stability vector of an explicit Runge-Kutta scheme given its Butcher 
 % tableau.
 %
 % Note that for an explicit Runge-Kutta scheme the stability functions are
 % polynomial in the complex variable z.
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 % INTERMEDIATE STABILITY POLYNOMIALS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Number os stages
+% Number of stages
 s = length(A);
 
 % Construct the intermediate stability functions \psi_j (where j is the 

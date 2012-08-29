@@ -1,5 +1,5 @@
 function test_suite = test_polyopt
-%function test_suite = test_polyopt
+% function test_suite = test_polyopt
 %
 % A set of verification tests for the polyopt suite.
 
