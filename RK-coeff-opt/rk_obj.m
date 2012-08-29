@@ -1,5 +1,5 @@
 function [r,g]=rk_obj(x,class,s,p,objective)
-%function [r,g]=rk_obj(x,class,s,p,objective)
+% function [r,g]=rk_obj(x,class,s,p,objective)
 
 if strcmp(objective,'ssp')
     r=x(end);

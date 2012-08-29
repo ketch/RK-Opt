@@ -1,5 +1,5 @@
 function D=errcoeff(A,b,c,p)
-%function D=errcoeff(A,b,c,p)
+% function D=errcoeff(A,b,c,p)
 %
 % Inputs: A,b,c -- Butcher tableau
 %         p     -- order of accuracy of the method

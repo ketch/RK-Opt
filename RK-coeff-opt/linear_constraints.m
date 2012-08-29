@@ -1,9 +1,9 @@
 function [Aeq,beq,lb,ub] = linear_constraints(s,class,objective,k)
-%function [Aeq,beq,lb,ub] = linear_constraints(s,class,objective,k)
+% function [Aeq,beq,lb,ub] = linear_constraints(s,class,objective,k)
 %
-%This sets up:
-%The linear constraints -                     Aeq*x = beq
-%The upper and lower bounds on the unknowns - ub, lb
+% This sets up:
+% The linear constraints -                     Aeq*x = beq
+% The upper and lower bounds on the unknowns - ub, lb
 
 n=set_n(s,class,k);
 

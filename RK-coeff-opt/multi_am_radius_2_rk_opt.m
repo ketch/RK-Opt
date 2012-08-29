@@ -1,5 +1,5 @@
 function multi_rk = multi_am_radius_2_rk_opt(input_file_name,class,varargin)
-%function multi_rk = multi_am_radius_2_rk_opt(input_file_name,class,varargin)
+% function multi_rk = multi_am_radius_2_rk_opt(input_file_name,class,varargin)
 %
 % This function calls the rk_opt.m function inside a loop for optimizing
 % multiple explicit monotonicity preserving RK methods given their stability 

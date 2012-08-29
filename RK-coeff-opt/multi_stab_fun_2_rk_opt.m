@@ -1,5 +1,5 @@
 function multi_rk = multi_stab_fun_2_rk_opt(input_file_name,class,objective,varargin)
-%function multi_rk = multi_stab_fun_2_rk_opt(input_file_name,class,objective,varargin)
+% function multi_rk = multi_stab_fun_2_rk_opt(input_file_name,class,objective,varargin)
 %
 %
 % This function calls the rk_opt.m function inside a loop for optimizing

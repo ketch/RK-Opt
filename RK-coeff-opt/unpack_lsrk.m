@@ -1,5 +1,5 @@
 function [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
-%function [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
+% function [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
 %
 % Extracts the coefficient arrays from the optimization vector
 % This one also returns the low-storage coefficients

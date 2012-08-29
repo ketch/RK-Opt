@@ -1,7 +1,7 @@
 function tau=oc(x,class,s,p,Aeq,beq)
-%function tau=oc(x,class,s,p)
-%Order conditions for RKMs
-%This is just a small wrapper
+% function tau=oc(x,class,s,p)
+% Order conditions for RKMs
+% This is just a small wrapper
 
 oc_form = 'albrecht';
 

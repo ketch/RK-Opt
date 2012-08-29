@@ -1,5 +1,5 @@
 function linear_cond = linear_order_conditions(A,b,p)
-%linear_cond = linear_order_conditions(A,b,p)
+% linear_cond = linear_order_conditions(A,b,p)
 %
 % Check linear order conditions
 

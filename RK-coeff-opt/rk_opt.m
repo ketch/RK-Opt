@@ -1,27 +1,41 @@
 function rk = rk_opt(s,p,class,objective,varargin)
-%function rk = rk_opt(s,p,class,objective,varargin)
+% function rk = rk_opt(s,p,class,objective,varargin)
 %
+% Find optimal RK and multistep RK methods.
+% The meaning of the arguments is as follows:
+%     * :math:`s`: number of stages.
+%     * :math:`k`: number of steps (1 for RK methods)
+%     * :math:`p`: order of the Runge-Kutta (RK) scheme.
+%     * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations, see *Ketcheson, "Runge-Kutta methods with minimum storage implementations". J. Comput. Phys. 229(5):1763 - 1773, 2010*)
+%     * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient)
+%       Accuracy optimization is not currently supported for multistep RK methods
+%     * poly_coeff_ind: index of the polynomial coefficients to constrain (:math:`\beta_j`) for :math:`j > p`  (j denotes the index of the stage). The default value is an empty array.  Note that one should not include any indices :math:`i \le p`, since those are determined by the order conditions.
+%     * poly_coeff_val: constrained values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights). The default value is an empty array.
+%     * startvec: vector of the initial guess ('random' = random approach; 'smart' = smart approach; alternatively, the user can provide the startvec array. By default startvec is initialize with random numbers.
+%     * solveorderconditions: if set to 1, solve the order conditions first before trying to optimize. The default value is 0.
+%     * np: number of processor to use. If np :math:`> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
+%     * max_tries: maximum number of fmincon function calls. The default value is 10.
+%     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
+%     * algorithm: which algorithm to use in fmincon ('sqp' or 'interior-point'). By default sqp is used.
+
+%     .. note::
+%        **numerical experiments have shown that when the objective function is the minimization of the leading truncation error coefficient, the interior-point algorithm performs much better than the sqp one.**
+%     
+%     * display: level of display of fmincon solver ('off', 'iter', 'notify' or 'final'). The default value is 'notify'.
+%     * problem_class: class of problems for which the RK is designed ('linear' or 'nonlinear' problems). This option changes the type of order conditions check, i.e. linear or nonlinear order conditions controll. The default value is 'nonlinear'.
+% 
+% 
+% .. note::
+% 
+%    Only :math:`s`: , :math:`p`: , class and objective are required inputs.
+%    All the other arguments are **parameter name - value arguments to the input 
+%    parser scheme**. Therefore they can be specified in a free order.
+%    Example::
+% 
+%     >>>> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
 % =========================================================================
-% Find optimal RK and multistep RK methods using MATLAB's fmincon function.
-% Approaches available:
-%
-% Optimization of a RK method 
-% ==================================
-%
-% - if np>1: run in parallel. fmincon is called in combination with the 
-% multistart solver (Global Optimization Toolbox). It starts a local solver 
-% (in Optimization Toolbox) from multiple starting points and stores local 
-% and global solutions found during the search process. This approach can 
-% be run in parallel.
-%
-% - max_tries: maximum number of fmincon/Multistart function calls.
-%
+% Implementation notes
 % =========================================================================
-%
-% Variable meanings:
-% s    - # of stages
-% p    - order of accuracy
-% k    - # of steps (1 for RK methods)
 %
 % Decision variables:
 % A, b, c -- Method coefficients
@@ -31,14 +45,6 @@ function rk = rk_opt(s,p,class,objective,varargin)
 % The decision variables are stored in a single vector x as:
 % x=[A b' c']
 % A is stored row-by-row
-%
-% Objective function:
-% Set to 'ssp' to maximize SSP coefficient 
-% Set to 'acc' to minimize leading truncation error coefficients
-% Accuracy optimization is not currently supported for multistep RK methods
-%
-% poly_coeff_ind: indices of stability polynomial coefficients to constrain
-% poly_coeff_val: values of constrained stability polynomial coefficients
 %
 % Problem definition:
 % Class of methods to search
@@ -52,11 +58,6 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %       'imsrk1/2'    : Implicit multistep-Runge-Kutta methods
 %       'dimsrk1/2'   : Diagonally implicit multistep-Runge-Kutta methods
 %
-%solveorderconditions:
-%       if set to 1, solve the order conditions first before trying to optimize
-%       (in rare cases, this is helpful for high order methods)
-
-s
 
 [k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
     solveorderconditions,write_to_file,algorithm,display,min_amrad]=...

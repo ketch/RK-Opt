@@ -1,5 +1,5 @@
 function p = check_RK_order(A,b,c,problem_class)
-%function p = check_RK_order(A,b,c)
+% function p = check_RK_order(A,b,c)
 % Determines order of a RK method, up to sixth order
 % For an s-stage method, input A should be a s x s matrix;
 % b and c should are column vectors of length s

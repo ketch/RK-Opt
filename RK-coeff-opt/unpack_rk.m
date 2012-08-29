@@ -1,5 +1,5 @@
 function [A,b,c]=unpack_rk(X,s,class)
-%function [A,b,c]=unpack_rk(X,s,class)
+% function [A,b,c]=unpack_rk(X,s,class)
 %
 % Extracts the coefficient arrays from the optimization vector
 % Stored in a single vector x as:
