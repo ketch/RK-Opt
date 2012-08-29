@@ -26,15 +26,13 @@ The RK-Opt pacakge consists of the following packages:
                         This includes codes for optimizing stability functions of 
                         multistep, multistage methods and even methods with downwinding.
                         The optimization of rational functions is experimental.
-
-The following packages are now deprecated:
-    * **SSP**: given the order of the scheme :math:`p` and its number of stages :math:`s` it can find the optimal RK method in terms of **SSP coefficient**
-    * **low-storage**: given the order of the scheme :math:`p` and its number of stages :math:`s` it can find the optimal RK method that has the **minimal leading truncation error coefficient**
-
-Some of the functionality in these deprecated packages has not yet been incorporated
-in **RK-coeff-opt**.
-
-A Python version of the package is also planned.
+    * **polyopt**:    Given a spectrum (typically corresponding to a spatial
+                        semi-discretization of a PDE), finds an optimal stability
+                        polynomial.  The polynomial coefficients can then be used
+                        as input to **RK-coeff-opt** to find a corresponding Runge-Kutta
+                        method.
+    * **RKtools**:    Some general utilities for analyzing Runge-Kutta methods.
+                        
 
 
 *******
