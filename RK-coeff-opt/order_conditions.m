@@ -1,5 +1,5 @@
-function tau=oc(x,class,s,p,Aeq,beq)
-% function tau=oc(x,class,s,p)
+function tau = order_conditions(x,class,s,p,Aeq,beq)
+% function tau = order_conditions(x,class,s,p,Aeq,beq)
 % Order conditions for RKMs
 % This is just a small wrapper
 

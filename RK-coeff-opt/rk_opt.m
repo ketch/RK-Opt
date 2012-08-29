@@ -118,7 +118,7 @@ for i=1:max_tries
 
         %Optionally find a feasible (for the order conditions) point to start
         if solveorderconditions==1
-            x=fsolve(@(x) oc(x,class,s,p,Aeq,beq),x);
+            x=fsolve(@(x) order_conditions(x,class,s,p,Aeq,beq),x);
         end
 
         [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),...
