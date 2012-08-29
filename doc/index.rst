@@ -45,10 +45,21 @@ RK-opt
    :maxdepth: 2
 
    started
-   structure_RK-coeff-opt
    tutorial
    about
    future
+
+*********
+Reference
+*********
+
+.. toctree::
+   :maxdepth: 2
+
+   RK-coeff-opt
+   am_radius-opt
+   polyopt
+   RKtools
 
 Contributing
 -------------
