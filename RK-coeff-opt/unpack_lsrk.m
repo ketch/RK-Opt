@@ -1,5 +1,5 @@
-function [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
-% function [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
+function [A,b,bhat,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
+% function [A,b,bhat,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
 %
 % Extracts the coefficient arrays from the optimization vector.
 %
@@ -43,7 +43,7 @@ switch class
     delta =[1 X(s:2*s-3) X(end-2:end)];
 end
 
-  if strcmp(class(1:2),'2S')
+if strcmp(class(1:2),'2S')
     gamma2=[0 1 X(1:s-1)];
 
     for i=2:s+1 gamma1(i)=1-gamma2(i)*sum(delta(1:i-1)); end
@@ -52,16 +52,15 @@ end
     for i=1:s beta(i+1,i)=X(2*s-3+i); end
 
     for i=2:s
-      beta( i+1,i-1) = -beta(i,i-1)*gamma2(i+1)/gamma2(i);
-      alpha(i+1,i-1) = -gamma1(i)  *gamma2(i+1)/gamma2(i);
-      alpha(i+1,i  ) = 1 - alpha(i+1,i-1);
+        beta( i+1,i-1) = -beta(i,i-1)*gamma2(i+1)/gamma2(i);
+        alpha(i+1,i-1) = -gamma1(i)  *gamma2(i+1)/gamma2(i);
+        alpha(i+1,i  ) = 1 - alpha(i+1,i-1);
     end
 
     %Convert Shu-Osher to Butcher
     [A,b,c]=shuosher2butcher(alpha,beta);
 
-  elseif strcmp(class(1:2),'3S')
-
+elseif strcmp(class(1:2),'3S')
 
     alpha=zeros(s+1,s); beta=zeros(s+1,s);
     for i=1:s beta(i+1,i)=X(2*s-3+i); end
@@ -73,13 +72,21 @@ end
     %alpha(2,1)=gamma1(2)+gamma2(2)+gamma3(2); %Should be 1
 
     for i=2:s
-      beta( i+1,i-1) = -beta(i,i-1)*gamma2(i+1)/gamma2(i);
-      alpha(i+1,1  ) = gamma3(i+1)-gamma3(i)*gamma2(i+1)/gamma2(i);
-      alpha(i+1,i-1) = -gamma1(i)  *gamma2(i+1)/gamma2(i);
-      alpha(i+1,i  ) = 1 - alpha(i+1,i-1) - alpha(i+1,1);
+        beta( i+1,i-1) = -beta(i,i-1)*gamma2(i+1)/gamma2(i);
+        alpha(i+1,1  ) = gamma3(i+1)-gamma3(i)*gamma2(i+1)/gamma2(i);
+        alpha(i+1,i-1) = -gamma1(i)  *gamma2(i+1)/gamma2(i);
+        alpha(i+1,i  ) = 1 - alpha(i+1,i-1) - alpha(i+1,1);
     end
 
     %Convert Shu-Osher to Butcher
     [A,b,c]=shuosher2butcher(alpha,beta);
+end
 
-  end
+%Now do embedded method
+if strcmp(class,'2Semb')
+    bhat = (delta*[A;b']/sum(delta))';
+elseif strcmp(class,'3Sstaremb')
+  bhat = (delta(1:s+1)*[A;b']/sum(delta))';
+else
+  bhat = [];
+end

@@ -6,7 +6,7 @@ function p = check_RK_order(A,b,c,problem_class)
 % `b` and `c` should be column vectors of length `s`.
 
 if nargin<4
-    problem_class='nonlinear'
+    problem_class='nonlinear';
 end
 
 eps = 1.e-14;
