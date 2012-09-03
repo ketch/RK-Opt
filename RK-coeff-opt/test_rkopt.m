@@ -166,3 +166,10 @@ b = [0.25 0.75]';
 assertElementsAlmostEqual(rk.errcoeff,1./6);
 assertElementsAlmostEqual(rk.b,b,'absolute',1.e-5);
 
+function test_RK32_3S_acc
+rk = rk_opt(4,2,'3Sstar','acc','algorithm','interior-point');
+p = check_RK_order(rk.A,rk.b,rk.c);
+g = errcoeff(rk.A,rk.b,rk.c,p);
+assert(p==2,'test_RK32_3S_acc failed')
+assert(g<1.e-8,'test_RK32_3S_acc failed')
+
