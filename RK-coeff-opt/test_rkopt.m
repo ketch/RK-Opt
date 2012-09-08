@@ -166,3 +166,26 @@ b = [0.25 0.75]';
 assertElementsAlmostEqual(rk.errcoeff,1./6);
 assertElementsAlmostEqual(rk.b,b,'absolute',1.e-5);
 
+function test_RK32_3S_acc
+rk = rk_opt(4,2,'3Sstar','acc','algorithm','interior-point');
+p = check_RK_order(rk.A,rk.b,rk.c);
+g = errcoeff(rk.A,rk.b,rk.c,p);
+assert(p==2,'test_RK32_3S_acc failed')
+assert(g<1.e-8,'test_RK32_3S_acc failed')
+
+function test_embedded_RK435_3Ss
+% This is the method from table 6 of Ketcheson JCP 2010
+X=[1.384996869124138 3.878155713328178 -2.324512951813145 -0.514633322274467 0.081252332929194 -1.083849060586449 -1.096110881845602 0.075152045700771 0.211361016946069 1.100713347634329 0.728537814675568 0.393172889823198 1.642598936063715 0.188295940828347 2.859440022030827 -0.655568367959557 -0.194421504490852];
+s=5;
+class='3Sstaremb';
+[A,b,bhat,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class);
+p = check_RK_order(A,b,c);
+assert(p==4,'test_embedded_RK435_3Ss failed')
+g = errcoeff(A,b,c,p);
+assert(abs(g-0.005521417971326)<1.e-16,'test_embedded_RK435_3Ss failed');
+p_hat = check_RK_order(A,bhat,c);
+assert(p_hat==3,'test_embedded_RK435_3Ss failed')
+g_hat = errcoeff(A,bhat,c,p_hat);
+assert(abs(g_hat-0.063779596487680)<1.e-16,'test_embedded_RK435_3Ss failed');
+
+

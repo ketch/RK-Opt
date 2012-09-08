@@ -5,6 +5,10 @@ function p = check_RK_order(A,b,c,problem_class)
 % For an s-stage method, input `A` should be a `s \times s` matrix;
 % `b` and `c` should be column vectors of length `s`.
 
+if nargin<4
+    problem_class='nonlinear';
+end
+
 eps = 1.e-14;
 
 if abs(sum(b)-1)<eps
