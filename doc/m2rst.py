@@ -1,4 +1,8 @@
+"""Convert MATLAB code documentation to Restructured Text format suitable
+   for use in Sphinx.
 
+   This is used to generate the docs for the RK-opt package.
+"""
 def extract_matlab_docstring(mfile):
     """Return the docstring from mfile, assuming that it consists of the
        first uninterrupted comment block.
@@ -51,3 +55,6 @@ def extract_function_name(signature):
     else:
         return signature.split()[-1]
 
+if __name__ == '__main__':
+    for subdir in ['RKtools','am_radius-opt','polyopt','RK-coeff-opt']:
+        compile_docstrings('../'+subdir+'/',subdir+'.rst')
