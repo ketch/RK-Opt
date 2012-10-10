@@ -3,8 +3,11 @@ function [Aeq,beq,lb,ub] = linear_constraints(s,class,objective,k)
 %
 % This sets up:
 %
-%       * The linear constraints:                     Aeq*x = beq
-%       * The upper and lower bounds on the unknowns: ub, lb
+%       * The linear constraints, corresponding to the consistency conditions
+%         `\sum_j b_j = 1` and `\sum_j a_{ij} = c_j`.
+%       * The upper and lower bounds on the unknowns.  These are chosen
+%         somewhat arbitrarily, but usually aren't important as long as
+%         they're not too restrictive.
 
 n=set_n(s,class,k);
 

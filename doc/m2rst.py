@@ -2,6 +2,9 @@
    for use in Sphinx.
 
    This is used to generate the docs for the RK-opt package.
+
+   Ignores additional functions in a single file.  Might be nice to
+   change this behavior in the future.
 """
 def extract_matlab_docstring(mfile):
     """Return the docstring from mfile, assuming that it consists of the
@@ -28,7 +31,17 @@ def compile_docstrings(directory,rstfile):
     import os
     output=open(rstfile,'w')
 
+    # Title
     write_h1(output,directory[3:-1])
+
+    # Include the README, if there is one
+    try:
+        with open(os.path.relpath(directory+'README.rst')) as f:
+            readme = f.read()
+            output.write(readme)
+            output.write('\n\n')
+    except IOError:
+        pass
 
     output.write('\n.. contents::\n\n')
 

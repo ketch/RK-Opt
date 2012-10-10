@@ -1,6 +1,9 @@
 =======
 RKtools
 =======
+Some general utilities for analyzing Runge-Kutta methods.
+
+
 
 .. contents::
 
@@ -14,20 +17,20 @@ am_radius
 Evaluates the Radius of absolute monotonicity
 of a Runge-Kutta method, given the Butcher array.
 
-For an m-stage method, A should be an m x m matrix
-and b should be a column vector of length m.
+For an `m`-stage method, `A` should be an `m \times m` matrix
+and `b` should be a column vector of length m.
 
-Accuracy can be changed by modifying the value of eps (default 10^-10)
+Accuracy can be changed by modifying the value of eps (default `10^-{10}`)
 Methods with very large radii of a.m. (>50) will require
 the default value of rmax to be increased.
 
-The radius of absolute monotonicity is the largest value of $r$
+The radius of absolute monotonicity is the largest value of `r`
 such that
-\begin{eqnarray}
-K(I+rA)^{-1} &     \ge & 0 \\
-rK(I+rA)^{-1}e_m & \le & e_{m+1} 
-\end{eqnarray}
-where $$ K = \left(\begin{array}{c} A \\ b^T \end{array}\right) $$
+\\begin{eqnarray}
+K(I+rA)^{-1} &     \\ge & 0 \\\\
+rK(I+rA)^{-1}e_m & \\le & e_{m+1} 
+\\end{eqnarray}
+where $$ K = \\left(\\begin{array}{c} A \\\\ b^T \\end{array}\\right) $$
 
 
 
@@ -44,11 +47,16 @@ stability vector of an explicit Runge-Kutta scheme given its Butcher
 tableau.
 
 Note that for an explicit Runge-Kutta scheme the stability functions are
-polynomial in the complex variable z.
+polynomials in the complex variable z.
 
+Construct the intermediate stability functions \psi_j (where j is the 
+index of the stage).
 
-INTERMEDIATE STABILITY POLYNOMIALS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Note that for an explicit scheme the intermediate stability polynomial 
+associated to the first stage is always 1, i.e. \psi_1 = 1.
+Therefore we just compute and plot the remaining (s-1) intermediate
+stability polynomials plus the one-step stability polynomial of the
+Runge-Kuatta method.
 
 
 
@@ -127,7 +135,7 @@ p contains the coefficients of the numerator
 
 q contains the coefficients of the denominator
 
-$$\phi(z)=\frac{\sum_j p_j z^j}{\sum_j q_j z^j} = \frac{\det(I-z(A+eb^T))}{\det(I-zA)}.$$
+$$\\phi(z)=\\frac{\\sum_j p_j z^j}{\\sum_j q_j z^j} = \\frac{\\det(I-z(A+eb^T))}{\\det(I-zA)}.$$
 
 
 
