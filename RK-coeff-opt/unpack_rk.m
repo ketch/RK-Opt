@@ -62,6 +62,7 @@ switch class
     case '3Sstar'
         % n = 4s - 6 free parameters
         s=(length(X)+6)/4; % # of stages
+        assert(s>=3, '3S* methods require at least 3 stages');
         %for 3S* methods witohout an embedded method
         %X=[gamma_{32} ... gamma_{s+1,2} delta2 ... delta_{s-1} 
         %    beta21 ... beta_{s+1,s} gamma_{53} ... gamma_{s+1,3} ]
@@ -69,6 +70,7 @@ switch class
     case '3Sstaremb'
         % n = 4s - 3 free parameters
         s=(length(X)+3)/4; % # of stages
+        assert(s>=3, '3S* methods require at least 3 stages');
         %for 3S* methods with an embedded method
         %X=[gamma_{32} ... gamma_{s+1,2} delta2 ... delta_{s-1} 
         %      beta21 ... beta_{s+1,s}
