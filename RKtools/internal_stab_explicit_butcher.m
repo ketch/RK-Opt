@@ -7,23 +7,20 @@ function [stability] = internal_stab_explicit_butcher(A,b,c,p,spectrum,one_step_
 % tableau.
 %
 % Note that for an explicit Runge-Kutta scheme the stability functions are
-% polynomial in the complex variable z.
+% polynomials in the complex variable z.
 %
-%
-% INTERMEDIATE STABILITY POLYNOMIALS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Number of stages
-s = length(A);
-
 % Construct the intermediate stability functions \psi_j (where j is the 
 % index of the stage).
 %
 % Note that for an explicit scheme the intermediate stability polynomial 
 % associated to the first stage is always 1, i.e. \psi_1 = 1.
-% Therefore we just compute and plots the remaining (s-1) intermediate
+% Therefore we just compute and plot the remaining (s-1) intermediate
 % stability polynomials plus the one-step stability polynomial of the
 % Runge-Kuatta method.
+
+
+% Number of stages
+s = length(A);
 
 close all;
 clc;
@@ -199,7 +196,7 @@ function wf = write_file(s,p,val)
 %function wf = write_file(s,p,n)
 %
 % 
-% Write to file maximum norm of the j-stage internal stability vector
+% Write to file the maximum norm of the j-stage internal stability vector
 % \theta_j, 1=< j <= s
 
 output_file_name = strcat('max-norm_int-stab-',num2str(p),num2str(s),...

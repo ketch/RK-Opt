@@ -1,6 +1,16 @@
 =============
 am_radius-opt
 =============
+Find stability functions with optimal radius of absolute monotonicity.
+This includes codes for optimizing stability functions of 
+multistep, multistage methods and even methods with downwinding.
+
+Generally, the optimization problem is phrased as a sequence of linear 
+programming feasibility problems.  For details, see [ketcheson2009]_.
+
+The optimization of rational functions is experimental.
+
+
 
 .. contents::
 
@@ -42,13 +52,19 @@ Note that:
 
 
 
-roots
-========================================
+radimpfast
+=============================
 ::
 
-    Assuming multiplicity one for all roots
+    function rad=radimpfast(p,q)
 
-Uses high precision arithmetic
+
+Compute the radius of absolute monotonicity of a rational function.
+
+This function is outdated and needs to be fixed.
+
+Uses van de Griend's algorithm, assuming multiplicity one for all roots.
+Uses high precision arithmetic.
 
 
 

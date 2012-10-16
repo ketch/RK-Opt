@@ -1,7 +1,12 @@
-% van de Griend's algorithm
-% Assuming multiplicity one for all roots
-% Uses high precision arithmetic
 function rad=radimpfast(p,q)
+% function rad=radimpfast(p,q)
+%
+% Compute the radius of absolute monotonicity of a rational function.
+%
+% This function is outdated and needs to be fixed.
+%
+% Uses van de Griend's algorithm, assuming multiplicity one for all roots.
+% Uses high precision arithmetic.
 
 syms x P Q phi
 

@@ -1,5 +1,5 @@
 function r=emb_obj(x,rk,phat)
-%function r=emb_obj(x,rk)
+%function r=emb_obj(x,rk,phat)
 
 %Get Butcher array
 A=rk.A; b=x; c=rk.c; %bhat=x;

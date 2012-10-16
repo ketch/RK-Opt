@@ -8,9 +8,9 @@ Supported objective functions include the principal
 error norm and the SSP coefficient.  Supported constraints include stability
 polynomial coefficients, low-storage formulations, and structural constraints
 (explicit, diagonally implicit, etc.)
-RK-opt uses MATLAB's optimization toolbox, in particular `fmincon` and `linprog`.
+RK-opt uses MATLAB's optimization toolbox, in particular *fmincon* and *linprog*.
 
-MATLAB's global optimization toolbox function `Multistart` can be used to exploit the 
+MATLAB's global optimization toolbox function *Multistart* can be used to exploit the 
 benefits of parallel search on multicore machines.
 
 
@@ -43,9 +43,9 @@ RK-opt
    :maxdepth: 2
 
    started
-   tutorial
    about
    future
+   bib
 
 *********
 Reference

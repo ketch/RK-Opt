@@ -8,7 +8,7 @@ function [p,q] = rk_stabfun(rk)
 %
 % q contains the coefficients of the denominator
 %
-% $$\phi(z)=\frac{\sum_j p_j z^j}{\sum_j q_j z^j} = \frac{\det(I-z(A+eb^T))}{\det(I-zA)}.$$
+% $$\\phi(z)=\\frac{\\sum_j p_j z^j}{\\sum_j q_j z^j} = \\frac{\\det(I-z(A+eb^T))}{\\det(I-zA)}.$$
 
 s = length(rk.b);
 e=ones(s,1);

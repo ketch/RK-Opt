@@ -1,6 +1,18 @@
 ============
 RK-coeff-opt
 ============
+RK-coeff-opt finds optimal Runge-Kutta method coefficients, for a prescribed
+order of accuracy and number of stages.  
+The objective function can be chosen as either the **SSP coefficient** or the
+**leading truncation error coefficient**.
+The method may be constrained to have a **low-storage implementation**
+and/or a prescribed **stability polynomial**.
+Implicit and diagonally implicit methods can also be optimized, as can
+multistep Runge-Kutta methods.
+
+The main routine is *rk_opt.m*.
+
+
 
 .. contents::
 
@@ -49,8 +61,11 @@ linear_constraints
 
 This sets up:
 
-      * The linear constraints:                     Aeq*x = beq
-      * The upper and lower bounds on the unknowns: ub, lb
+      * The linear constraints, corresponding to the consistency conditions
+        `\sum_j b_j = 1` and `\sum_j a_{ij} = c_j`.
+      * The upper and lower bounds on the unknowns.  These are chosen
+        somewhat arbitrarily, but usually aren't important as long as
+        they're not too restrictive.
 
 
 
@@ -63,18 +78,19 @@ nonlinear_constraints
 Impose nonlinear constraints:
   - if objective = 'ssp' : both order conditions and absolute monotonicity conditions
   - if objective = 'acc' : order conditions
-The meaning of the input arguments is as follow:
-    * :math:`x`: vector of the unknowns.
-    * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations).
+The input arguments are:
+    * :math:`x`: vector of the decision variables.  See unpack_rk.m for details about
+      the order in which they are stored.
+    * *class*: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations).
     * :math:`s`:number of stages.
     * :math:`p`: order of the RK scheme.
-    * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).
-    * poly_coeff_ind: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`.
-    * poly_coeff_val: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights).
+    * *objective*: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).
+    * *poly_coeff_ind*: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`.
+    * *poly_coeff_val*: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights).
 
-The meaning of the output arguments is as follow:
-    * con: inequality constraints, i.e. absolute monotonicity conditions if objective = 'ssp' or nothing if objective = 'acc'
-    * coneq: order conditions plus stability function coefficients constraints (tall-tree elementary weights)
+The outputs are:
+    * *con*: inequality constraints, i.e. absolute monotonicity conditions if objective = 'ssp' or nothing if objective = 'acc'
+    * *coneq*: order conditions plus stability function coefficients constraints (tall-tree elementary weights)
 
 Two forms of the order conditions are implemented: one based on **Butcher's
 approach**, and one based on **Albrecht's approach**. One or the other may lead 
@@ -258,10 +274,10 @@ stability polynomial.
 
 
 unpack_lsrk
-==============================================================================
+===================================================================================
 ::
 
-    function [A,b,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
+    function [A,b,bhat,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
 
 
 Extracts the coefficient arrays from the optimization vector.
