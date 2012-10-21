@@ -1,8 +1,20 @@
-        module globals
+
+! SSP model formulation received from David Ketcheson, KAUST, October 16, 2012 
+
+       module globals
             implicit none
-            integer, parameter :: s=2
-            integer, parameter :: p=2
+            integer, parameter :: s=5
+            integer, parameter :: p=4
             character, parameter :: RKclass*3 = 'erk'
+            real*8, allocatable :: order_conditions(:)           
+
+            contains
+                subroutine alloc_oc(n_order_conditions)
+                    integer n_order_conditions
+
+                    allocate(order_conditions(n_order_conditions)) 
+                end subroutine
+
         end module globals
     
         program main
@@ -43,6 +55,7 @@
 ! Model name (character)
       modname='SSP RK'
 
+
 ! Number of variables (positive integer)
       call set_nvars(nvars)
 
@@ -51,8 +64,19 @@
       neqcons = n_order_conditions + n_consistency_conditions
       ncons=neqcons + n_am_conditions
 
+
+      call alloc_oc(n_order_conditions)
 ! Default variable bound, set for variables without explicit bounds
       defbnd=5.d0 
+
+      varlb(:) = 0.d0
+      varub(:) = 0.d0
+      varnom(:) = 0.d0
+      varopt(:) = 0.d0
+      conopt(:) = 0.d0
+      ctype(:) = 0.d0
+      varname(:) = ''
+      conname(:) = ''
 
 ! Variable lower bounds (real)
       do i=1,nvars
@@ -60,9 +84,10 @@
       end do  
 
 ! Variable upper bounds (real)
-      do i=1,nvars
-        varub(i)=5.d0
+      do i=1,nvars-1
+        varub(i)=1.d0
       end do     
+      varub(nvars) = s-p+1.d0
 
 ! Variable nominal values (real)
       do i=1,nvars
@@ -92,43 +117,48 @@
          ctype(i)=-1
       end do      
 
+!      write(*,*) n_order_conditions, n_consistency_conditions, n_am_conditions
+!      write(*,*) nvars, ncons, ctype
+!      stop
+
 ! --- Solver options and parameters ---
   
 ! Operational mode selected: 0: LS; 1: B&B+LS; 2: GARS+LS; 3: MS+LS
 ! Suggested default for global search: 3; for local search only: 0
-      opmode=0
+!     opmode=0
 !     opmode=1
 !     opmode=2        
-!     opmode=3
+      opmode=3
   
 ! Maximal no. of model function evaluations in global search phase (integer)
 ! Suggested optional default settings
-      g_maxfct=1000*(nvars+ncons+1)**2
+      !g_maxfct=100
+      g_maxfct=10000*(nvars+ncons+1)**2
   
 ! Maximal no. of model function evaluations in each executed local search 
 ! phase (integer)
 ! Suggested optional default setting
-      l_maxfct=100*(nvars+ncons+1)**2        
+      l_maxfct=10000*(nvars+ncons+1)**2        
   
 ! Maximal no. of model function evaluations in global search phase, w/o improvement (integer)
 ! Suggested default settings: g_maxfct/10 <= max_nosuc <= g_maxfct        
 ! Suggested optional default setting
-      max_nosuc=500*(nvars+ncons+1)**2    
+      max_nosuc=5000*(nvars+ncons+1)**2    
   
 ! Constraint penalty multiplier (positive real, used in merit function evaluation)
 ! Suggested default setting: 1.; one can incresase it to enforce feasibility       
-      pen_mult=1.d0
+      pen_mult=100.d0
   
 ! Target objective function value in global search phase (real)
 ! Suggested default setting: "close" to optimum value when known
 ! Otherwise can be set to an "unrealistic" value such as e.g. -1.d30
-      g_target=-10.
+      g_target=-8.
   
 ! Target objective function value in local search phase (real)
 ! Suggested default setting: "even closer" to optimum value when known
 ! l_target <= g_target settings are expected
 ! Otherwise can be set to an "unrealistic" value such as e.g. -1.d20
-      l_target=-10.
+      l_target=-9.
   
 ! Required local search precision parameter (positive real)
 ! Suggested default setting: 1.d-8
@@ -152,7 +182,7 @@
 ! Program execution time limit (seconds, positive integer)
 ! Suggested default setting: 300, but large-size and/or difficult models 
 ! may require longer runs
-      tlimit=300
+      tlimit=3000
   
 ! Optional result and logfile printout level 
 ! 0: no printout of results 
@@ -162,10 +192,11 @@
 !    function values, to file LGO.LOG (unit 11)
 ! Suggested default setting: 1; use 2 for more information, or 3 in 
 ! checking and troubleshooting sessions
-      iprl=2
+      iprl=1
  
 ! --- LGO solver call ---
   
+      write(*,*) nvars, ncons
       CALL lgo_run (modname, nvars, ncons, varname, objname, conname, &
      ctype, defbnd, varlb, varnom, varub, opmode, g_maxfct, l_maxfct, &
      max_nosuc, pen_mult, g_target, l_target, fi_tol, con_tol, kt_tol, &
@@ -270,7 +301,6 @@ subroutine USER_FCT(x, obj, con)
     real*8 obj
     real*8 con(*)
     real*8 A(s,s), b(s), c(s)
-    real*8, allocatable :: order_conditions(:)
     real*8 K(s+1,s+1), kiprkinv(s+1,s+1), Kpow(s+1,s+1)
     real*8 stage_consistency(s)
     real*8 r
@@ -292,8 +322,6 @@ subroutine USER_FCT(x, obj, con)
 
     r   = x(nvars)
     obj = -r
-
-    allocate(order_conditions(n_order_conditions))
 
     ! Compute order conditions
     call oc_butcher(A,b,c,order_conditions)
@@ -320,15 +348,17 @@ subroutine USER_FCT(x, obj, con)
     kiprkinv = matmul(K,kiprkinv)
 
     ! K(I+rK)^{-1} >= 0
-    am_conditions_1 = -reshape(kiprkinv, [(s+1)**2])
+!    am_conditions_1 = -reshape(kiprkinv, [(s+1)**2])
+    am_conditions_1 = -reshape( kiprkinv, (/ (s+1)**2 /) )
     ! rK(I+rK)^{-1}e <= 1
     am_conditions_2 = r*sum(kiprkinv,2)-1.d0
 
     ! Concatenate all constraints, equalities first
-    con(1:ncons) = [order_conditions,stage_consistency,am_conditions_1, &
-            am_conditions_2]
-
-end subroutine obj_and_constraints
+!    con(1:ncons) = [order_conditions,stage_consistency,am_conditions_1, &
+!            am_conditions_2]
+    con(1:ncons) = (/ order_conditions,stage_consistency,am_conditions_1, &
+             am_conditions_2 /)
+end subroutine ! objective_and_constraints
 
 
 subroutine set_nvars(n)
@@ -385,8 +415,10 @@ subroutine unpack_rk(X,A,b,c)
     ! Generate Butcher coefficients (for RK) or Shu-Osher coefficients (for lsRK)
     select case(RKclass)
         case ('erk')
-            c = reshape( [X(1:s)], [s,1])
-            b = reshape( X(s+1:2*s) , [s,1])
+!            c = reshape( [X(1:s)], [s,1])
+!            b = reshape( X(s+1:2*s) , [s,1])
+            c = reshape( (/ X(1:s) /), (/ s,1 /) )
+            b = reshape( X(s+1:2*s) , (/ s,1 /) )
             do i = 1, s
                 A(i,1:i-1)=X(2*s+1+(i-2)*(i-1)/2:2*s+i*(i-1)/2);
             end do
@@ -429,119 +461,119 @@ subroutine oc_butcher(A,b,c,coneq)
     use globals
     real*8 A(s,s), b(s), c(s)
     real*8 coneq(*)
-
     if (p>=1) then
       ! order 1 conditions:
-        coneq(1)=sum(b)-1d0
+        coneq(1)=sum(b)-1.d0
     endif
 
     if (p>=2) then
       ! order 2 conditions:
-        coneq(2)=dot_product(b,c)-1/2d0
+        coneq(2)=dot_product(b,c)-1/2.d0
     endif
 
     if (p>=3) then
       ! order 3 conditions:
-        coneq(3)=dot_product(b,matmul(A,c))-1/6d0
-        coneq(4)=dot_product(b,c**2)-1/3d0
+        coneq(3)=dot_product(b,matmul(A,c))-1/6.d0
+        coneq(4)=dot_product(b,c**2)-1/3.d0
     endif
 
     if (p>=4) then
       ! order 4 conditions:
-        coneq(5)=dot_product(b,matmul(A,c**2))-1/12d0
-        coneq(6)=dot_product(b,matmul(A,matmul(A,c)))-1/24d0
-        coneq(7)=dot_product(b,matmul(A,c)*c)-1/8d0
-        coneq(8)=dot_product(b,c**3)-1/4d0
+        coneq(5)=dot_product(b,matmul(A,c**2))-1/12.d0
+        coneq(6)=dot_product(b,matmul(A,matmul(A,c)))-1/24.d0
+        coneq(7)=dot_product(b,matmul(A,c)*c)-1/8.d0
+        coneq(8)=dot_product(b,c**3)-1/4.d0
     endif
 
     if (p>=5) then
       ! order 5 conditions:
-        coneq(9)=dot_product(b,matmul(A,c**3))-1/20d0
-        coneq(10)=dot_product(b,matmul(A,matmul(A,c**2)))-1/60d0
-        coneq(11)=dot_product(b,matmul(A,matmul(A,matmul(A,c))))-1/120d0
-        coneq(12)=dot_product(b,matmul(A,c*matmul(A,c)))-1/40d0
-        coneq(13)=dot_product(b,matmul(A,c**2)*c)-1/15d0
-        coneq(14)=dot_product(b,matmul(A,matmul(A,c))*c)-1/30d0
-        coneq(15)=dot_product(b,matmul(A,c)*c**2)-1/10d0
-        coneq(16)=dot_product(b,matmul(A,c)*matmul(A,c))-1/20d0
-        coneq(17)=dot_product(b,c**4)-1/5d0
+        coneq(9)=dot_product(b,matmul(A,c**3))-1/20.d0
+        coneq(10)=dot_product(b,matmul(A,matmul(A,c**2)))-1/60.d0
+        coneq(11)=dot_product(b,matmul(A,matmul(A,matmul(A,c))))-1/120.d0
+        coneq(12)=dot_product(b,matmul(A,c*matmul(A,c)))-1/40.d0
+        coneq(13)=dot_product(b,matmul(A,c**2)*c)-1/15.d0
+        coneq(14)=dot_product(b,matmul(A,matmul(A,c))*c)-1/30.d0
+        coneq(15)=dot_product(b,matmul(A,c)*c**2)-1/10.d0
+        coneq(16)=dot_product(b,matmul(A,c)*matmul(A,c))-1/20.d0
+        coneq(17)=dot_product(b,c**4)-1/5.d0
     endif
 
     if (p>=6) then
       ! order 6 conditions:
-        coneq(18)=dot_product(b,matmul(A,c**4))-1/30d0
-        coneq(19)=dot_product(b,matmul(A,matmul(A,c**3)))-1/120d0
-        coneq(20)=dot_product(b,matmul(A,matmul(A,matmul(A,c**2))))-1/360d0
-        coneq(21)=dot_product(b,matmul(A,matmul(A,matmul(A,matmul(A,c)))))-1/720d0
-        coneq(22)=dot_product(b,matmul(A,matmul(A,c*matmul(A,c))))-1/240d0
-        coneq(23)=dot_product(b,matmul(A,c*matmul(A,c**2)))-1/90d0
-        coneq(24)=dot_product(b,matmul(A,c*matmul(A,matmul(A,c))))-1/180d0
-        coneq(25)=dot_product(b,matmul(A,c**2*matmul(A,c)))-1/60d0
-        coneq(26)=dot_product(b,matmul(A,matmul(A,c)*matmul(A,c)))-1/120d0
-        coneq(27)=dot_product(b,matmul(A,c**3)*c)-1/24d0
-        coneq(28)=dot_product(b,matmul(A,matmul(A,c**2))*c)-1/72d0
-        coneq(29)=dot_product(b,matmul(A,matmul(A,matmul(A,c)))*c)-1/144d0
-        coneq(30)=dot_product(b,matmul(A,c*matmul(A,c))*c)-1/48d0
-        coneq(31)=dot_product(b,matmul(A,c**2)*c**2)-1/18d0
-        coneq(32)=dot_product(b,matmul(A,matmul(A,c))*c**2)-1/36d0
-        coneq(33)=dot_product(b,matmul(A,c)*c**3)-1/12d0
-        coneq(34)=dot_product(b,matmul(A,c**2)*matmul(A,c))-1/36d0
-        coneq(35)=dot_product(b,matmul(A,matmul(A,c))*matmul(A,c))-1/72d0
-        coneq(36)=dot_product(b,matmul(A,c)*matmul(A,c)*c)-1/24d0
-        coneq(37)=dot_product(b,c**5)-1/6d0
+        coneq(18)=dot_product(b,matmul(A,c**4))-1/30.d0
+        coneq(19)=dot_product(b,matmul(A,matmul(A,c**3)))-1/120.d0
+        coneq(20)=dot_product(b,matmul(A,matmul(A,matmul(A,c**2))))-1/360.d0
+        coneq(21)=dot_product(b,matmul(A,matmul(A,matmul(A,matmul(A,c)))))-1/720.d0
+        coneq(22)=dot_product(b,matmul(A,matmul(A,c*matmul(A,c))))-1/240.d0
+        coneq(23)=dot_product(b,matmul(A,c*matmul(A,c**2)))-1/90.d0
+        coneq(24)=dot_product(b,matmul(A,c*matmul(A,matmul(A,c))))-1/180.d0
+        coneq(25)=dot_product(b,matmul(A,c**2*matmul(A,c)))-1/60.d0
+        coneq(26)=dot_product(b,matmul(A,matmul(A,c)*matmul(A,c)))-1/120.d0
+        coneq(27)=dot_product(b,matmul(A,c**3)*c)-1/24.d0
+        coneq(28)=dot_product(b,matmul(A,matmul(A,c**2))*c)-1/72.d0
+        coneq(29)=dot_product(b,matmul(A,matmul(A,matmul(A,c)))*c)-1/144.d0
+        coneq(30)=dot_product(b,matmul(A,c*matmul(A,c))*c)-1/48.d0
+        coneq(31)=dot_product(b,matmul(A,c**2)*c**2)-1/18.d0
+        coneq(32)=dot_product(b,matmul(A,matmul(A,c))*c**2)-1/36.d0
+        coneq(33)=dot_product(b,matmul(A,c)*c**3)-1/12.d0
+        coneq(34)=dot_product(b,matmul(A,c**2)*matmul(A,c))-1/36.d0
+        coneq(35)=dot_product(b,matmul(A,matmul(A,c))*matmul(A,c))-1/72.d0
+        coneq(36)=dot_product(b,matmul(A,c)*matmul(A,c)*c)-1/24.d0
+        coneq(37)=dot_product(b,c**5)-1/6.d0
     endif
 
     if (p>=7) then
       ! order 7 conditions:
-        coneq(38)=dot_product(b,matmul(A,c**5))-1/42d0
-        coneq(39)=dot_product(b,matmul(A,matmul(A,c**4)))-1/210d0
-        coneq(40)=dot_product(b,matmul(A,matmul(A,matmul(A,c**3))))-1/840d0
-        coneq(41)=dot_product(b,matmul(A,matmul(A,matmul(A,matmul(A,c**2)))))-1/2520d0
-        coneq(42)=dot_product(b,matmul(A,matmul(A,matmul(A,matmul(A,matmul(A,c))))))-1/5040d0
-        coneq(43)=dot_product(b,matmul(A,matmul(A,matmul(A,c*matmul(A,c)))))-1/1680d0
-        coneq(44)=dot_product(b,matmul(A,matmul(A,c*matmul(A,c**2))))-1/630d0
-        coneq(45)=dot_product(b,matmul(A,matmul(A,c*matmul(A,matmul(A,c)))))-1/1260d0
-        coneq(46)=dot_product(b,matmul(A,matmul(A,c**2*matmul(A,c))))-1/420d0
-        coneq(47)=dot_product(b,matmul(A,matmul(A,matmul(A,c)*matmul(A,c))))-1/840d0
-        coneq(48)=dot_product(b,matmul(A,c*matmul(A,c**3)))-1/168d0
-        coneq(49)=dot_product(b,matmul(A,c*matmul(A,matmul(A,c**2))))-1/504d0
-        coneq(50)=dot_product(b,matmul(A,c*matmul(A,matmul(A,matmul(A,c)))))-1/1008d0
-        coneq(51)=dot_product(b,matmul(A,c*matmul(A,c*matmul(A,c))))-1/336d0
-        coneq(52)=dot_product(b,matmul(A,c**2*matmul(A,c**2)))-1/126d0
-        coneq(53)=dot_product(b,matmul(A,c**2*matmul(A,matmul(A,c))))-1/252d0
-        coneq(54)=dot_product(b,matmul(A,c**3*matmul(A,c)))-1/84d0
-        coneq(55)=dot_product(b,matmul(A,matmul(A,c)*matmul(A,c**2)))-1/252d0
-        coneq(56)=dot_product(b,matmul(A,matmul(A,c)*matmul(A,matmul(A,c))))-1/504d0
-        coneq(57)=dot_product(b,matmul(A,c*matmul(A,c)*matmul(A,c)))-1/168d0
-        coneq(58)=dot_product(b,matmul(A,c**4)*c)-1/35d0
-        coneq(59)=dot_product(b,matmul(A,matmul(A,c**3))*c)-1/140d0
-        coneq(60)=dot_product(b,matmul(A,matmul(A,matmul(A,c**2)))*c)-1/420d0
-        coneq(61)=dot_product(b,matmul(A,matmul(A,matmul(A,matmul(A,c))))*c)-1/840d0
-        coneq(62)=dot_product(b,matmul(A,matmul(A,c*matmul(A,c)))*c)-1/280d0
-        coneq(63)=dot_product(b,matmul(A,c*matmul(A,c**2))*c)-1/105d0
-        coneq(64)=dot_product(b,matmul(A,c*matmul(A,matmul(A,c)))*c)-1/210d0
-        coneq(65)=dot_product(b,matmul(A,c**2*matmul(A,c))*c)-1/70d0
-        coneq(66)=dot_product(b,matmul(A,matmul(A,c)*matmul(A,c))*c)-1/140d0
-        coneq(67)=dot_product(b,matmul(A,c**3)*c**2)-1/28d0
-        coneq(68)=dot_product(b,matmul(A,matmul(A,c**2))*c**2)-1/84d0
-        coneq(69)=dot_product(b,matmul(A,matmul(A,matmul(A,c)))*c**2)-1/168d0
-        coneq(70)=dot_product(b,matmul(A,c*matmul(A,c))*c**2)-1/56d0
-        coneq(71)=dot_product(b,matmul(A,c**2)*c**3)-1/21d0
-        coneq(72)=dot_product(b,matmul(A,matmul(A,c))*c**3)-1/42d0
-        coneq(73)=dot_product(b,matmul(A,c)*c**4)-1/14d0
-        coneq(74)=dot_product(b,matmul(A,c**2)*matmul(A,c**2))-1/63d0
-        coneq(75)=dot_product(b,matmul(A,matmul(A,c))*matmul(A,c**2))-1/126d0
-        coneq(76)=dot_product(b,matmul(A,matmul(A,c))*matmul(A,matmul(A,c)))-1/252d0
-        coneq(77)=dot_product(b,matmul(A,c**3)*matmul(A,c))-1/56d0
-        coneq(78)=dot_product(b,matmul(A,matmul(A,c**2))*matmul(A,c))-1/168d0
-        coneq(79)=dot_product(b,matmul(A,matmul(A,matmul(A,c)))*matmul(A,c))-1/336d0
-        coneq(80)=dot_product(b,matmul(A,c*matmul(A,c))*matmul(A,c))-1/112d0
-        coneq(81)=dot_product(b,matmul(A,c**2)*matmul(A,c)*c)-1/42d0
-        coneq(82)=dot_product(b,matmul(A,matmul(A,c))*matmul(A,c)*c)-1/84d0
-        coneq(83)=dot_product(b,matmul(A,c)*matmul(A,c)*c**2)-1/28d0
-        coneq(84)=dot_product(b,matmul(A,c)*matmul(A,c)*matmul(A,c))-1/56d0
-        coneq(85)=dot_product(b,c**6)-1/7d0
+        coneq(38)=dot_product(b,matmul(A,c**5))-1/42.d0
+        coneq(39)=dot_product(b,matmul(A,matmul(A,c**4)))-1/210.d0
+        coneq(40)=dot_product(b,matmul(A,matmul(A,matmul(A,c**3))))-1/840.d0
+        coneq(41)=dot_product(b,matmul(A,matmul(A,matmul(A,matmul(A,c**2)))))-1/2520.d0
+        coneq(42)=dot_product(b,matmul(A,matmul(A,matmul(A,matmul(A,matmul(A,c))))))-1/5040.d0
+        coneq(43)=dot_product(b,matmul(A,matmul(A,matmul(A,c*matmul(A,c)))))-1/1680.d0
+        coneq(44)=dot_product(b,matmul(A,matmul(A,c*matmul(A,c**2))))-1/630.d0
+        coneq(45)=dot_product(b,matmul(A,matmul(A,c*matmul(A,matmul(A,c)))))-1/1260.d0
+        coneq(46)=dot_product(b,matmul(A,matmul(A,c**2*matmul(A,c))))-1/420.d0
+        coneq(47)=dot_product(b,matmul(A,matmul(A,matmul(A,c)*matmul(A,c))))-1/840.d0
+        coneq(48)=dot_product(b,matmul(A,c*matmul(A,c**3)))-1/168.d0
+        coneq(49)=dot_product(b,matmul(A,c*matmul(A,matmul(A,c**2))))-1/504.d0
+        coneq(50)=dot_product(b,matmul(A,c*matmul(A,matmul(A,matmul(A,c)))))-1/1008.d0
+        coneq(51)=dot_product(b,matmul(A,c*matmul(A,c*matmul(A,c))))-1/336.d0
+        coneq(52)=dot_product(b,matmul(A,c**2*matmul(A,c**2)))-1/126.d0
+        coneq(53)=dot_product(b,matmul(A,c**2*matmul(A,matmul(A,c))))-1/252.d0
+        coneq(54)=dot_product(b,matmul(A,c**3*matmul(A,c)))-1/84.d0
+        coneq(55)=dot_product(b,matmul(A,matmul(A,c)*matmul(A,c**2)))-1/252.d0
+        coneq(56)=dot_product(b,matmul(A,matmul(A,c)*matmul(A,matmul(A,c))))-1/504.d0
+        coneq(57)=dot_product(b,matmul(A,c*matmul(A,c)*matmul(A,c)))-1/168.d0
+        coneq(58)=dot_product(b,matmul(A,c**4)*c)-1/35.d0
+        coneq(59)=dot_product(b,matmul(A,matmul(A,c**3))*c)-1/140.d0
+        coneq(60)=dot_product(b,matmul(A,matmul(A,matmul(A,c**2)))*c)-1/420.d0
+        coneq(61)=dot_product(b,matmul(A,matmul(A,matmul(A,matmul(A,c))))*c)-1/840.d0
+        coneq(62)=dot_product(b,matmul(A,matmul(A,c*matmul(A,c)))*c)-1/280.d0
+        coneq(63)=dot_product(b,matmul(A,c*matmul(A,c**2))*c)-1/105.d0
+        coneq(64)=dot_product(b,matmul(A,c*matmul(A,matmul(A,c)))*c)-1/210.d0
+        coneq(65)=dot_product(b,matmul(A,c**2*matmul(A,c))*c)-1/70.d0
+        coneq(66)=dot_product(b,matmul(A,matmul(A,c)*matmul(A,c))*c)-1/140.d0
+        coneq(67)=dot_product(b,matmul(A,c**3)*c**2)-1/28.d0
+        coneq(68)=dot_product(b,matmul(A,matmul(A,c**2))*c**2)-1/84.d0
+        coneq(69)=dot_product(b,matmul(A,matmul(A,matmul(A,c)))*c**2)-1/168.d0
+        coneq(70)=dot_product(b,matmul(A,c*matmul(A,c))*c**2)-1/56.d0
+        coneq(71)=dot_product(b,matmul(A,c**2)*c**3)-1/21.d0
+        coneq(72)=dot_product(b,matmul(A,matmul(A,c))*c**3)-1/42.d0
+        coneq(73)=dot_product(b,matmul(A,c)*c**4)-1/14.d0
+        coneq(74)=dot_product(b,matmul(A,c**2)*matmul(A,c**2))-1/63.d0
+        coneq(75)=dot_product(b,matmul(A,matmul(A,c))*matmul(A,c**2))-1/126.d0
+        coneq(76)=dot_product(b,matmul(A,matmul(A,c))*matmul(A,matmul(A,c)))-1/252.d0
+        coneq(77)=dot_product(b,matmul(A,c**3)*matmul(A,c))-1/56.d0
+        coneq(78)=dot_product(b,matmul(A,matmul(A,c**2))*matmul(A,c))-1/168.d0
+        coneq(79)=dot_product(b,matmul(A,matmul(A,matmul(A,c)))*matmul(A,c))-1/336.d0
+        coneq(80)=dot_product(b,matmul(A,c*matmul(A,c))*matmul(A,c))-1/112.d0
+        coneq(81)=dot_product(b,matmul(A,c**2)*matmul(A,c)*c)-1/42.d0
+        coneq(82)=dot_product(b,matmul(A,matmul(A,c))*matmul(A,c)*c)-1/84.d0
+        coneq(83)=dot_product(b,matmul(A,c)*matmul(A,c)*c**2)-1/28.d0
+        coneq(84)=dot_product(b,matmul(A,c)*matmul(A,c)*matmul(A,c))-1/56.d0
+        coneq(85)=dot_product(b,c**6)-1/7.d0
     endif
 
 return
 end subroutine
+
