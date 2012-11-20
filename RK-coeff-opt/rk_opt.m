@@ -98,7 +98,7 @@ for i=1:max_tries
         nsp = 20;
         
         for i=1:nsp
-            x(i,:)=initial_guess(s,p,class,startvec,k);
+            x(i,:) = initial_guess(s,p,class,startvec,k);
             tpoints = CustomStartPointSet(x);
         end
 
@@ -112,14 +112,14 @@ for i=1:max_tries
         [X,FVAL,status,outputg,manyminsg] = run(ms,problem,tpoints);
 
     else
-        x=initial_guess(s,p,class,startvec,k);
+        x = initial_guess(s,p,class,startvec,k);
 
         %Optionally find a feasible (for the order conditions) point to start
         if solveorderconditions==1
             x=fsolve(@(x) order_conditions(x,class,s,p,Aeq,beq),x);
         end
 
-        [X,FVAL,status]=fmincon(@(x) rk_obj(x,class,s,p,objective),...
+        [X,FVAL,status] = fmincon(@(x) rk_obj(x,class,s,p,objective),...
                                 x,[],[],Aeq,beq,lb,ub,...  
                                 @(x) nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k),opts);
     end
@@ -127,21 +127,21 @@ for i=1:max_tries
   
     % Check order of the scheme
     if (class(1:2)=='2S' | class(1:2)=='3S')
-        [rk.A,rk.b,rk.bhat,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta]=unpack_lsrk(X,s,class);
+        [rk.A,rk.b,rk.bhat,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,s,class);
         order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
     elseif k==1
-        [rk.A,rk.b,rk.c]=unpack_rk(X,s,class);
+        [rk.A,rk.b,rk.c] = unpack_rk(X,s,class);
         order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
     else
-        [rk.A,rk.Ahat,rk.b,rk.bhat,rk.rk.D,rk.theta] =  unpack_msrk(X,s,k,class);
-        order=p; %HACK
+        [rk.A,rk.Ahat,rk.b,rk.bhat,rk.rk.D,rk.theta] = unpack_msrk(X,s,k,class);
+        order = p; %HACK
     end
     
     % Compute properties of the method
     if strcmp(objective,'ssp')
         rk.r = -FVAL;
     else
-        rk.r=am_radius(rk.A,rk.b,rk.c);
+        rk.r = am_radius(rk.A,rk.b,rk.c);
     end
 
      % If a solution is found, then exit the loop
@@ -158,11 +158,13 @@ if (i==max_tries && status<=0)
 end
 
 if k==1
-    rk.errcoeff=errcoeff(rk.A,rk.b,rk.c,order);
-    [rk.v,rk.alpha,rk.beta] = optimal_shuosher_form(rk.A,rk.b,rk.c);
+    rk.errcoeff = errcoeff(rk.A,rk.b,rk.c,order);
+
+    if strcmp(objective,'ssp')
+        [rk.v_opt,rk.alpha_opt,rk.beta_opt] = optimal_shuosher_form(rk.A,rk.b,rk.c);
     
     if (write_to_file == 1 && p == order)
-        output=write_file(rk,p);
+        output = write_file(rk,p);
     end
 end
 
