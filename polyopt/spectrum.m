@@ -31,13 +31,13 @@ switch name
     l3 = -kappa + 1i*linspace(0,imag_lim,50);
     lamda = [l1 l2 l3].';
   case 'Niegemann-ellipse'
-    lambda_0 = sqrt(3.)/2; % = cos(arcsin(0.5))
+    lamda_0 = sqrt(3.)/2; % = cos(arcsin(0.5))
     theta = linspace(0,2*pi,N);
-    lam = (min(-0.5*(lambda_0+cos(theta)),0.) + 1i*sin(theta)).';
+    lamda = (min(-0.5*(labda_0+cos(theta)),0.) + 1i*sin(theta)).';
   case 'Niegemann-circle'
-    lambda_0 = sqrt(3.)/2; % = cos(arcsin(0.5))
+    labda_0 = sqrt(3.)/2; % = cos(arcsin(0.5))
     theta = linspace(0,2*pi,N);
-    lamda = (min(-(lambda_0+cos(theta)),0.) + 1i*sin(theta)).';
+    lamda = (min(-(labda_0+cos(theta)),0.) + 1i*sin(theta)).';
   case 'gap'
     gap = 20;
     d   = 1;
