@@ -17,3 +17,11 @@ It includes the following sub-packages:
  - **RKtools**: A collection of routines for analyzing or computing various 
    properties of Runge-Kutta methods.  For a much more extensive package along these
    lines, see [NodePy](http://numerics.kaust.edu.sa/nodepy).
+
+
+# Authors
+The following people have contributed code to RK-opt (listed alphabetically):
+
+ - Aron Ahmadia: **polyopt** routines
+ - David Ketcheson: Principal author and maintainer
+ - Matteo Parsani: **RK-coeff-opt** routines and organization
