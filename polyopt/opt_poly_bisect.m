@@ -3,6 +3,27 @@ function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,varargin)
 %
 % Finds an optimally stable polynomial of degree s and order p for the spectrum
 % lam in the interval (h_min,h_max) to precision eps.
+%
+% Optional arguments:
+%
+%       lam_func: A function used to generate the appropriate spectrum
+%                 at each bisection step, instead of using a fixed (scaled) spectrum.
+%                 Used for instance to find the longest rectangle of a fixed height
+%                 (see Figure 10 of the CAMCoS paper).
+%
+% Examples:
+%
+% To find negative real axis inclusion:
+%
+%        lam = spectrum('realaxis',500);       
+%        s = 10; p = 2;
+%        [h,poly_coeff] = opt_poly_bisect(lam,s,p,'chebyshev')    
+%
+% To reproduce figure 10 of the CAMCoS paper::
+%
+%       lam_func = @(kappa) spectrum('rectangle',100,kappa,10)
+%       [h,poly_coeff] = opt_poly_bisect(lam,20,1,'chebyshev','lam_func',lam_func)
+%       plotstabreg_func(poly_coeff,[1])
 
 [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
         h_true] = opt_poly_params(s,lam,varargin);
@@ -24,6 +45,7 @@ for i_step=1:max_steps
     h = (h_max + h_min)/2.;
 
     if isfloat(lam_func) == 0
+        % Divide by 'h' here, since we will multiply by it later
         lam = lam_func(h)/h;
     end
     
