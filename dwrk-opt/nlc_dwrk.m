@@ -101,13 +101,13 @@ if p>=6   % 6th order
   coneq(36)=b1'*A1^4*c1-1/720;
 end
 
-conzero_At = At(:,1:end-1);
-conzero_At3 = At(2:3,end);
-conzero_bt = bt(1:end-1);
-conzero_A  = A( :,end);
-conzero_A2 = A(:,2)-A(1,2);
-conzero_At2 = At(:,end)-At(1,end);
-conzero_bt2 = bt(end)-At(1,end);
-conzero_b = b(end);
-%coneq = [coneq conzero_At(:)' conzero_bt' conzero_At3(:)'];
-coneq = [coneq conzero_At(:)' conzero_bt' conzero_A(:)' conzero_At2(:)' conzero_bt2 conzero_b];
+%conzero_At = At(:,1:end-1);
+%conzero_At3 = At(2:3,end);
+%conzero_bt = bt(1:end-1);
+%conzero_A  = A( :,end);
+%conzero_A2 = A(:,2)-A(1,2);
+%conzero_At2 = At(:,end)-At(1,end);
+%conzero_bt2 = bt(end)-At(1,end);
+%conzero_b = b(end);
+%%coneq = [coneq conzero_At(:)' conzero_bt' conzero_At3(:)'];
+%coneq = [coneq conzero_At(:)' conzero_bt' conzero_A(:)' conzero_At2(:)' conzero_bt2 conzero_b];

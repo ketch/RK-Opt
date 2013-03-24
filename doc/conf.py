@@ -203,7 +203,7 @@ htmlhelp_basename = 'RK-opt-doc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'RK-Opt.tex', u'RK-Opt. Documentation', 'manual'),
+  ('index', 'RK-Opt.tex', u'RK-Opt User Manual', u'The RK-Opt development team', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

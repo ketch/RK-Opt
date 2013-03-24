@@ -4,7 +4,7 @@
 ===============
 Installation
 ===============
-This page describes how to obtain and test RK-opt. 
+This section describes how to obtain RK-opt and test that it is working correctly.
 
 Dependencies 
 ------------
