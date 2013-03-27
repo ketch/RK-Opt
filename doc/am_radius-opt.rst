@@ -24,8 +24,9 @@ multi_R_opt
     function multi_R = multi_R_opt(k,p,class,varargin)
 
 
-This function is an interface to Rskp or Rkp_dw or Rkp_imp and 
-Rkp_imp_dw for running multiple consecutive optimization problems with 
+This function is a script to run the routines Rskp, Rkp_dw, Rkp_imp, or
+Rkp_imp_dw several times with different inputs, in order to construct tables
+of optimal values like those that appear in [ketcheson2009]_.
 different values of the input parameters, i.e.: 
 
 k = [k1, k2, ..., kK]^T, K = length(k),  ith-element = # of steps
@@ -39,9 +40,7 @@ when optimal contractive k-step, s-stage GLM are investigated.
 
 The family of method to be considered is specified in the string 'class'.
 
-Note that:
-
-1- in general S != K != P. Fixed the order of accuracy of the time 
+Note that in general `S\ne K\ne P`. Fixed the order of accuracy of the time 
    integration scheme, one is usually interested in understanding the
    behavior of the threshold factor R as a function of the number of
    stages. Therefore, for a fixed element of the array "p", this function

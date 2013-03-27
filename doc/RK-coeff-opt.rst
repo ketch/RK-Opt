@@ -1,16 +1,10 @@
 ============
 RK-coeff-opt
 ============
-RK-coeff-opt finds optimal Runge-Kutta method coefficients, for a prescribed
-order of accuracy and number of stages.  
-The objective function can be chosen as either the **SSP coefficient** or the
-**leading truncation error coefficient**.
-The method may be constrained to have a **low-storage implementation**
-and/or a prescribed **stability polynomial**.
-Implicit and diagonally implicit methods can also be optimized, as can
-multistep Runge-Kutta methods.
-
-The main routine is *rk_opt.m*.
+This subpackage contains routines for finding optimal Runge-Kutta method coefficents,
+given a prescribed order of accuracy, number of stages, and an objective function.  
+Constraints on the stability polynomial (possibly obtained using **polyopt** or **am_radius-opt**)
+can optionally be provided.
 
 
 

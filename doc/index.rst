@@ -33,7 +33,8 @@ The RK-Opt pacakge consists of the following packages:
                         method.
     * **RKtools**:    Some general utilities for analyzing Runge-Kutta methods.
                         
-
+If you use RK-Opt in published work, please cite this manual and/or relevant papers from the bibliography
+below.
 
 *******
 RK-opt
@@ -42,6 +43,7 @@ RK-opt
 .. toctree::
    :maxdepth: 2
 
+   rk-methods
    started
    about
    future
@@ -50,6 +52,8 @@ RK-opt
 *********
 Reference
 *********
+This section contains a compilation of the documentation of each function,
+organized by subpackage.
 
 .. toctree::
    :maxdepth: 2

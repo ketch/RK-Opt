@@ -27,7 +27,7 @@ sys.path.append(os.path.abspath('.'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo', 'sphinx.ext.coverage','sphinx.ext.viewcode','sphinx.ext.inheritance_diagram']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo', 'sphinx.ext.coverage','sphinx.ext.viewcode','sphinx.ext.inheritance_diagram']#,'math_dollar']
 
 
 
@@ -203,7 +203,7 @@ htmlhelp_basename = 'RK-opt-doc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'RK-Opt.tex', u'RK-Opt User Manual', u'The RK-Opt development team', 'manual'),
+  ('index', 'RK-Opt.tex', u'RK-Opt User Manual', u'David I. Ketcheson, Matteo Parsani, and Aron Ahmadia', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
