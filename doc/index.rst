@@ -52,7 +52,7 @@ RK-opt
    started
    about
    future
-   bib
+   citing
 
 *********
 Reference
@@ -75,3 +75,5 @@ fork the `RK-Opt GitHub repository <https://github.com/ketch/RK-opt>`_,
 implement your additions, and `issue a pull request
 <https://help.github.com/articles/using-pull-requests>`_.  You may also
 simply e-mail a patch to us.
+
+.. include:: bib.rst
