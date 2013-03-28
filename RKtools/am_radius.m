@@ -13,11 +13,15 @@ function r = am_radius(A,b,c,eps,rmax)
 %
 % The radius of absolute monotonicity is the largest value of `r`
 % such that
-% \\begin{eqnarray}
-% K(I+rA)^{-1} &     \\ge & 0 \\\\
-% rK(I+rA)^{-1}e_m & \\le & e_{m+1} 
-% \\end{eqnarray}
-% where $$ K = \\left(\\begin{array}{c} A \\\\ b^T \\end{array}\\right) $$
+%
+% .. raw:: latex
+%
+%    \begin{eqnarray}
+%    K(I+rA)^{-1} \ge & 0    \\
+%    rK(I+rA)^{-1}e_m \le & e_{m+1}
+%    \end{eqnarray}
+%
+%    where $$ K = \left(\begin{array}{c} A \\ b^T \end{array}\right) $$
 
 
 if nargin<5 rmax=50; end

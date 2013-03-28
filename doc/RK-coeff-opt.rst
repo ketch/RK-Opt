@@ -202,7 +202,7 @@ The meaning of the arguments is as follows:
 
     .. note::
        **numerical experiments have shown that when the objective function is the minimization of the leading truncation error coefficient, the interior-point algorithm performs much better than the sqp one.**
-    
+
     * display: level of display of fmincon solver ('off', 'iter', 'notify' or 'final'). The default value is 'notify'.
     * problem_class: class of problems for which the RK is designed ('linear' or 'nonlinear' problems). This option changes the type of order conditions check, i.e. linear or nonlinear order conditions controll. The default value is 'nonlinear'.
 
@@ -210,12 +210,12 @@ The meaning of the arguments is as follows:
 .. note::
 
    Only :math:`s`: , :math:`p`: , class and objective are required inputs.
-   All the other arguments are **parameter name - value arguments to the input 
+   All the other arguments are **parameter name - value arguments to the input
    parser scheme**. Therefore they can be specified in any order.
 
    **Example**::
 
-    >>> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
+    >> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
 
 The fmincon options are set through the **optimset** that creates/alters optimization options structure. By default the following additional options are used:
     * MaxFunEvals = 1000000
