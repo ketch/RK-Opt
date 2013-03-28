@@ -31,20 +31,20 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %
 %     .. note::
 %        **numerical experiments have shown that when the objective function is the minimization of the leading truncation error coefficient, the interior-point algorithm performs much better than the sqp one.**
-%     
+%
 %     * display: level of display of fmincon solver ('off', 'iter', 'notify' or 'final'). The default value is 'notify'.
 %     * problem_class: class of problems for which the RK is designed ('linear' or 'nonlinear' problems). This option changes the type of order conditions check, i.e. linear or nonlinear order conditions controll. The default value is 'nonlinear'.
-% 
-% 
+%
+%
 % .. note::
-% 
+%
 %    Only :math:`s`: , :math:`p`: , class and objective are required inputs.
-%    All the other arguments are **parameter name - value arguments to the input 
+%    All the other arguments are **parameter name - value arguments to the input
 %    parser scheme**. Therefore they can be specified in any order.
 %
 %    **Example**::
-% 
-%     >>> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
+%
+%     >> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
 %
 % The fmincon options are set through the **optimset** that creates/alters optimization options structure. By default the following additional options are used:
 %     * MaxFunEvals = 1000000
@@ -62,7 +62,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
     setup_params(varargin);
 
 % New random seed every time
-rand('twister', sum(100*clock)); 
+rand('twister', sum(100*clock));
 
 % Open pool of sessions (# is equal to the processors specified in np)
 if np>1
@@ -77,7 +77,7 @@ options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.
 %,'RelLineSrchBnd',0.1,'RelLineSrchBndDuration',100000000);
 %Also, sometimes something can be gained by adjusting 'Tol*' above.
 %==============================================
- 
+
 if strcmp(objective,'ssp')
     opts = optimset(options,'GradObj','on');
 elseif strcmp(objective,'acc')
@@ -85,7 +85,7 @@ elseif strcmp(objective,'acc')
 else
     error('Unrecognized objective type.');
 end
-                 
+
 %Set the linear constraints: Aeq*x = beq
 %and the upper and lower bounds on the unknowns: lb <= x <= ub
 [Aeq,beq,lb,ub] = linear_constraints(s,class,objective,k);
@@ -96,7 +96,7 @@ for i=1:max_tries
     if np>1
         % # of starting points for multistart
         nsp = 20;
-        
+
         for i=1:nsp
             x(i,:) = initial_guess(s,p,class,startvec,k);
             tpoints = CustomStartPointSet(x);
@@ -120,11 +120,11 @@ for i=1:max_tries
         end
 
         [X,FVAL,status] = fmincon(@(x) rk_obj(x,class,s,p,objective),...
-                                x,[],[],Aeq,beq,lb,ub,...  
+                                x,[],[],Aeq,beq,lb,ub,...
                                 @(x) nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k),opts);
     end
 
-  
+
     % Check order of the scheme
     if (class(1:2)=='2S' | class(1:2)=='3S')
         [rk.A,rk.b,rk.bhat,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,s,class);
@@ -136,7 +136,7 @@ for i=1:max_tries
         [rk.A,rk.Ahat,rk.b,rk.bhat,rk.rk.D,rk.theta] = unpack_msrk(X,s,k,class);
         order = p; %HACK
     end
-    
+
     % Compute properties of the method
     if strcmp(objective,'ssp')
         rk.r = -FVAL;
@@ -149,7 +149,7 @@ for i=1:max_tries
         fprintf('The method found has order of accuracy: %d \n', order)
         break;
     end
-end 
+end
 
 if (i==max_tries && status<=0)
     fprintf('Failed to find a solution.\n')
@@ -162,7 +162,7 @@ if k==1
 
     if strcmp(objective,'ssp')
         [rk.v_opt,rk.alpha_opt,rk.beta_opt] = optimal_shuosher_form(rk.A,rk.b,rk.c);
-    
+
     if (write_to_file == 1 && p == order)
         output = write_file(rk,p);
     end
@@ -206,9 +206,9 @@ default_problem_class = 'nonlinear';
 % Populate input parser object
 % ----------------------------
 % Parameter values
-i_p.addParamValue('k',1,@isnumeric); 
-i_p.addParamValue('min_amrad',0,@isnumeric); 
-i_p.addParamValue('poly_coeff_ind',[],@isnumeric); 
+i_p.addParamValue('k',1,@isnumeric);
+i_p.addParamValue('min_amrad',0,@isnumeric);
+i_p.addParamValue('poly_coeff_ind',[],@isnumeric);
 i_p.addParamValue('poly_coeff_val',[],@isnumeric);
 i_p.addParamValue('startvec',default_startvec);
 i_p.addParamValue('solveorderconditions',default_solveorderconditions,@(x) isnumeric(x) && any(x==expected_solveorderconditions))
@@ -252,8 +252,8 @@ switch class
         %Explicit Runge-Kutta
         switch starttype
             case 'random'
-                x(1:s-1)=sort(rand(1,s-1)-1/2); 
-                x(s:2*s-2)=rand(1,s-1)-1/2; 
+                x(1:s-1)=sort(rand(1,s-1)-1/2);
+                x(s:2*s-2)=rand(1,s-1)-1/2;
                 x(2*s-1)=1-sum(x(s:2*s-2));
                 x(2*s:2*s-1+s*(s-1)/2)=rand(1,s*(s-1)/2)-1/2;
                 x(2*s+s*(s-1)/2)=-0.01;
@@ -270,8 +270,8 @@ switch class
         % Implicit Runge-Kutta
         switch starttype
             case 'random'
-                x(1:s)=sort(rand(1,s)); 
-                x(s+1:2*s-1)=rand(1,s-1); 
+                x(1:s)=sort(rand(1,s));
+                x(s+1:2*s-1)=rand(1,s-1);
                 x(2*s)=1-sum(x(s+1:2*s-1));
                 x(2*s+1:2*s+s^2)=rand(1,s^2);
                 x(2*s+s^2+1)=-0.01;
@@ -293,7 +293,7 @@ switch class
             case 'random'
                 x(1:s-1)=sort(rand(1,s-1));    %c's
                 x(s:2*s-2)=rand(1,s-1);        %b's
-                x(2*s-1)=1-sum(x(s:2*s-2)); 
+                x(2*s-1)=1-sum(x(s:2*s-2));
                 x(2*s:2*s-1+s*(s-1))=rand(1,s*(s-1));  %A's
                 x(2*s+s*(s-1))=-0.01;            %r
             case 'smart'
@@ -343,7 +343,7 @@ switch class
                 nbz=4;
                 %modified 2nd order
                 x(1:s-1)=(1:s-1)/s;
-                x(s:2*s-1)=1/(s-nbz);  
+                x(s:2*s-1)=1/(s-nbz);
                 %Zero some b's:
                 x(2*s-nbz:2*s-1)=0;
                 x(s)=x(s)/2;
@@ -386,8 +386,8 @@ end
 function wf=write_file(rk,p)
 %function wf=write_file(rk,p)
 %
-% 
-% Write to file Butcher's coefficients and low-storage coefficients if 
+%
+% Write to file Butcher's coefficients and low-storage coefficients if
 % required.
 
 szA = size(rk.A);
