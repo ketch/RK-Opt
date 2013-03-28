@@ -26,11 +26,15 @@ the default value of rmax to be increased.
 
 The radius of absolute monotonicity is the largest value of `r`
 such that
-\\begin{eqnarray}
-K(I+rA)^{-1} &     \\ge & 0 \\\\
-rK(I+rA)^{-1}e_m & \\le & e_{m+1} 
-\\end{eqnarray}
-where $$ K = \\left(\\begin{array}{c} A \\\\ b^T \\end{array}\\right) $$
+
+.. raw:: latex
+
+   \begin{eqnarray}
+   K(I+rA)^{-1} \ge & 0    \\
+   rK(I+rA)^{-1}e_m \le & e_{m+1}
+   \end{eqnarray}
+
+   where $$ K = \left(\begin{array}{c} A \\ b^T \end{array}\right) $$
 
 
 
@@ -135,7 +139,10 @@ p contains the coefficients of the numerator
 
 q contains the coefficients of the denominator
 
-$$\\phi(z)=\\frac{\\sum_j p_j z^j}{\\sum_j q_j z^j} = \\frac{\\det(I-z(A+eb^T))}{\\det(I-zA)}.$$
+
+.. raw:: latex
+
+    $$\phi(z)=\frac{\sum_j p_j z^j}{\sum_j q_j z^j} = \frac{\det(I-z(A+eb^T))}{\det(I-zA)}.$$
 
 
 
