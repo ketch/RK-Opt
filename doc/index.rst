@@ -68,8 +68,11 @@ organized by subpackage.
    polyopt
    RKtools
 
+
+************
 Contributing
--------------
+************
+
 If you wish to contribute, we recommend that you
 fork the `RK-Opt GitHub repository <https://github.com/ketch/RK-opt>`_,
 implement your additions, and `issue a pull request

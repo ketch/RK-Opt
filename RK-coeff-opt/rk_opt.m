@@ -4,10 +4,10 @@ function rk = rk_opt(s,p,class,objective,varargin)
 % Find optimal RK and multistep RK methods.
 % The meaning of the arguments is as follows:
 %
-%     * :math:`s`: number of stages.
-%     * :math:`k`: number of steps (1 for RK methods)
-%     * :math:`p`: order of the Runge-Kutta (RK) scheme.
-%     * class: class of method to search %       Available classes:
+%     * `s` number of stages.
+%     * `k` number of steps (1 for RK methods)
+%     * `p` order of the Runge-Kutta (RK) scheme.
+%     * class: class of method to search.  Available classes:
 %
 %       * 'erk'      : Explicit Runge-Kutta methods
 %       * 'irk'      : Implicit Runge-Kutta methods
@@ -20,11 +20,11 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %
 %     * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient)
 %       Accuracy optimization is not currently supported for multistep RK methods
-%     * poly_coeff_ind: index of the polynomial coefficients to constrain (:math:`\beta_j`) for :math:`j > p`  (j denotes the index of the stage). The default value is an empty array.  Note that one should not include any indices :math:`i \le p`, since those are determined by the order conditions.
-%     * poly_coeff_val: constrained values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights). The default value is an empty array.
+%     * poly_coeff_ind: index of the polynomial coefficients to constrain (`\beta_j`) for `j > p`  (j denotes the index of the stage). The default value is an empty array.  Note that one should not include any indices `i \le p`, since those are determined by the order conditions.
+%     * poly_coeff_val: constrained values of the polynomial coefficients (`\beta_j`) for `j > p` (tall-tree elementary weights). The default value is an empty array.
 %     * startvec: vector of the initial guess ('random' = random approach; 'smart' = smart approach; alternatively, the user can provide the startvec array. By default startvec is initialize with random numbers.
 %     * solveorderconditions: if set to 1, solve the order conditions first before trying to optimize. The default value is 0.
-%     * np: number of processor to use. If np :math:`> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
+%     * np: number of processor to use. If np `> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
 %     * max_tries: maximum number of fmincon function calls. The default value is 10.
 %     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
 %     * algorithm: which algorithm to use in fmincon: 'sqp','interior-point', or 'active-set'. By default sqp is used.
@@ -36,11 +36,11 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * problem_class: class of problems for which the RK is designed ('linear' or 'nonlinear' problems). This option changes the type of order conditions check, i.e. linear or nonlinear order conditions controll. The default value is 'nonlinear'.
 %
 %
-% .. note::
+%     .. note::
 %
-%    Only :math:`s`: , :math:`p`: , class and objective are required inputs.
-%    All the other arguments are **parameter name - value arguments to the input
-%    parser scheme**. Therefore they can be specified in any order.
+%        Only `s` , `p` , class and objective are required inputs.
+%        All the other arguments are **parameter name - value arguments to the input
+%        parser scheme**. Therefore they can be specified in any order.
 %
 %    **Example**::
 %

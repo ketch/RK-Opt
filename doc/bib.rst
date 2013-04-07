@@ -1,6 +1,6 @@
-============
+************
 Bibliography
-============
+************
 The papers listed here were produced using RK-Opt, and several of them describe parts of it.
 RK-Opt can be used to easily reproduce many of the results in these papers.
 
