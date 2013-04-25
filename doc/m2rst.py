@@ -52,6 +52,7 @@ def compile_docstrings(directory,rstfile):
             output.write('\n\n')
 
 def write_h1(stream,title):
+    stream.write('.. _'+title+':\n\n')
     stream.write('='*len(title)+'\n')
     stream.write(title+'\n')
     stream.write('='*len(title)+'\n')
