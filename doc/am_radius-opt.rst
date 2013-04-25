@@ -1,3 +1,5 @@
+.. _am_radius-opt:
+
 =============
 am_radius-opt
 =============
