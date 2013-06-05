@@ -1,5 +1,5 @@
-function rk = starting_opt(alpha,beta,s,p)
-%function rk = starting_opt(alpha,beta)
+function rk = starting_opt(alpha,beta,s,p,varargin)
+%function rk = starting_opt(alpha,beta,s,p,varargin)
 %
 % Find optimal RK method for starting a given multistep method
 % in order to maximize the step size for monotonicity.
@@ -30,7 +30,7 @@ opts = optimset(options,'GradObj','on');
 %First find the upper bound -- the step size for boundedness.
 %This is independent of the starting procedure.
 N = 100;
-rmax = lmm_boundedness(alpha,beta,N);
+rmax = lmm_boundedness(alpha,beta,N)
 
 %Set the linear constraints: Aeq*x = beq
 %and the upper and lower bounds on the unknowns: lb <= x <= ub
@@ -70,14 +70,13 @@ for i=1:max_tries
 
         [X,FVAL,status] = fmincon(@(x) rk_obj(x,class,s,p,objective),...
                                 x,[],[],Aeq,beq,lb,ub,...
-                                @(x) nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k),opts);
+                                @(x) nonlinear_constraints(x,class,s,p,alpha,beta),opts);
     end
 
     rk.r = -FVAL;
 
      % If a solution is found, then exit the loop
-    if (status>0 && p==order && (~strcmp(objective,'ssp') || rk.r>min_amrad))
-        fprintf('The method found has order of accuracy: %d \n', order)
+    if (status>0 && rk.r>min_amrad)
         break;
     end
 end
@@ -88,13 +87,12 @@ if (i==max_tries && status<=0)
     return
 end
 
-if k==1
-    if strcmp(objective,'ssp')
-        [rk.v_opt,rk.alpha_opt,rk.beta_opt] = optimal_shuosher_form(rk.A,rk.b,rk.c);
+[rk.A,rk.b,rk.c] = unpack_rk(X,s,class);
 
-    if (write_to_file == 1 && p == order)
-        output = write_file(rk,p);
-    end
+[rk.v_opt,rk.alpha_opt,rk.beta_opt] = optimal_shuosher_form(rk.A,rk.b,rk.c);
+
+if (write_to_file == 1)
+    output = write_file(rk,p);
 end
 
 if np>1 matlabpool close; end
