@@ -27,7 +27,9 @@ def extract_matlab_docstring(mfile):
     return docstring+'\n'
 
 def compile_docstrings(directory,rstfile):
-    """Write all the docstrings from directory to rstfile."""
+    """Write all the docstrings from the files in the specified directory to 
+       the file rstfile."""
+
     import os
     output=open(rstfile,'w')
 
