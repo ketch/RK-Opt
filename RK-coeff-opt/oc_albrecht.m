@@ -197,7 +197,7 @@ elseif min_stage_order==3
 
     coneq=[coneq tau_2' tau_3'];
     if p>9
-        disp('Albrecht-form order conditions for p>6 not coded yet')
+        disp('Albrecht-form order conditions for p>9 not coded yet')
     end
 else disp('Order conditions for stage_order>3 are not coded up yet');
 end

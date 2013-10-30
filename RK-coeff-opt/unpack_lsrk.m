@@ -1,4 +1,4 @@
-function [A,b,bhat,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
+function [A,Ahat,b,bhat,c,chat,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
 % function [A,b,bhat,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
 %
 % Extracts the coefficient arrays from the optimization vector.
@@ -41,6 +41,16 @@ switch class
     %      beta21 ... beta_{s+1,s}
     %     gamma_{53} ... gamma_{s+1,3} delta_s delta_{s+1} delta_{s+2} ]
     delta =[1 X(s:2*s-3) X(end-2:end)];
+  case '3SstarembFSAL'
+    % n = 4s - 2 free parameters
+    s=(length(X)+2)/4; % # of stages
+    assert(s>=3, '3S* methods require at least 3 stages');
+    %for 3S* methods with an embedded method
+    %X=[gamma_{32} ... gamma_{s+1,2} delta2 ... delta_{s-1} 
+    %      beta21 ... beta_{s+1,s}
+    %     gamma_{53} ... gamma_{s+1,3} delta_s delta_{s+1} delta_{s+2} ]
+    delta =[1 X(s:2*s-3) X(end-3:end-1)];
+    betahat = X(end);
 end
 
 if strcmp(class(1:2),'2S')
@@ -83,10 +93,19 @@ elseif strcmp(class(1:2),'3S')
 end
 
 %Now do embedded method
+Ahat = A;
+chat = c;
 if strcmp(class,'2Semb')
     bhat = (delta*[A;b']/sum(delta))';
 elseif strcmp(class,'3Sstaremb')
   bhat = (delta(1:s+1)*[A;b']/sum(delta))';
+elseif strcmp(class,'3SstarembFSAL')
+  bhat = (delta(1:s+1)*[A;b']/sum(delta))';
+  bhat(end+1) = betahat;
+  Ahat = A;
+  Ahat(end+1,:) = b';
+  Ahat(:,end+1) = 0;
+  chat(end+1) = 1;
 else
   bhat = [];
 end

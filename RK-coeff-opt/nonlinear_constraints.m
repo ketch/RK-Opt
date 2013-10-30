@@ -29,7 +29,7 @@ function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,
 oc_form = 'albrecht';
 
 if k==1
-    [A,b,c]=unpack_rk(x,s,class);
+    [A,b,c,Ahat,bhat,chat]=unpack_rk(x,s,class);
 else
     [A,Ahat,b,bhat,D,theta] =  unpack_msrk(x,s,k,class);
 end
@@ -83,8 +83,16 @@ if k>1
     coneq= oc_ksrk(A,b,D,theta,p);
 elseif strcmp(oc_form,'albrecht')
     coneq = oc_albrecht(A,b,c,p);
+    if length(bhat)>0
+        coneq2 = oc_albrecht(Ahat,bhat,chat,p-1);
+        coneq = [coneq  coneq2];
+    end
 elseif strcmp(oc_form,'butcher')
     coneq = oc_butcher(A,b,c,p);
+    if length(bhat)>0
+        coneq2 = oc_butcher(Ahat,bhat,chat,p-1);
+        coneq = [coneq  coneq2];
+    end
 end
 %=====================================================
 

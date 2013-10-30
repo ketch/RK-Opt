@@ -127,7 +127,7 @@ for i=1:max_tries
 
     % Check order of the scheme
     if (class(1:2)=='2S' | class(1:2)=='3S')
-        [rk.A,rk.b,rk.bhat,rk.c,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,s,class);
+        [rk.A,rk.Ahat,rk.b,rk.bhat,rk.c,rk.chat,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,s,class);
         order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
     elseif k==1
         [rk.A,rk.b,rk.c] = unpack_rk(X,s,class);
@@ -162,6 +162,7 @@ if k==1
 
     if strcmp(objective,'ssp')
         [rk.v_opt,rk.alpha_opt,rk.beta_opt] = optimal_shuosher_form(rk.A,rk.b,rk.c);
+    end
 
     if (write_to_file == 1 && p == order)
         output = write_file(rk,p);
