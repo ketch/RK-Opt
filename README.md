@@ -25,3 +25,5 @@ The following people have contributed code to RK-opt (listed alphabetically):
  - Aron Ahmadia: **polyopt** routines
  - David Ketcheson: Principal author and maintainer
  - Matteo Parsani: **RK-coeff-opt** routines and organization
+ - Zachary Grant: Extension of order conditions to multistep RK with more than two stages and 
+    addition of order conditions for orders 9-11.
