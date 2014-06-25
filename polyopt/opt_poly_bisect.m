@@ -27,7 +27,7 @@ function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,varargin)
 %               plotstabreg_func(poly_coeff,[1])
 
 [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true] = opt_poly_params(s,lam,varargin);
+        h_true,do_plot] = opt_poly_params(s,lam,varargin);
 
 diagnostics_init;
 
@@ -85,6 +85,9 @@ diagnostics_finalize;
 
 h=h_min; % Return the largest known feasible value
 
+if do_plot
+    stability_plot(h*lam,poly_coeff);
+end
 
 
 %====================================================
@@ -164,7 +167,6 @@ end
 status=cvx_status;
 v = cvx_optval;
 diagnostics_least_deviation;
-
 
 
 %====================================================
@@ -256,7 +258,7 @@ end
 
 %==============================================================
 function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true] = opt_poly_params(s,lam,optional_params);
+        h_true,do_plot] = opt_poly_params(s,lam,optional_params);
 % function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
 %        h_true] = opt_poly_params(s,lam,optional_params);
 %
@@ -273,6 +275,7 @@ i_p.addParamValue('h_min',0,@isnumeric);
 i_p.addParamValue('h_max',default_h_max,@isnumeric);
 i_p.addParamValue('max_steps',1000,@isnumeric);
 i_p.addParamValue('h_true',[]);
+i_p.addParamValue('do_plot',false,@islogical);
 
 i_p.parse(optional_params{:});
 
@@ -283,3 +286,13 @@ h_min             = i_p.Results.h_min;
 h_max             = i_p.Results.h_max;
 max_steps         = i_p.Results.max_steps;
 h_true            = i_p.Results.h_true;
+do_plot           = i_p.Results.do_plot;
+
+
+
+function status = stability_plot(lam,poly_coeff)
+    plotstabreg_func(poly_coeff,[1])
+    hold on;
+    plot(real(lam),imag(lam),'o')
+    hold off;
+    status = 1;
