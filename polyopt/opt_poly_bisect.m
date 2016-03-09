@@ -49,6 +49,15 @@ for i_step=1:max_steps
         % Divide by 'h' here, since we will multiply by it later
         lam = lam_func(h)/h;
     end
+
+    % lam should be a column vector
+    shape = size(lam)
+    if shape(1) == 1
+        lam = lam'
+    end
+    % length(lam) should be at least s+1
+    assert(length(lam)>=s+1,'Underdetermined: spectrum should contain at least s+1 values.')
+
     
     [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sdpt3',row_scale,diag_on);
     if strcmp(status,'Failed') || v==Inf || isnan(v)
