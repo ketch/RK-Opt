@@ -65,8 +65,8 @@ function rk = rk_opt(s,p,class,objective,varargin)
 rand('twister', sum(100*clock));
 
 % Open pool of sessions (# is equal to the processors specified in np)
-if np>1
-    matlabpool('local',np);
+if np > 1
+    parpool('local', np);
 end
 
 %Set optimization parameters:
@@ -169,7 +169,9 @@ if k==1
     end
 end
 
-if np>1 matlabpool close; end
+if np > 1 
+    delete(gcp('nocreate'));
+end
 end
 % =========================================================================
 
