@@ -19,3 +19,16 @@ if nargin<2 plotbounds=[-9 1 -5 5]; end
 [p,q]=rk_stabfun(rk);
 
 plotstabreg_func(p,q,plotbounds,ls,lw);
+
+if isfield(rk, 'bhat')
+    hold on
+    rk_emb.b = rk.bhat;
+    Ahat = zeros(size(rk.A,1)+1, size(rk.A,2)+1);
+    Ahat(1:end-1, 1:end-1) = rk.A(:,:);
+    Ahat(end, 1:end-1) = rk.b(:);
+    rk_emb.A = Ahat;
+    [phat, qhat] = rk_stabfun(rk_emb);
+    plotstabreg_func(phat, qhat, plotbounds, '-b', lw);
+    legend('Main', 'Embedded');
+    hold off
+end

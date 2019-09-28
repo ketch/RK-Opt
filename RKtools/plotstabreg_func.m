@@ -66,6 +66,7 @@ contour(xa,ya,R,[1 1],ls,'LineWidth',lw);
 title('Absolute stability region');
 hold on
 axis equal
-v=axis
-plot([0 0],v(3:4),'--k'); plot(v(1:2),[0 0],'--k')
+v=axis;
+plot([0 0],v(3:4),'--k', 'HandleVisibility', 'off');
+plot(v(1:2),[0 0],'--k', 'HandleVisibility', 'off');
 hold off
