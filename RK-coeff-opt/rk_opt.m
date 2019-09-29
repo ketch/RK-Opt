@@ -58,8 +58,8 @@ function rk = rk_opt(s,p,class,objective,varargin)
 
 
 [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,write_to_file,algorithm,display,min_amrad]=...
-    setup_params(varargin);
+    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
+    algorithm,display,min_amrad] = setup_params(varargin);
 
 % New random seed every time
 rand('twister', sum(100*clock));
@@ -103,9 +103,11 @@ starting_points = CustomStartPointSet(x);
 
 problem = createOptimProblem('fmincon','x0',x(1,:),'objective', ...
           @(x) rk_obj(x,class,s,p,objective),'Aeq',Aeq,'beq',beq,...
-          'lb',lb,'ub',ub,'nonlcon',...
-          @(x) nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,...
-          poly_coeff_val,k),'options',opts);
+                      'lb',lb,'ub',ub,...
+                      'nonlcon', @(x) nonlinear_constraints(x,class,s,p,objective,...
+                                            poly_coeff_ind, poly_coeff_val, k,...
+                                            emb_poly_coeff_ind, emb_poly_coeff_val),...
+                      'options',opts);
 if np > 1
     ms = MultiStart('Display','final','UseParallel', true);
 else
@@ -166,11 +168,11 @@ end
 % =========================================================================
 
 function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
-    solveorderconditions,write_to_file,algorithm,display,min_amrad]=...
-    setup_params(optional_params)
-%function [k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
-%    solveorderconditions,write_to_file,algorithm,display,min_amrad]=...
-%    setup_params(optional_params)
+    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
+    algorithm,display,min_amrad] = setup_params(optional_params)
+%function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
+%    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
+%    algorithm,display,min_amrad] = setup_params(optional_params)
 %
 % Set default optional and param values
 
@@ -200,6 +202,8 @@ i_p.addParamValue('k',1,@isnumeric);
 i_p.addParamValue('min_amrad',0,@isnumeric);
 i_p.addParamValue('poly_coeff_ind',[],@isnumeric);
 i_p.addParamValue('poly_coeff_val',[],@isnumeric);
+i_p.addParamValue('emb_poly_coeff_ind',[],@isnumeric);
+i_p.addParamValue('emb_poly_coeff_val',[],@isnumeric);
 i_p.addParamValue('startvec',default_startvec);
 i_p.addParamValue('solveorderconditions',default_solveorderconditions,@(x) isnumeric(x) && any(x==expected_solveorderconditions))
 i_p.addParamValue('np',default_np,@isnumeric);
@@ -218,6 +222,8 @@ num_starting_points  = i_p.Results.num_starting_points * i_p.Results.np;
 startvec             = i_p.Results.startvec;
 poly_coeff_ind       = i_p.Results.poly_coeff_ind;
 poly_coeff_val       = i_p.Results.poly_coeff_val;
+emb_poly_coeff_ind   = i_p.Results.emb_poly_coeff_ind;
+emb_poly_coeff_val   = i_p.Results.emb_poly_coeff_val;
 solveorderconditions = i_p.Results.solveorderconditions;
 write_to_file        = i_p.Results.write_to_file;
 algorithm            = i_p.Results.algorithm;
