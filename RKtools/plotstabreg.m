@@ -20,13 +20,11 @@ if nargin<2 plotbounds=[-9 1 -5 5]; end
 
 plotstabreg_func(p,q,plotbounds,ls,lw);
 
-if isfield(rk, 'bhat')
+if isfield(rk, 'Ahat') && isfield(rk, 'bhat') && isfield(rk, 'chat')
     hold on
+    rk_emb.A = rk.Ahat;
     rk_emb.b = rk.bhat;
-    Ahat = zeros(size(rk.A,1)+1, size(rk.A,2)+1);
-    Ahat(1:end-1, 1:end-1) = rk.A(:,:);
-    Ahat(end, 1:end-1) = rk.b(:);
-    rk_emb.A = Ahat;
+    rk_emb.c = rk.chat;
     [phat, qhat] = rk_stabfun(rk_emb);
     plotstabreg_func(phat, qhat, plotbounds, '-b', lw);
     legend('Main', 'Embedded');
