@@ -379,31 +379,32 @@ end
 
 
 % =========================================================================
-function wf=write_file(rk,p)
-%function wf=write_file(rk,p)
+function write_file(rk, p)
+%function write_file(rk,p)
 %
 %
 % Write to file Butcher's coefficients and low-storage coefficients if
 % required.
 
-szA = size(rk.A);
+s = size(rk.A, 1);
 
-output_file_name = strcat('ERK-',num2str(p),'-',num2str(szA(1)),'.txt');
-write_fid = fopen(output_file_name,'w');
+% output_file_name = strcat('ERK-', num2str(p), '-', num2str(szA(1)), '.txt');
+io_filename = sprintf('ERK-%d-%d_%s.txt', p, s, datestr(now, 'yyyy-mm-ddTHH-MM-SS'));
+io = fopen(io_filename, 'w');
 
-fprintf(write_fid, '%s\t\t %s\n', '#stage','order');
-output = [szA(1);p];
-fprintf(write_fid, '%u\t \t\t%u\n\n',output);
+fprintf(io, '%s\t\t %s\n', '#stage','order');
+output = [s; p];
+fprintf(io, '%u\t \t\t%u\n\n', output);
 
 values = struct2cell(rk);
 names  = fieldnames(rk);
 for i=1:length(values)
-    write_field(write_fid,names{i},values{i});
+    write_field(io, names{i}, values{i});
 end
 
 str = '==============================================================';
-fprintf(write_fid,'\n%s\r\n\n',str);
+fprintf(io, '\n%s\r\n\n', str);
+fclose(io);
 
-wf= 1;
 end
 % =========================================================================
