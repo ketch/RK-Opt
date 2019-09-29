@@ -95,6 +95,7 @@ end
 if strcmp(class(1:2),'2S')
     gamma2=[0 1 X(1:s-1)];
 
+    gamma1 = zeros(s+1);
     for i=2:s+1
         gamma1(i)=1-gamma2(i)*sum(delta(1:i-1)); 
     end
@@ -123,6 +124,7 @@ elseif strcmp(class(1:2),'3S')
     gamma2=[0 1 X(1:s-1)];
     gamma3=[0 0 0 0 X(3*s-2:4*s-6)];
 
+    gamma1 = zeros(s+1);
     for i=2:s+1 
         gamma1(i)=1-gamma3(i)-gamma2(i)*sum(delta(1:i-1)); 
     end

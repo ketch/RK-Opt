@@ -24,12 +24,26 @@ C=diag(c);
 %=====================================================
 % Stage order conditions
 
-tau_2 = (c.^2)/factorial(2) - A*c;
-tau_3 = (c.^3)/factorial(3) - A*(c.^2)/factorial(2);
-tau_4 = (c.^4)/factorial(4) - A*(c.^3)/factorial(3);
-tau_5 = (c.^5)/factorial(5) - A*(c.^4)/factorial(4);
-tau_6 = (c.^6)/factorial(6) - A*(c.^5)/factorial(5);
-tau_7 = (c.^7)/factorial(7) - A*(c.^6)/factorial(6);
+c2_fac = (c .* c) ./ 2;
+c3_fac = c .* c2_fac ./ 3;
+c4_fac = c .* c3_fac ./ 4;
+c5_fac = c .* c4_fac ./ 5;
+c6_fac = c .* c5_fac ./ 6;
+c7_fac = c .* c6_fac ./ 7;
+
+tau_2 = c2_fac - A * c;
+tau_3 = c3_fac - A * c2_fac;
+tau_4 = c4_fac - A * c3_fac;
+tau_5 = c5_fac - A * c4_fac;
+tau_6 = c6_fac - A * c5_fac;
+tau_7 = c7_fac - A * c6_fac;
+
+% tau_2 = (c.^2)/factorial(2) - A*c;
+% tau_3 = (c.^3)/factorial(3) - A*(c.^2)/factorial(2);
+% tau_4 = (c.^4)/factorial(4) - A*(c.^3)/factorial(3);
+% tau_5 = (c.^5)/factorial(5) - A*(c.^4)/factorial(4);
+% tau_6 = (c.^6)/factorial(6) - A*(c.^5)/factorial(5);
+% tau_7 = (c.^7)/factorial(7) - A*(c.^6)/factorial(6);
 
 %=====================================================
 % Order conditions
@@ -199,6 +213,7 @@ elseif min_stage_order==3
     if p>9
         disp('Albrecht-form order conditions for p>9 not coded yet')
     end
-else disp('Order conditions for stage_order>3 are not coded up yet');
+else
+    disp('Order conditions for stage_order>3 are not coded up yet');
 end
 end
