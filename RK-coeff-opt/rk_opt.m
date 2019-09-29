@@ -25,7 +25,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * startvec: vector of the initial guess ('random' = random approach; 'smart' = smart approach; alternatively, the user can provide the startvec array. By default startvec is initialize with random numbers.
 %     * solveorderconditions: if set to 1, solve the order conditions first before trying to optimize. The default value is 0.
 %     * np: number of processor to use. If np `> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
-%     * max_tries: maximum number of fmincon function calls. The default value is 10.
+%     * num_starting_points: Number of starting points for the global optimization per processor. The default value is 10.
 %     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
 %     * algorithm: which algorithm to use in fmincon: 'sqp','interior-point', or 'active-set'. By default sqp is used.
 %
@@ -44,7 +44,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %
 %    **Example**::
 %
-%     >> rk=rk_opt(4,3,'erk','acc','max_tries',2,'np',1,'solveorderconditions',1)
+%     >> rk=rk_opt(4,3,'erk','acc','num_starting_points',2,'np',1,'solveorderconditions',1)
 %
 % The fmincon options are set through the **optimset** that creates/alters optimization options structure. By default the following additional options are used:
 %     * MaxFunEvals = 1000000
@@ -57,7 +57,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * GradObj = on, if the objective is set equal to 'ssp'
 
 
-[k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
+[k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
     solveorderconditions,write_to_file,algorithm,display,min_amrad]=...
     setup_params(varargin);
 
@@ -90,68 +90,59 @@ end
 %and the upper and lower bounds on the unknowns: lb <= x <= ub
 [Aeq,beq,lb,ub] = linear_constraints(s,class,objective,k);
 
-for i=1:max_tries
-    fprintf('Attempt %d\n', i);
-
-    if np>1
-        % # of starting points for multistart
-        nsp = 20;
-
-        for i=1:nsp
-            x(i,:) = initial_guess(s,p,class,startvec,k);
-            tpoints = CustomStartPointSet(x);
-        end
-
-        problem = createOptimProblem('fmincon','x0',x(1,:),'objective', ...
-                  @(x) rk_obj(x,class,s,p,objective),'Aeq',Aeq,'beq',beq,...
-                  'lb',lb,'ub',ub,'nonlcon',...
-                  @(x) nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,...
-                  poly_coeff_val,k),'options',opts);
-
-        ms = MultiStart('Display','final','UseParallel','always');
-        [X,FVAL,status,outputg,manyminsg] = run(ms,problem,tpoints);
-
-    else
-        x = initial_guess(s,p,class,startvec,k);
-
-        %Optionally find a feasible (for the order conditions) point to start
-        if solveorderconditions==1
-            x=fsolve(@(x) order_conditions(x,class,s,p,Aeq,beq),x);
-        end
-
-        [X,FVAL,status] = fmincon(@(x) rk_obj(x,class,s,p,objective),...
-                                x,[],[],Aeq,beq,lb,ub,...
-                                @(x) nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k),opts);
-    end
-
-
-    % Check order of the scheme
-    if (class(1:2)=='2S' | class(1:2)=='3S')
-        [rk.A,rk.Ahat,rk.b,rk.bhat,rk.c,rk.chat,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,s,class);
-        order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
-    elseif k==1
-        [rk.A,rk.b,rk.c] = unpack_rk(X,s,class);
-        order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
-    else
-        [rk.A,rk.Ahat,rk.b,rk.bhat,rk.rk.D,rk.theta] = unpack_msrk(X,s,k,class);
-        order = p; %HACK
-    end
-
-    % Compute properties of the method
-    if strcmp(objective,'ssp')
-        rk.r = -FVAL;
-    else
-        rk.r = am_radius(rk.A,rk.b,rk.c);
-    end
-
-     % If a solution is found, then exit the loop
-    if (status>0 && p==order && (~strcmp(objective,'ssp') || rk.r>min_amrad))
-        fprintf('The method found has order of accuracy: %d \n', order)
-        break;
+% construct the starting points for the global optimization
+for i = 1:num_starting_points
+    x(i,:) = initial_guess(s, p, class, startvec, k);
+    
+    %Optionally find a feasible (for the order conditions) point to start
+    if solveorderconditions==1
+        x(i,:) = fsolve(@(x) order_conditions(x,class,s,p,Aeq,beq), x(i,:));
     end
 end
+starting_points = CustomStartPointSet(x);
 
-if (i==max_tries && status<=0)
+problem = createOptimProblem('fmincon','x0',x(1,:),'objective', ...
+          @(x) rk_obj(x,class,s,p,objective),'Aeq',Aeq,'beq',beq,...
+          'lb',lb,'ub',ub,'nonlcon',...
+          @(x) nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,...
+          poly_coeff_val,k),'options',opts);
+if np > 1
+    ms = MultiStart('Display','final','UseParallel', true);
+else
+    ms = MultiStart('Display','final','UseParallel', false);
+end
+[X,FVAL,status] = run(ms, problem, starting_points);
+
+if np > 1 
+    delete(gcp('nocreate'));
+end
+
+
+% Check order of the scheme
+if strcmp(class(1:2),'2S') || strcmp(class(1:2),'3S')
+    [rk.A,rk.Ahat,rk.b,rk.bhat,rk.c,rk.chat,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,s,class);
+    order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
+elseif k==1
+    [rk.A,rk.b,rk.c] = unpack_rk(X,s,class);
+    order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
+else
+    [rk.A,rk.Ahat,rk.b,rk.bhat,rk.rk.D,rk.theta] = unpack_msrk(X,s,k,class);
+    order = p; %HACK
+end
+
+% Compute properties of the method
+if strcmp(objective,'ssp')
+    rk.r = -FVAL;
+else
+    rk.r = am_radius(rk.A,rk.b,rk.c);
+end
+
+ % If a solution is found, then exit the loop
+if (status>0 && p==order && (~strcmp(objective,'ssp') || rk.r>min_amrad))
+    fprintf('The method found has order of accuracy: %d \n', order)
+end
+
+if (status<=0)
     fprintf('Failed to find a solution.\n')
     rk = -1;
     return
@@ -165,20 +156,16 @@ if k==1
     end
 
     if (write_to_file == 1 && p == order)
-        output = write_file(rk,p);
+        write_file(rk,p);
     end
 end
-
-if np > 1 
-    delete(gcp('nocreate'));
-end
 end
 % =========================================================================
 
 
 % =========================================================================
 
-function [k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
+function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
     solveorderconditions,write_to_file,algorithm,display,min_amrad]=...
     setup_params(optional_params)
 %function [k,np,max_tries,startvec,poly_coeff_ind,poly_coeff_val,...
@@ -199,7 +186,7 @@ expected_problem_class = {'linear', 'nonlinear'};
 default_startvec = 'random';
 default_solveorderconditions = 0;
 default_np = 1;
-default_max_tries = 10;
+default_num_starting_points = 10;
 default_write_to_file = 1;
 default_algorithm = 'sqp';
 default_display = 'notify';
@@ -216,7 +203,7 @@ i_p.addParamValue('poly_coeff_val',[],@isnumeric);
 i_p.addParamValue('startvec',default_startvec);
 i_p.addParamValue('solveorderconditions',default_solveorderconditions,@(x) isnumeric(x) && any(x==expected_solveorderconditions))
 i_p.addParamValue('np',default_np,@isnumeric);
-i_p.addParamValue('max_tries',default_max_tries,@isnumeric);
+i_p.addParamValue('num_starting_points', default_num_starting_points, @isnumeric);
 i_p.addParamValue('write_to_file',default_write_to_file,@isnumeric);
 i_p.addParamValue('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
 i_p.addParamValue('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
@@ -227,7 +214,7 @@ i_p.parse(optional_params{:});
 k                    = i_p.Results.k;
 min_amrad            = i_p.Results.min_amrad;
 np                   = i_p.Results.np;
-max_tries            = i_p.Results.max_tries;
+num_starting_points  = i_p.Results.num_starting_points * i_p.Results.np;
 startvec             = i_p.Results.startvec;
 poly_coeff_ind       = i_p.Results.poly_coeff_ind;
 poly_coeff_val       = i_p.Results.poly_coeff_val;
