@@ -139,9 +139,9 @@ else
     rk.r = am_radius(rk.A,rk.b,rk.c);
 end
 
- % If a solution is found, then exit the loop
-if (status>0 && p==order && (~strcmp(objective,'ssp') || rk.r>min_amrad))
-    fprintf('The method found has order of accuracy: %d \n', order)
+ % If a solution is found
+if (status>0 && (~strcmp(objective,'ssp') || rk.r>min_amrad))
+    fprintf('The method found has order of accuracy: %d (wanted: %d)\n', order, p)
 end
 
 if (status<=0)
