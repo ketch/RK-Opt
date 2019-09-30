@@ -1,5 +1,5 @@
-function plotstabreg(rk,plotbounds,ls,lw)
-% function plotstabreg(rk,plotbounds,ls,lw)
+function [contour_matrix] = plotstabreg(rk,plotbounds,ls,lw)
+% function [contour_matrix] = plotstabreg(rk,plotbounds,ls,lw)
 %
 % Plots the absolute stability region
 % of a Runge-Kutta method, given the Butcher array
@@ -18,7 +18,7 @@ if nargin<2 plotbounds=[-9 1 -5 5]; end
 
 [p,q]=rk_stabfun(rk);
 
-plotstabreg_func(p,q,plotbounds,ls,lw);
+contour_matrix = plotstabreg_func(p,q,plotbounds,ls,lw);
 
 if isfield(rk, 'Ahat') && isfield(rk, 'bhat') && isfield(rk, 'chat')
     hold on
