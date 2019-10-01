@@ -27,6 +27,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * np: number of processor to use. If np `> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
 %     * num_starting_points: Number of starting points for the global optimization per processor. The default value is 10.
 %     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
+%     * append_time: whether a timestamp should be added to the output file name
 %     * algorithm: which algorithm to use in fmincon: 'sqp','interior-point', or 'active-set'. By default sqp is used.
 %
 %     .. note::
@@ -59,7 +60,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 
 [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
     emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
-    algorithm,display,min_amrad] = setup_params(varargin);
+    algorithm,display,min_amrad,append_time] = setup_params(varargin);
 
 % New random seed every time
 rand('twister', sum(100*clock));
@@ -158,7 +159,7 @@ if k==1
     end
 
     if (write_to_file == 1 && p == order)
-        write_file(rk,p);
+        write_file(rk,p,append_time);
     end
 end
 end
@@ -169,7 +170,7 @@ end
 
 function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
     emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
-    algorithm,display,min_amrad] = setup_params(optional_params)
+    algorithm,display,min_amrad,append_time] = setup_params(optional_params)
 %function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
 %    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
 %    algorithm,display,min_amrad] = setup_params(optional_params)
@@ -211,6 +212,7 @@ i_p.addParamValue('num_starting_points', default_num_starting_points, @isnumeric
 i_p.addParamValue('write_to_file',default_write_to_file,@isnumeric);
 i_p.addParamValue('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
 i_p.addParamValue('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
+i_p.addParamValue('append_time',true);
 
 
 i_p.parse(optional_params{:});
@@ -228,6 +230,7 @@ solveorderconditions = i_p.Results.solveorderconditions;
 write_to_file        = i_p.Results.write_to_file;
 algorithm            = i_p.Results.algorithm;
 display              = i_p.Results.display;
+append_time          = i_p.Results.append_time;
 end
 % =========================================================================
 
@@ -379,8 +382,8 @@ end
 
 
 % =========================================================================
-function write_file(rk, p)
-%function write_file(rk,p)
+function write_file(rk, p, append_time)
+%function write_file(rk, p, append_time)
 %
 %
 % Write to file Butcher's coefficients and low-storage coefficients if
@@ -388,8 +391,11 @@ function write_file(rk, p)
 
 s = size(rk.A, 1);
 
-% output_file_name = strcat('ERK-', num2str(p), '-', num2str(szA(1)), '.txt');
-io_filename = sprintf('ERK-%d-%d_%s.txt', p, s, datestr(now, 'yyyy-mm-ddTHH-MM-SS'));
+if append_time
+    io_filename = sprintf('ERK-%d-%d_%s.txt', p, s, datestr(now, 'yyyy-mm-ddTHH-MM-SS'));
+else
+    io_filename = sprintf('ERK-%d-%d.txt', p, s);
+end
 io = fopen(io_filename, 'w');
 
 fprintf(io, '%s\t\t %s\n', '#stage','order');
