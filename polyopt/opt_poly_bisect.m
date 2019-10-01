@@ -1,5 +1,5 @@
-function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,varargin)
-% function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,varargin)
+function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
+% function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
 %
 % Finds an optimally stable polynomial of degree s and order p for the spectrum
 % lam in the interval (h_min,h_max) to precision eps.
@@ -29,7 +29,19 @@ function [h,poly_coeff] = opt_poly_bisect(lam,s,p,basis,varargin)
 [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
         h_true,do_plot] = opt_poly_params(s,lam,varargin);
 
-diagnostics_init;
+%Diagnostics requested
+if nargout >= 3           
+    if isempty(h_true)
+        error('Enabling diagnostics assumes h_true is given!');
+    end
+    diag_on=true;
+    diag_bisect.lam = lam; diag_bisect.s = s; diag_bisect.p = p; diag_bisect.basis = basis; diag_bisect.tol_bisect = tol_bisect;
+    diag_bisect.tol_feasible = tol_feasible; diag_bisect.h_min = h_min; diag_bisect.h_max = h_max; diag_bisect.max_steps = max_steps; diag_bisect.h_true = h_true;
+    diag_bisect.solved_steps = []; diag_bisect.failed_steps = []; diag_bisect.right_steps = []; diag_bisect.wrong_steps = [];
+else
+    diag_on=false;
+end
+
 
 if strcmp(basis,'monomial')
     row_scale = factorial(0:s);
@@ -51,9 +63,9 @@ for i_step=1:max_steps
     end
 
     % lam should be a column vector
-    shape = size(lam)
+    shape = size(lam);
     if shape(1) == 1
-        lam = lam'
+        lam = lam';
     end
     % length(lam) should be at least s+1
     assert(length(lam)>=s+1,'Underdetermined: spectrum should contain at least s+1 values.')
@@ -68,7 +80,16 @@ for i_step=1:max_steps
         end
     end
 
-    diagnostics_update;
+    if diag_on
+        diag.step(i_step).solve = diag_solve; diag.step(i_step).h = h; diag.step(i_step).h_max = h_max;
+        diag.step(i_step).h_min = h_min; diag.step(i_step).x_opt = x_opt; diag.step(i_step).v = v;
+        diag.step(i_step).status = status;
+
+        if strcmp(status,'Solved') || strcmp(status,'Inaccurate/Solved')
+            diag.failed_steps(end+1) = i_step;
+        end
+ 
+    end
 
     % Check if CVX has found a feasible solution and bisect accordingly
     if strcmp(status,'Solved') || strcmp(status,'Inaccurate/Solved')
@@ -90,12 +111,18 @@ for i_step=1:max_steps
     fprintf(' [%5.0d] h_min: %e h_max: %e h_true: %e\n',i_step,h_min,h_max,h_true);         
 end
 
-diagnostics_finalize;
+if diag_on
+    diag.final_solve.solve = diag_solve; diag.final_solve.h = h; diag.final_solve.h_max = h_max;
+    diag.final_solve.h_min = h_min; diag.final_solve.x_opt = x_opt; diag.final_solve.v = v;
+    diag.final_solve.status = status;
+    diag.n_iter = i_step;
+end
 
 h=h_min; % Return the largest known feasible value
 
 if do_plot
     stability_plot(h*lam,poly_coeff);
+end
 end
 
 
@@ -175,7 +202,23 @@ if ~strcmp(basis,'monomial')
 end
 status=cvx_status;
 v = cvx_optval;
-diagnostics_least_deviation;
+if diag_on
+    diag.b = b;
+    diag.c = c;
+    diag.fixed_coefficients = fixed_coefficients;
+    diag.cond_b = cond(b);
+    diag.cond_c = cond(c);
+    diag.h = h;
+    diag.precision = precision;
+    diag.poly_coeffs = poly_coeffs;
+    diag.cvx.cputime = cvx_cputime;
+    diag.cvx.slvitr = cvx_slvitr;
+    diag.cvx.slvtol = cvx_slvtol;
+    diag.cvx.status = cvx_status;
+else 
+    diag = [];
+end
+end
 
 
 %====================================================
@@ -213,7 +256,7 @@ for j=0:N
         c(i,j+1) = (1+z(i)/r)^j;
     end
 end
-
+end
 
 
 %====================================================
@@ -262,12 +305,12 @@ c(:,2) = m1*z+m0;
 for k=1:N-1 
     c(:,k+2) = 2*(m1*c(:,k+1).*z + m0*c(:,k+1)) - c(:,k);
 end
-
+end
 
 
 %==============================================================
 function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true,do_plot] = opt_poly_params(s,lam,optional_params);
+        h_true,do_plot] = opt_poly_params(s,lam,optional_params)
 % function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
 %        h_true] = opt_poly_params(s,lam,optional_params);
 %
@@ -277,14 +320,14 @@ i_p.FunctionName = 'opt_poly_params';
 
 default_h_max        = 2.01*s^2*max(abs(lam)); 
 
-i_p.addParamValue('lam_func',0);
-i_p.addParamValue('tol_bisect',1.e-3,@isnumeric);
-i_p.addParamValue('tol_feasible',1.e-9,@isnumeric);
-i_p.addParamValue('h_min',0,@isnumeric);
-i_p.addParamValue('h_max',default_h_max,@isnumeric);
-i_p.addParamValue('max_steps',1000,@isnumeric);
-i_p.addParamValue('h_true',[]);
-i_p.addParamValue('do_plot',false,@islogical);
+i_p.addParameter('lam_func',0);
+i_p.addParameter('tol_bisect',1.e-3,@isnumeric);
+i_p.addParameter('tol_feasible',1.e-9,@isnumeric);
+i_p.addParameter('h_min',0,@isnumeric);
+i_p.addParameter('h_max',default_h_max,@isnumeric);
+i_p.addParameter('max_steps',1000,@isnumeric);
+i_p.addParameter('h_true',[]);
+i_p.addParameter('do_plot',false,@islogical);
 
 i_p.parse(optional_params{:});
 
@@ -296,12 +339,13 @@ h_max             = i_p.Results.h_max;
 max_steps         = i_p.Results.max_steps;
 h_true            = i_p.Results.h_true;
 do_plot           = i_p.Results.do_plot;
-
+end
 
 
 function status = stability_plot(lam,poly_coeff)
-    plotstabreg_func(poly_coeff,[1])
-    hold on;
-    plot(real(lam),imag(lam),'o')
-    hold off;
-    status = 1;
+plotstabreg_func(poly_coeff,[1])
+hold on;
+plot(real(lam),imag(lam),'o')
+hold off;
+status = 1;
+end
