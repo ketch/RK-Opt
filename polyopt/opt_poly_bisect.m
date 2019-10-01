@@ -6,6 +6,13 @@ function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
 %
 % Optional arguments:
 %
+%
+%       solvers: 
+%                 A cell array of cvx solver names that should be used to
+%                 solve the convex problem in the inner loop. Defaults to
+%                 {'sdpt3', 'sedumi'}. You can also add 'mosek' and
+%                 'gurobi' if you have obtained (free academic) licences
+%                 for these and installed them in cvx.
 %       lam_func: 
 %                 A function used to generate the appropriate spectrum
 %                 at each bisection step, instead of using a fixed (scaled) spectrum.
@@ -27,7 +34,7 @@ function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
 %               plotstabreg_func(poly_coeff,[1])
 
 [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true,do_plot] = opt_poly_params(s,lam,varargin);
+        h_true,do_plot,solvers] = opt_poly_params(s,lam,varargin);
 
 %Diagnostics requested
 if nargout >= 3           
@@ -71,12 +78,14 @@ for i_step=1:max_steps
     assert(length(lam)>=s+1,'Underdetermined: spectrum should contain at least s+1 values.')
 
     
-    [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sdpt3',row_scale,diag_on);
-    if strcmp(status,'Failed') || v==Inf || isnan(v)
-        disp('sdpt3 failed!');
-        [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,'sedumi',row_scale,diag_on);
+    for solver_idx = 1:length(solvers)
+        solver = solvers{solver_idx};
+        [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,solver,row_scale,diag_on);
+        
         if strcmp(status,'Failed') || v==Inf || isnan(v)
-            disp('sedumi failed!'); 
+            fprintf('%s failed!\n', solver);
+        else
+            break
         end
     end
 
@@ -310,9 +319,9 @@ end
 
 %==============================================================
 function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true,do_plot] = opt_poly_params(s,lam,optional_params)
+        h_true,do_plot,solvers] = opt_poly_params(s,lam,optional_params)
 % function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-%        h_true] = opt_poly_params(s,lam,optional_params);
+%        h_true,do_plot,solvers] = opt_poly_params(s,lam,optional_params);
 %
 % Set default optional and parameter values
 i_p = inputParser;
@@ -328,6 +337,7 @@ i_p.addParameter('h_max',default_h_max,@isnumeric);
 i_p.addParameter('max_steps',1000,@isnumeric);
 i_p.addParameter('h_true',[]);
 i_p.addParameter('do_plot',false,@islogical);
+i_p.addParameter('solvers',{'sdpt3','sedumi'});
 
 i_p.parse(optional_params{:});
 
@@ -339,6 +349,7 @@ h_max             = i_p.Results.h_max;
 max_steps         = i_p.Results.max_steps;
 h_true            = i_p.Results.h_true;
 do_plot           = i_p.Results.do_plot;
+solvers           = i_p.Results.solvers;
 end
 
 

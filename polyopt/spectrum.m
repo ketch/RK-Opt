@@ -33,7 +33,7 @@ switch name
   case 'Niegemann-ellipse'
     lamda_0 = sqrt(3.)/2; % = cos(arcsin(0.5))
     theta = linspace(0,2*pi,N);
-    lamda = (min(-0.5*(labda_0+cos(theta)),0.) + 1i*sin(theta)).';
+    lamda = (min(-0.5*(lamda_0+cos(theta)),0.) + 1i*sin(theta)).';
   case 'Niegemann-circle'
     labda_0 = sqrt(3.)/2; % = cos(arcsin(0.5))
     theta = linspace(0,2*pi,N);
