@@ -146,14 +146,14 @@ chat = c;
 if strcmp(class,'2Semb')
     bhat = (delta*[A;b']/sum(delta))';
 elseif strcmp(class,'3Sstaremb')
-  bhat = (delta(1:s+1)*[A;b']/sum(delta))';
+    bhat = (delta(1:s+1)*[A;b']/sum(delta))';
 elseif strcmp(class,'3SstarembFSAL')
-  bhat = (delta(1:s+1)*[A;b']/sum(delta))';
-  bhat(end+1) = betahat;
-  Ahat = A;
-  Ahat(end+1,:) = b';
-  Ahat(:,end+1) = 0;
-  chat(end+1) = 1;
+    bhat = (delta(1:s+1)*[A;b']/sum(delta))';
+    bhat(end+1) = betahat;
+    Ahat = A;
+    Ahat(end+1,:) = b';
+    Ahat(:,end+1) = 0;
+    chat(end+1) = 1;
 else
-  bhat = [];
+    bhat = [];
 end

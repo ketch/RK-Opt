@@ -63,7 +63,8 @@ function rk = rk_opt(s,p,class,objective,varargin)
     algorithm,display,min_amrad,append_time] = setup_params(varargin);
 
 % New random seed every time
-rand('twister', sum(100*clock));
+rng('default');
+rng('shuffle');
 
 % Open pool of sessions (# is equal to the processors specified in np)
 if np > 1
@@ -199,20 +200,20 @@ default_problem_class = 'nonlinear';
 % Populate input parser object
 % ----------------------------
 % Parameter values
-i_p.addParamValue('k',1,@isnumeric);
-i_p.addParamValue('min_amrad',0,@isnumeric);
-i_p.addParamValue('poly_coeff_ind',[],@isnumeric);
-i_p.addParamValue('poly_coeff_val',[],@isnumeric);
-i_p.addParamValue('emb_poly_coeff_ind',[],@isnumeric);
-i_p.addParamValue('emb_poly_coeff_val',[],@isnumeric);
-i_p.addParamValue('startvec',default_startvec);
-i_p.addParamValue('solveorderconditions',default_solveorderconditions,@(x) isnumeric(x) && any(x==expected_solveorderconditions))
-i_p.addParamValue('np',default_np,@isnumeric);
-i_p.addParamValue('num_starting_points', default_num_starting_points, @isnumeric);
-i_p.addParamValue('write_to_file',default_write_to_file,@isnumeric);
-i_p.addParamValue('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
-i_p.addParamValue('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
-i_p.addParamValue('append_time',true);
+i_p.addParameter('k',1,@isnumeric);
+i_p.addParameter('min_amrad',0,@isnumeric);
+i_p.addParameter('poly_coeff_ind',[],@isnumeric);
+i_p.addParameter('poly_coeff_val',[],@isnumeric);
+i_p.addParameter('emb_poly_coeff_ind',[],@isnumeric);
+i_p.addParameter('emb_poly_coeff_val',[],@isnumeric);
+i_p.addParameter('startvec',default_startvec);
+i_p.addParameter('solveorderconditions',default_solveorderconditions,@(x) isnumeric(x) && any(x==expected_solveorderconditions))
+i_p.addParameter('np',default_np,@isnumeric);
+i_p.addParameter('num_starting_points', default_num_starting_points, @isnumeric);
+i_p.addParameter('write_to_file',default_write_to_file,@isnumeric);
+i_p.addParameter('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
+i_p.addParameter('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
+i_p.addParameter('append_time',true);
 
 
 i_p.parse(optional_params{:});

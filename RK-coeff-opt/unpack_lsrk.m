@@ -56,10 +56,15 @@ end
 if strcmp(class(1:2),'2S')
     gamma2=[0 1 X(1:s-1)];
 
-    for i=2:s+1 gamma1(i)=1-gamma2(i)*sum(delta(1:i-1)); end
+    gamma1 = zeros(1,s+1);
+    for i=2:s+1 
+        gamma1(i)=1-gamma2(i)*sum(delta(1:i-1)); 
+    end
 
     alpha=zeros(s+1,s); beta=zeros(s+1,s);
-    for i=1:s beta(i+1,i)=X(2*s-3+i); end
+    for i=1:s 
+        beta(i+1,i)=X(2*s-3+i); 
+    end
 
     for i=2:s
         beta( i+1,i-1) = -beta(i,i-1)*gamma2(i+1)/gamma2(i);
@@ -73,12 +78,17 @@ if strcmp(class(1:2),'2S')
 elseif strcmp(class(1:2),'3S')
 
     alpha=zeros(s+1,s); beta=zeros(s+1,s);
-    for i=1:s beta(i+1,i)=X(2*s-3+i); end
+    for i=1:s 
+        beta(i+1,i)=X(2*s-3+i); 
+    end
 
     gamma2=[0 1 X(1:s-1)];
     gamma3=[0 0 0 0 X(3*s-2:4*s-6)];
 
-    for i=2:s+1 gamma1(i)=1-gamma3(i)-gamma2(i)*sum(delta(1:i-1)); end
+    gamma1 = zeros(1,s+1);
+    for i=2:s+1 
+        gamma1(i)=1-gamma3(i)-gamma2(i)*sum(delta(1:i-1)); 
+    end
     %alpha(2,1)=gamma1(2)+gamma2(2)+gamma3(2); %Should be 1
 
     for i=2:s
