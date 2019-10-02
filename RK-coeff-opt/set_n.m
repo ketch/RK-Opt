@@ -49,5 +49,5 @@ switch class
     case 'dimsrk1'                       
         n=.5*(s^2+s)+s*k+k;         %Diagonally Implicit Type1
     case 'dimsrk2'                       
-        n=.5*(s^2+s)+2*s*k-s+1      %Diagonally Implicit Type2
+        n=.5*(s^2+s)+2*s*k-s+1;      %Diagonally Implicit Type2
 end

@@ -1,5 +1,5 @@
-function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k)
-% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k)
+function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val)
+% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val)
 % Impose nonlinear constraints:
 %   - if objective = 'ssp' : both order conditions and absolute monotonicity conditions
 %   - if objective = 'acc' : order conditions
@@ -12,6 +12,9 @@ function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,
 %     * *objective*: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).
 %     * *poly_coeff_ind*: index of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p`.
 %     * *poly_coeff_val*: values of the polynomial coefficients (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights).
+%     * :math:`k`: Number of steps for multi-step, mlti-stage schemes.
+%     * *emb_poly_coeff_ind*: index of the polynomial coefficients of the embedded scheme (:math:`\beta_j`) for :math:`j > p`.
+%     * *emb_poly_coeff_val*: values of the polynomial coefficients of the embedded scheme (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights).
 % 
 % The outputs are:
 %     * *con*: inequality constraints, i.e. absolute monotonicity conditions if objective = 'ssp' or nothing if objective = 'acc'
@@ -29,9 +32,9 @@ function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,
 oc_form = 'albrecht';
 
 if k==1
-    [A,b,c,Ahat,bhat,chat]=unpack_rk(x,s,class);
+    [A,b,c,Ahat,bhat,chat] = unpack_rk(x,s,class);
 else
-    [A,Ahat,b,bhat,D,theta] =  unpack_msrk(x,s,k,class);
+    [A,Ahat,b,bhat,D,theta] = unpack_msrk(x,s,k,class);
 end
 
 if strcmp(objective,'ssp')
@@ -83,13 +86,13 @@ if k>1
     coneq= oc_ksrk(A,b,D,theta,p);
 elseif strcmp(oc_form,'albrecht')
     coneq = oc_albrecht(A,b,c,p);
-    if length(bhat)>0
+    if ~isempty(bhat)
         coneq2 = oc_albrecht(Ahat,bhat,chat,p-1);
         coneq = [coneq  coneq2];
     end
 elseif strcmp(oc_form,'butcher')
     coneq = oc_butcher(A,b,c,p);
-    if length(bhat)>0
+    if ~isempty(bhat)
         coneq2 = oc_butcher(Ahat,bhat,chat,p-1);
         coneq = [coneq  coneq2];
     end
@@ -100,4 +103,10 @@ for i=1:length(poly_coeff_ind)
     %Enforce stability function coefficient constraints
     j = poly_coeff_ind(i);
     coneq(end+1) = b'*A^(j-2)*c - poly_coeff_val(i);
+end
+
+for i=1:length(emb_poly_coeff_ind)
+    %Enforce stability function coefficient constraints
+    j = emb_poly_coeff_ind(i);
+    coneq(end+1) = bhat'*Ahat^(j-2)*chat - emb_poly_coeff_val(i);
 end

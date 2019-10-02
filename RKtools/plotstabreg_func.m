@@ -1,5 +1,5 @@
-function [dummy] = plotstabreg_func(p,q,bounds,ls,lw)
-% function [dummy] = plotstabreg_func(p,q,bounds,ls,lw)
+function [contour_matrix] = plotstabreg_func(p,q,bounds,ls,lw)
+% function [contour_matrix] = plotstabreg_func(p,q,bounds,ls,lw)
 %
 % plot the absolute stability region of a one-step method,
 % given the stability function
@@ -62,10 +62,11 @@ while ~finished
 end
 
 %Plot the absolute stability boundary ($R=1$)
-contour(xa,ya,R,[1 1],ls,'LineWidth',lw);
+contour_matrix = contour(xa,ya,R,[1 1],ls,'LineWidth',lw);
 title('Absolute stability region');
 hold on
 axis equal
-v=axis
-plot([0 0],v(3:4),'--k'); plot(v(1:2),[0 0],'--k')
+v=axis;
+plot([0 0],v(3:4),'--k', 'HandleVisibility', 'off');
+plot(v(1:2),[0 0],'--k', 'HandleVisibility', 'off');
 hold off

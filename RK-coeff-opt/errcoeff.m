@@ -12,6 +12,8 @@ function D = errcoeff(A,b,c,p)
 %
 % For now we just use Butcher's approach.  We could alternatively use Albrecht's.
 
+D = inf;
+
 if p==1
   % order 2 conditions:
   tau(1) = (b'*(c) - 1/2)/1;
@@ -1235,7 +1237,7 @@ elseif p==9
   tau(718)=(b'*((A*c).*(A*c).*(A*c).*(A*c).*c)-1/160)/24;
   tau(719)=(b'*(c.^9)-1/10)/362880;
 else 
-    disp('Calculation of the principal error norm for p > 5 is not implemented yet')
+    disp('Calculation of the principal error norm for p > 9 is not implemented yet')
     return
 end
 
