@@ -1,5 +1,5 @@
-function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val)
-% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val)
+function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability)
+% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability)
 % Impose nonlinear constraints:
 %   - if objective = 'ssp' : both order conditions and absolute monotonicity conditions
 %   - if objective = 'acc' : order conditions
@@ -109,4 +109,14 @@ for i=1:length(emb_poly_coeff_ind)
     %Enforce stability function coefficient constraints
     j = emb_poly_coeff_ind(i);
     coneq(end+1) = bhat'*Ahat^(j-2)*chat - emb_poly_coeff_val(i);
+end
+%=====================================================
+
+if ~isempty(constrain_emb_stability)
+    rk_tmp.A = Ahat; rk_tmp.b = bhat; rk_tmp.c = chat;
+    % matlab stores polynomial coefficients for polyval etc. in another order
+    poly_coef = rk_stabfun(rk_tmp);
+    poly_coef = poly_coef(end:-1:1);
+    res = polyval(poly_coef, constrain_emb_stability);
+    con = [con, res .* conj(res) - 1];
 end

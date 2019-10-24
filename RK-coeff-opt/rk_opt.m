@@ -28,6 +28,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * num_starting_points: Number of starting points for the global optimization per processor. The default value is 10.
 %     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
 %     * append_time: whether a timestamp should be added to the output file name
+%     * constrain_emb_stability: a vector of complex points where the embedded method should be stable. This feature is not really useful since fmincon often has a hard time satisfying these constraints.
 %     * algorithm: which algorithm to use in fmincon: 'sqp','interior-point', or 'active-set'. By default sqp is used.
 %
 %     .. note::
@@ -46,6 +47,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %    **Example**::
 %
 %     >> rk=rk_opt(4,3,'erk','acc','num_starting_points',2,'np',1,'solveorderconditions',1)
+%     >> rk=rk_opt(4,3,'erk','acc','num_starting_points',2,'np',1,'solveorderconditions',1,'np',feature('numcores'))
 %
 % The fmincon options are set through the **optimset** that creates/alters optimization options structure. By default the following additional options are used:
 %     * MaxFunEvals = 1000000
@@ -60,7 +62,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 
 [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
     emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
-    algorithm,display,min_amrad,append_time] = setup_params(varargin);
+    algorithm,display,min_amrad,append_time,constrain_emb_stability] = setup_params(varargin);
 
 % New random seed every time
 rng('default');
@@ -108,7 +110,8 @@ problem = createOptimProblem('fmincon','x0',x(1,:),'objective', ...
                       'lb',lb,'ub',ub,...
                       'nonlcon', @(x) nonlinear_constraints(x,class,s,p,objective,...
                                             poly_coeff_ind, poly_coeff_val, k,...
-                                            emb_poly_coeff_ind, emb_poly_coeff_val),...
+                                            emb_poly_coeff_ind, emb_poly_coeff_val, ...
+                                            constrain_emb_stability),...
                       'options',opts);
 if np > 1
     ms = MultiStart('Display','final','UseParallel', true);
@@ -160,7 +163,7 @@ if k==1
     end
 
     if (write_to_file == 1 && p == order)
-        write_file(rk,p,append_time);
+        write_file(rk,class,p,append_time);
     end
 end
 end
@@ -171,7 +174,7 @@ end
 
 function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
     emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
-    algorithm,display,min_amrad,append_time] = setup_params(optional_params)
+    algorithm,display,min_amrad,append_time,constrain_emb_stability] = setup_params(optional_params)
 %function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
 %    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
 %    algorithm,display,min_amrad] = setup_params(optional_params)
@@ -195,6 +198,7 @@ default_write_to_file = 1;
 default_algorithm = 'sqp';
 default_display = 'notify';
 default_problem_class = 'nonlinear';
+default_constrain_emb_stability = [];
 
 
 % Populate input parser object
@@ -214,6 +218,7 @@ i_p.addParameter('write_to_file',default_write_to_file,@isnumeric);
 i_p.addParameter('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
 i_p.addParameter('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
 i_p.addParameter('append_time',true);
+i_p.addParameter('constrain_emb_stability',default_constrain_emb_stability);
 
 
 i_p.parse(optional_params{:});
@@ -232,6 +237,7 @@ write_to_file        = i_p.Results.write_to_file;
 algorithm            = i_p.Results.algorithm;
 display              = i_p.Results.display;
 append_time          = i_p.Results.append_time;
+constrain_emb_stability = i_p.Results.constrain_emb_stability;
 end
 % =========================================================================
 
@@ -383,8 +389,8 @@ end
 
 
 % =========================================================================
-function write_file(rk, p, append_time)
-%function write_file(rk, p, append_time)
+function write_file(rk, class, p, append_time)
+%function write_file(rk, class, p, append_time)
 %
 %
 % Write to file Butcher's coefficients and low-storage coefficients if
