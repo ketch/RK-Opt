@@ -28,7 +28,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * num_starting_points: Number of starting points for the global optimization per processor. The default value is 10.
 %     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
 %     * append_time: whether a timestamp should be added to the output file name
-%     * constrain_emb_stability: a vector of complex points where the embedded method should be stable. This feature is not really useful since fmincon often has a hard time satisfying these constraints.
+%     * constrain_emb_stability: a vector of complex points where the embedded method should be stable. Sometimes, fmincon cannot find solutions if emb_poly_coeff_ind,emb_poly_coeff_val are given. In these situations, there are a few parameter combinations where it can be advantageous to ask fmincon to directly constraint the value of the embedded stability function at a few points. In general, the existing approach using polyopt and emb_poly_coeff_ind,emb_poly_coeff_val seems to be better for most problems.
 %     * algorithm: which algorithm to use in fmincon: 'sqp','interior-point', or 'active-set'. By default sqp is used.
 %
 %     .. note::
