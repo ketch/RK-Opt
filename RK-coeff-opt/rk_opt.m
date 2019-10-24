@@ -399,9 +399,9 @@ function write_file(rk, class, p, append_time)
 s = size(rk.A, 1);
 
 if append_time
-    io_filename = sprintf('ERK-%d-%d_%s.txt', p, s, datestr(now, 'yyyy-mm-ddTHH-MM-SS'));
+    io_filename = sprintf('%s-%d-%d_%s.txt', class, p, s, datestr(now, 'yyyy-mm-ddTHH-MM-SS'));
 else
-    io_filename = sprintf('ERK-%d-%d.txt', p, s);
+    io_filename = sprintf('%s-%d-%d.txt', class, p, s);
 end
 io = fopen(io_filename, 'w');
 
