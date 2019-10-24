@@ -74,7 +74,7 @@ if np > 1
 end
 
 %Set optimization parameters:
-options=optimset('MaxFunEvals',1000000,'TolCon',1.e-13,'TolFun',1.e-13,'TolX',1.e-15,'MaxIter',10000,'Diagnostics','off','Display',display,'DerivativeCheck','off'...%);
+options=optimset('MaxFunEvals',1000000,'TolCon',1.e-14,'TolFun',1.e-13,'TolX',1.e-15,'MaxIter',10000,'Diagnostics','off','Display',display,'DerivativeCheck','off'...%);
 ,'Algorithm',algorithm);
 %For difficult cases, it can be useful to limit the line search step size
 %by appending to the line above (possibly with a modified value of RelLineSrchBnd):
