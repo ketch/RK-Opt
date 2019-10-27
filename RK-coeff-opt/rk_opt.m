@@ -30,6 +30,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * append_time: whether a timestamp should be added to the output file name
 %     * constrain_emb_stability: a vector of complex points where the embedded method should be stable. Sometimes, fmincon cannot find solutions if emb_poly_coeff_ind,emb_poly_coeff_val are given. In these situations, there are a few parameter combinations where it can be advantageous to ask fmincon to directly constraint the value of the embedded stability function at a few points. In general, the existing approach using polyopt and emb_poly_coeff_ind,emb_poly_coeff_val seems to be better for most problems.
 %     * algorithm: which algorithm to use in fmincon: 'sqp','interior-point', or 'active-set'. By default sqp is used.
+%     * suppress_warnings: whether to suppress all warnings
 %
 %     .. note::
 %        **numerical experiments have shown that when the objective function is the minimization of the leading truncation error coefficient, the interior-point algorithm performs much better than the sqp one.**
@@ -62,7 +63,8 @@ function rk = rk_opt(s,p,class,objective,varargin)
 
 [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
     emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
-    algorithm,display,min_amrad,append_time,constrain_emb_stability] = setup_params(varargin);
+    algorithm,display,min_amrad,append_time,constrain_emb_stability,...
+    suppress_warnings] = setup_params(varargin);
 
 % New random seed every time
 rng('default');
@@ -71,6 +73,14 @@ rng('shuffle');
 % Open pool of sessions (# is equal to the processors specified in np)
 if np > 1
     parpool('local', np);
+    if suppress_warnings
+        % interior-point throws a lot of warnings
+        pctRunOnAll warning('off', 'all')
+    end
+end
+if suppress_warnings
+    % interior-point throws a lot of warnings
+    warning('off', 'all')
 end
 
 %Set optimization parameters:
@@ -97,7 +107,7 @@ end
 % construct the starting points for the global optimization
 for i = 1:num_starting_points
     x(i,:) = initial_guess(s, p, class, startvec, k);
-    
+
     %Optionally find a feasible (for the order conditions) point to start
     if solveorderconditions==1
         x(i,:) = fsolve(@(x) order_conditions(x,class,s,p,Aeq,beq), x(i,:));
@@ -120,8 +130,14 @@ else
 end
 [X,FVAL,status] = run(ms, problem, starting_points);
 
-if np > 1 
+if np > 1
+    if suppress_warnings
+        pctRunOnAll warning('on', 'all')
+    end
     delete(gcp('nocreate'));
+end
+if suppress_warnings
+    warning('on', 'all')
 end
 
 
@@ -174,7 +190,8 @@ end
 
 function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
     emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
-    algorithm,display,min_amrad,append_time,constrain_emb_stability] = setup_params(optional_params)
+    algorithm,display,min_amrad,append_time,constrain_emb_stability,...
+    suppress_warnings] = setup_params(optional_params)
 %function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
 %    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
 %    algorithm,display,min_amrad] = setup_params(optional_params)
@@ -199,6 +216,7 @@ default_algorithm = 'sqp';
 default_display = 'notify';
 default_problem_class = 'nonlinear';
 default_constrain_emb_stability = [];
+default_suppress_warnings = false;
 
 
 % Populate input parser object
@@ -219,6 +237,7 @@ i_p.addParameter('algorithm',default_algorithm,@(x) ischar(x) && any(validatestr
 i_p.addParameter('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
 i_p.addParameter('append_time',true);
 i_p.addParameter('constrain_emb_stability',default_constrain_emb_stability);
+i_p.addParameter('suppress_warnings',default_suppress_warnings);
 
 
 i_p.parse(optional_params{:});
@@ -238,6 +257,7 @@ algorithm            = i_p.Results.algorithm;
 display              = i_p.Results.display;
 append_time          = i_p.Results.append_time;
 constrain_emb_stability = i_p.Results.constrain_emb_stability;
+suppress_warnings    = i_p.Results.suppress_warnings;
 end
 % =========================================================================
 
