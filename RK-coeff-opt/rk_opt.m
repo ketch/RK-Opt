@@ -97,7 +97,7 @@ end
 % construct the starting points for the global optimization
 for i = 1:num_starting_points
     x(i,:) = initial_guess(s, p, class, startvec, k);
-    
+
     %Optionally find a feasible (for the order conditions) point to start
     if solveorderconditions==1
         x(i,:) = fsolve(@(x) order_conditions(x,class,s,p,Aeq,beq), x(i,:));
@@ -120,14 +120,14 @@ else
 end
 [X,FVAL,status] = run(ms, problem, starting_points);
 
-if np > 1 
+if np > 1
     delete(gcp('nocreate'));
 end
 
 
 % Check order of the scheme
 if strcmp(class(1:2),'2S') || strcmp(class(1:2),'3S')
-    [rk.A,rk.Ahat,rk.b,rk.bhat,rk.c,rk.chat,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,s,class);
+    [rk.A,rk.Ahat,rk.b,rk.bhat,rk.c,rk.chat,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,class);
     order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
 elseif k==1
     [rk.A,rk.b,rk.c] = unpack_rk(X,s,class);
