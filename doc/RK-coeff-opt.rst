@@ -4,7 +4,7 @@
 RK-coeff-opt
 ============
 This subpackage contains routines for finding optimal Runge-Kutta method coefficents,
-given a prescribed order of accuracy, number of stages, and an objective function.  
+given a prescribed order of accuracy, number of stages, and an objective function.
 Constraints on the stability polynomial (possibly obtained using **polyopt** or **am_radius-opt**)
 can optionally be provided.
 
@@ -37,7 +37,7 @@ errcoeff
    - `p`         -- order of accuracy of the method
 
 Computes the norm of the vector of truncation error coefficients
-for the terms of order `p+1`: 
+for the terms of order `p+1`:
 (elementary weight - 1/(density of the tree)/(symmetry of the tree)
 
 
@@ -89,8 +89,8 @@ The outputs are:
     * *coneq*: order conditions plus stability function coefficients constraints (tall-tree elementary weights)
 
 Two forms of the order conditions are implemented: one based on **Butcher's
-approach**, and one based on **Albrecht's approach**. One or the other may lead 
-to a more tractable optimization problem in some cases, but this has not been 
+approach**, and one based on **Albrecht's approach**. One or the other may lead
+to a more tractable optimization problem in some cases, but this has not been
 explored carefully. The Albrecht order conditions are implemented up to order 9, assuming
 a certain stage order, while the Butcher order conditions are implemented up to order 9 but
 do not assume anything about the stage order. Albrecht's approach is used
@@ -163,7 +163,7 @@ The meaning of the input arguments is as follow:
 
 The meaning of the output arguments is as follow:
     * r: it is a scalar containing the radius of absolute monotonicity if objective = 'ssp' or the value of the leading truncation error coefficient if objective = 'acc'.
-    * g: it is a vector and contains the gradient of the objective function respect to the unknowns.  It is an array with all zero elements except for the last component which is equal to one if objective = 'ssp' or it is an empty array if objective = 'acc'. 
+    * g: it is a vector and contains the gradient of the objective function respect to the unknowns.  It is an array with all zero elements except for the last component which is equal to one if objective = 'ssp' or it is an empty array if objective = 'acc'.
 
 
 
@@ -251,7 +251,7 @@ shuosher2butcher
 Generate Butcher form of a Runge-Kutta method,
 given its Shu-Osher or modified Shu-Osher form.
 
-For an m-stage method, `\alpha` and `\beta` should be 
+For an m-stage method, `\alpha` and `\beta` should be
 matrices of dimension `(m+1) \times m`.
 
 
@@ -273,7 +273,7 @@ unpack_lsrk
 ===================================================================================
 ::
 
-    function [A,b,bhat,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,s,class)
+    function [A,b,bhat,c,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsrk(X,class)
 
 
 Extracts the coefficient arrays from the optimization vector.
