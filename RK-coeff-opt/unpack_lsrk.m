@@ -6,7 +6,6 @@ function [A,Ahat,b,bhat,c,chat,alpha,beta,gamma1,gamma2,gamma3,delta]=unpack_lsr
 % This function also returns the low-storage coefficients.
 
 gamma3=[];
-A=zeros(s);
 switch class
   case '2S'
     % n = 3s - 3 free parameters
