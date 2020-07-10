@@ -39,7 +39,7 @@ lam in the interval (h_min,h_max) to precision eps.
 
 Optional arguments:
 
-      lam_func: 
+      lam_func:
                 A function used to generate the appropriate spectrum
                 at each bisection step, instead of using a fixed (scaled) spectrum.
                 Used for instance to find the longest rectangle of a fixed height
@@ -49,9 +49,9 @@ Examples:
 
       - To find negative real axis inclusion::
 
-              lam = spectrum('realaxis',500);       
+              lam = spectrum('realaxis',500);
               s = 10; p = 2;
-              [h,poly_coeff] = opt_poly_bisect(lam,s,p,'chebyshev')    
+              [h,poly_coeff] = opt_poly_bisect(lam,s,p,'chebyshev')
 
       - To reproduce figure 10 of [ketcheson-ahmadia]_ ::
 
@@ -79,17 +79,4 @@ Acceptable values for name:
       * 'gap':          Spectrum with a gap; see Ketcheson & Ahmadia 2012
 
 kappa and beta are used only if name == 'rectangle'
-
-
-
-test_polyopt
-===================================
-::
-
-    function test_suite = test_polyopt
-
-
-A set of verification tests for the polyopt suite.
-
-
 
