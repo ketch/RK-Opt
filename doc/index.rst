@@ -2,13 +2,13 @@
 Overview
 ********
 
-`RK-opt <https://github.com/ketch/RK-opt>`_ is a MATLAB package for designing
+`RK-Opt <https://github.com/ketch/RK-Opt>`_ is a MATLAB package for designing
 Runge-Kutta (RK) methods and stability polynomials.
 Supported objective functions include the principal
 error norm and the SSP coefficient.  Supported constraints include stability
 polynomial coefficients, low-storage formulations, and structural constraints
 (explicit, diagonally implicit, etc.)
-RK-opt uses MATLAB's optimization toolbox, in particular *fmincon* and *linprog*.
+RK-Opt uses MATLAB's optimization toolbox, in particular *fmincon* and *linprog*.
 
 MATLAB's global optimization toolbox function *Multistart* can be used to exploit the
 benefits of parallel search on multicore machines.
@@ -38,7 +38,7 @@ The RK-Opt package consists of the following packages:
     + :ref:`RKtools`:
                         Some general utilities for analyzing Runge-Kutta methods.
 
-RK-opt has been developed by David Ketcheson (primary developer and maintainer),
+RK-Opt has been developed by David Ketcheson (primary developer and maintainer),
 Matteo Parsani, and Aron Ahmadia.  Additional contributions include:
 
     + Order conditions for multistep RK methods of orders 9-11 (Christopher Bresten, Zachary Grant, and Daniel Higgs)
@@ -48,7 +48,7 @@ It is released under a modified BSD License.
 If you use RK-Opt in published work, please see :ref:`citing`. 
 
 *******
-RK-opt
+RK-Opt
 *******
 
 .. toctree::
@@ -78,7 +78,7 @@ Contributing
 ************
 
 If you wish to contribute, we recommend that you
-fork the `RK-Opt GitHub repository <https://github.com/ketch/RK-opt>`_,
+fork the `RK-Opt GitHub repository <https://github.com/ketch/RK-Opt>`_,
 implement your additions, and `issue a pull request
 <https://help.github.com/articles/using-pull-requests>`_.  You may also
 simply e-mail a patch to us.

@@ -4,7 +4,7 @@
 ===============
 Installation
 ===============
-This section describes how to obtain RK-opt and test that it is working correctly.
+This section describes how to obtain RK-Opt and test that it is working correctly.
 
 Dependencies
 ------------
@@ -16,20 +16,20 @@ Optional dependencies
  - MATLAB Global Optimization toolbox (for multicore search)
 
 
-Obtaining RK-opt
+Obtaining RK-Opt
 ------------------
- - Download: https://github.com/ketch/RK-opt/
+ - Download: https://github.com/ketch/RK-Opt/
  - Or clone::
 
-    $ git clone https://github.com/ketch/RK-opt.git
+    $ git clone https://github.com/ketch/RK-Opt.git
 
-After unzipping/cloning, add the subdirectory ``RK-opt/RKtools`` to your MATLAB path.
+After unzipping/cloning, add the subdirectory ``RK-Opt/RKtools`` to your MATLAB path.
 
 
 =========================
 Testing your installation
 =========================
-You can test your RK-opt installation by running the MATLAB script `test.m`.
+You can test your RK-Opt installation by running the MATLAB script `test.m`.
 
 Running the tests
 -----------------

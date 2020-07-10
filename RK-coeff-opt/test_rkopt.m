@@ -1,4 +1,4 @@
-% test_rkopt.m A set of verification tests for the RK-opt package.
+% test_rkopt.m A set of verification tests for the RK-Opt package.
 %
 % Currently this tests SSP coefficient optimization and
 % accuracy optimization, but not under constraints on the

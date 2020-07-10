@@ -1,9 +1,9 @@
 
-# RK-opt: A Package for the Design of Numerical ODE solvers
+# RK-Opt: A Package for the Design of Numerical ODE solvers
 
-See the full documentation [here](http://numerics.kaust.edu.sa/RK-opt).
+See the full documentation [here](http://numerics.kaust.edu.sa/RK-Opt).
 
-RK-opt is a collection of MATLAB codes for designing optimized numerical ODE solvers.
+RK-Opt is a collection of MATLAB codes for designing optimized numerical ODE solvers.
 The main emphasis is on Runge-Kutta methods, but some routines deal with other classes of methods.
 It is primarily developed and used by the
 [KAUST Numerical Mathematics Group](http://numerics.kaust.edu.sa).
@@ -28,7 +28,7 @@ To run the tests, execute the MATLAB script `test.m`.
 
 # Authors
 The code is primarily developed and maintained by David Ketcheson.
-The following people have also made important constributions to RK-opt (listed alphabetically):
+The following people have also made important contributions to RK-Opt (listed alphabetically):
 
  - Aron Ahmadia: Co-developer of **polyopt** algorithm and routines.
  - Zachary Grant: Extension of order conditions to multistep RK with more than two stages and

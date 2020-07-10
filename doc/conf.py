@@ -43,7 +43,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'RK-opt'
+project = u'RK-Opt'
 copyright = u'2010-2012'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -172,7 +172,7 @@ html_logo = '_static/logo-RK-Opt.jpg'
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'RK-opt-doc'
+htmlhelp_basename = 'RK-Opt-doc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -218,7 +218,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'RK-opt', u'RK-opt. Documentation', 1)
+    ('index', 'RK-Opt', u'RK-Opt. Documentation', 1)
 ]
 
 # Example configuration for intersphinx: refer to the Python standard library.
