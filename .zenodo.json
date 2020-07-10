@@ -1,0 +1,29 @@
+{
+    "description": "RK-Opt: Optimization of Runge-Kutta and related time integration methods",
+    "license": "bsd-license",
+    "title": "ketch/RK-Opt",
+    "upload_type": "software",
+    "creators": [
+        {
+	    "affiliation": "King Abdullah University of Science and Technology",
+            "name": "David I. Ketcheson",
+            "orcid": "0000-0002-1212-126X"
+        },
+        {
+            "affiliation": "King Abdullah University of Science and Technology",
+            "name": "Matteo Parsani",
+            "orcid": "0000-0001-7300-1280"
+        },
+        {
+            "affiliation": "King Abdullah University of Science and Technology",
+            "name": "Hendrik Ranocha",
+            "orcid": "0000-0002-3456-2277"
+        },
+        {
+            "affiliation": "Capital One",
+            "name": "aron@ahmadia.net",
+            "orcid": "0000-0002-2573-2481"
+        }
+    ],
+    "access_right": "open"
+}
