@@ -23,6 +23,9 @@ A common workflow for designing Runge-Kutta methods is to use **polyopt** to fin
 appropriate stability function and then **RK-coeff-opt** to determine the Runge-Kutta
 method coefficients.
 
+To run the tests, execute the MATLAB script `test.m`.
+
+
 # Authors
 The code is primarily developed and maintained by David Ketcheson.
 The following people have also made important constributions to RK-opt (listed alphabetically):
