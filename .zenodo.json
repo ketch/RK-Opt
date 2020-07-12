@@ -1,5 +1,5 @@
 {
-    "description": "RK-Opt: Optimization of Runge-Kutta and related time integration methods",
+    "description": "RK-Opt: A Package for the Design of Numerical ODE Solvers",
     "license": "bsd-license",
     "title": "ketch/RK-Opt",
     "upload_type": "software",
@@ -21,7 +21,7 @@
         },
         {
             "affiliation": "Capital One",
-            "name": "aron@ahmadia.net",
+            "name": "Aron Ahmadia",
             "orcid": "0000-0002-2573-2481"
         }
     ],
