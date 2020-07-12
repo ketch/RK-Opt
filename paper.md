@@ -12,15 +12,15 @@ authors:
   - name: David I. Ketcheson^[Corresponding author.]
     orcid: 0000-0002-1212-126X
     affiliation: 1
-  - name: Hendrik Ranocha
-    orcid: 0000-0002-3456-2277
-    affiliation: 1
   - name: Matteo Parsani
     orcid: 0000-0001-7300-1280
     affiliation: 1
   - name: Aron Ahmadia
     orcid: 0000-0002-2573-2481
     affiliation: 2
+  - name: Hendrik Ranocha
+    orcid: 0000-0002-3456-2277
+    affiliation: 1
 affiliations:
  - name: King Abdullah University of Science and Technology
    index: 1
@@ -117,7 +117,7 @@ involving downwind Runge-Kutta methods and low-storage Runge-Kutta methods.
 
 Whereas the previous two subpackages are fairly general-purpose tools,
 this package solves a very specific set of problems described in
-[@].  Specifically, the provided routines determine the cofficients of
+[@2009_monotonicity].  Specifically, the provided routines determine the cofficients of
 multistep methods (including classes of general linear methods) with the
 largest possible SSP coefficient (also known
 as radius of absolute monotonicity).  The corresponding optimization problem
@@ -137,17 +137,17 @@ more on their analysis.  A common workflow involves generating new methods with
 Some of the research projects that have made use of `RK-Opt` include development of:
 
  - SSP Runge-Kutta methods 
-   [@2008_explicit_ssp;@2009_implicit_ssp;@2013_effective_order_ssp;gottlieb2015optimal]
+   [@2008_explicit_ssp;@2009_implicit_ssp;@gottlieb2015optimal]
  - SSP linear multistep methods [@2009_monotonicity]
  - SSP general linear methods [@2011_tsrk;@2017_msrk]
  - SSP IMEX Runge-Kutta methods [@conde2017implicit]
  - Low-storage Runge-Kutta methods [@2010_LSRK]
  - Optimal Runge-Kutta stability polynomials [@2012_optimal_stability_polynomials]
  - Additive and downwind SSP Runge-Kutta methods [@2011_dwssp;@2018_perturbations]
- - Optimal Runge-Kutta methods for specific PDE semi-discretizations [@parsani-eccomas;Parsani_finnish;2013_sd_erk;2014_ssp_rkdg]
- - Embedded pairs for Runge-Kutta methods [@horvathembedded;@conde2018embedded]
+ - Optimal Runge-Kutta methods for specific PDE semi-discretizations [@parsani-eccomas;@Parsani_finnish;@2013_sd_erk;@2014_ssp_rkdg]
+ - Embedded pairs for Runge-Kutta methods [@conde2018embedded]
  - Runge-Kutta methods with high weak stage order [@2018_wso]
- - SSP multistage, multiderivative methods [@christlieb2016explicit;grant2019strong;reynoso2017strong]
+ - SSP multistage, multiderivative methods [@christlieb2016explicit;@grant2019strong;@reynoso2017strong]
  
 As can be seen from this list, applications have mostly stemmed from the
 work of the main developer's research group, but have since expanded
