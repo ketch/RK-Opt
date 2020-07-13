@@ -40,9 +40,10 @@ by their coefficients.  The choice of appropriate coefficients in the design of
 methods for specific applications is an important area of research.
 `RK-Opt` is a software package for designing numerical ODE solvers with
 coefficients optimally chosen to provide desired properties.
-The original (and still primary) focus of the package is on the design of
-Runge-Kutta methods, but some routines for designing other classes of methods
-are also included.
+It is available from https://github.com/ketch/RK-Opt, with documentation
+at http://numerics.kaust.edu.sa/RK-opt/.
+The primary focus of the package is on the design of Runge-Kutta methods, but
+some routines for designing other classes of methods are also included.
 
 # Statement of need
 
@@ -60,7 +61,7 @@ goal.  Thus `RK-Opt` is a sort of meta-software, consisting of algorithms whose
 purpose is to create other algorithms.
 
 Typically, the most obvious formulation of the corresponding
-optimization is intractable.  Therefore, these optimization problems
+optimization problem is intractable.  Therefore, these problems
 are reformulated in ways that make them amenable to available techniques.
 These reformulations include, for instance, turning a nonconvex problem into
 a sequence of convex problems or even linear programs.  The resulting algorithms
@@ -80,12 +81,13 @@ it has been used in a number of papers (see below).
 ## `polyopt`
 
 This package computes optimal stability functions for Runge-Kutta methods.
-Here optimal means that the stable step size is maximized for a given ODE
+Here *optimal* means that the stable step size is maximized for a given ODE
 spectrum.  The corresponding optimization problem is intractable under a
 direct implementation.  The package uses the algorithm developed in
 [@2012_optimal_stability_polynomials], which transforms the problem into a
-sequence of convex problems and typically yields a solution in a few seconds or
-less.  This package is usually used as the first step in designing a
+sequence of convex problems and typically yields a solution in a few seconds.
+It relies on CVX [@cvx;gb08] to solve the convex subproblems.
+This package is usually used as the first step in designing a
 Runge-Kutta method.
 
 ## `RK-Coeff-Opt`
@@ -104,19 +106,19 @@ In addition to standard Runge-Kutta methods, various classes of multistep
 Runge-Kutta methods can also be optimized.
 
 The optimization problem in question is highly nonconvex and the available
-solvers may fail to find a solution or converge to a non-optimal solution.
+solvers may fail to find a solution, or may converge to a non-optimal solution.
 For this reason, the implementation is based on doing many local optimizations
 in parallel from different random initial points, using MATLAB's Global
 Optimization Toolbox.
 
 The packages `dwrk-opt` and `low-storage` are specialized but less full-featured
 versions of `RK-Coeff-Opt` that were developed for specific research projects
-involving downwind Runge-Kutta methods and low-storage Runge-Kutta methods.
+involving downwind Runge-Kutta methods and low-storage Runge-Kutta methods, respectively.
 
 ## `am_radius-opt`
 
 Whereas the previous two subpackages are fairly general-purpose tools,
-this package solves a very specific set of problems described in
+this package solves a very specific and discrete set of problems described in
 [@2009_monotonicity].  Specifically, the provided routines determine the coefficients of
 multistep methods (including classes of general linear methods) with the
 largest possible SSP coefficient (also known
