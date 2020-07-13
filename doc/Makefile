@@ -16,7 +16,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  deploy     to deploy HTML files to numerics.kaust.edu.sa/RK-opt"
+	@echo "  deploy     to deploy HTML files to numerics.kaust.edu.sa/RK-Opt"
 	@echo "  html       to make standalone HTML files"
 	@echo "  dirhtml    to make HTML files named index.html in directories"
 	@echo "  singlehtml to make a single large HTML file"
@@ -39,11 +39,11 @@ clean:
 
 deploy: html
 	@echo
-	@echo "Deploying generated HTML to http://numerics.kaust.edu.sa/RK-opt"
-	@-rsync -rltvzO _build/html/* numerics.kaust.edu.sa:/var/www/html/RK-opt
+	@echo "Deploying generated HTML to http://numerics.kaust.edu.sa/RK-Opt"
+	@-rsync -rltvzO _build/html/* numerics.kaust.edu.sa:/var/www/html/RK-Opt
 	@echo "Fixing up remote permissions"
-	@-ssh numerics.kaust.edu.sa "chmod -Rf g+w /var/www/html/RK-opt"
-	@echo "Deployed! check results at: http://numerics.kaust.edu.sa/RK-opt"
+	@-ssh numerics.kaust.edu.sa "chmod -Rf g+w /var/www/html/RK-Opt"
+	@echo "Deployed! check results at: http://numerics.kaust.edu.sa/RK-Opt"
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

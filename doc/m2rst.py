@@ -1,7 +1,7 @@
 """Convert MATLAB code documentation to Restructured Text format suitable
    for use in Sphinx.
 
-   This is used to generate the docs for the RK-opt package.
+   This is used to generate the docs for the RK-Opt package.
 
    Ignores additional functions in a single file.  Might be nice to
    change this behavior in the future.

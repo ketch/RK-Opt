@@ -256,19 +256,6 @@ matrices of dimension `(m+1) \times m`.
 
 
 
-test_SSP
-===============================
-::
-
-    function test_suite = test_SSP
-
-A set of verification tests for the RK-opt package.
-Currently this tests SSP coefficient optimization and
-accuracy optimization, but not under constraints on the
-stability polynomial.
-
-
-
 unpack_lsrk
 ===================================================================================
 ::

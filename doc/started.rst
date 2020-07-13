@@ -4,57 +4,38 @@
 ===============
 Installation
 ===============
-This section describes how to obtain RK-opt and test that it is working correctly.
+This section describes how to obtain RK-Opt and test that it is working correctly.
 
 Dependencies
 ------------
- - MATLAB 7.X or greater
- - MATLAB optimization toolbox
-
-Optional dependencies
-------------------------------
- - MATLAB Global Optimization toolbox (for multicore search)
- - xUnit test framework (for testing your installation); available for free
-   from `<http://www.mathworks.com/matlabcentral/fileexchange/22846>`_.
-   xUnit requires MATLAB R2008a or later.
+ - MATLAB (relatively recent versions; tested with R2018a and later)
+ - MATLAB Optimization Toolbox
+ - MATLAB Global Optimization Toolbox
+ - CVX (http://cvxr.com/cvx/)
 
 
-Obtaining RK-opt
+Obtaining RK-Opt
 ------------------
- - Download: https://github.com/ketch/RK-opt/downloads.
+ - Download: https://github.com/ketch/RK-Opt/
  - Or clone::
 
-    $ git clone https://github.com/ketch/RK-opt.git
+    $ git clone https://github.com/ketch/RK-Opt.git
 
-After unzipping/cloning, add the subdirectory ``RK-opt/RKtools`` to your MATLAB path.
+After unzipping/cloning, add the subdirectory ``RK-Opt/RKtools`` to your MATLAB path.
 
 
 =========================
 Testing your installation
 =========================
-You can test your RK-opt installation with xUnit.
-
-Installing xUnit
-----------------
-The MATLAB xUnit test framework can be downloaded for free at
-`<http://www.mathworks.com/matlabcentral/fileexchange/22846>`_
-(after the link, click on the button in the upper right corner).
-An easy way to install xUnit without setting any environment variables is
-to add the following lines to your ``startup.m`` file:
-
-.. doctest::
-
-   addpath /path/to/matlab/xunit/matlab_xunit
-   addpath /path/to/matlab/xunit/matlab_xunit/xunit
-   addpath /path/to/RK-opt/RK-coeff-opt
+You can test your RK-Opt installation by running the MATLAB script `test.m`.
 
 Running the tests
 -----------------
 
 To run the tests, do the following in MATLAB::
 
-    >> cd /path/to/RK/Opt/general/test
-    >> runtests
+    >> cd /path/to/RK-Opt/
+    >> test
 
 If everything is set up correctly, this will run several tests, and inform you
-that the tests passed. At present the tests are not very extensive.
+that the tests passed.
