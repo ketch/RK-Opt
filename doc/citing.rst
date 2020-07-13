@@ -14,7 +14,7 @@ with the following entry in your bibliography:
 
     [1] **RK-Opt: Software for the design of Runge-Kutta methods**, version 0.2.
     DI Ketcheson, M Parsani, and AJ Ahmadia.
-    http://numerics.kaust.edu.sa/RK-opt, April 2013.
+    http://numerics.kaust.edu.sa/RK-Opt, April 2013.
 
 as well as one or more of those below.  Specifically,
 if you use the **RK-coeff-opt** package to optimize SSP coefficients, please reference [2].
