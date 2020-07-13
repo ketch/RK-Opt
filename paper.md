@@ -87,7 +87,7 @@ spectrum.  The corresponding optimization problem is intractable under a
 direct implementation.  The package uses the algorithm developed in
 [@2012_optimal_stability_polynomials], which transforms the problem into a
 sequence of convex problems and typically yields a solution in a few seconds.
-It relies on CVX [@cvx;gb08] to solve the convex subproblems.
+It relies on CVX [@cvx;@gb08] to solve the convex subproblems.
 This package is usually used as the first step in designing a
 Runge-Kutta method.
 
