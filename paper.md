@@ -82,8 +82,8 @@ it has been used in a number of papers (see below).
 This package computes optimal stability functions for Runge-Kutta methods.
 Here optimal means that the stable step size is maximized for a given ODE
 spectrum.  The corresponding optimization problem is intractable under a
-direct implementation.  The package uses the algorithm developed by
-@2012_optimal_stability_polynomials, which transforms the problem into a
+direct implementation.  The package uses the algorithm developed in
+[@2012_optimal_stability_polynomials], which transforms the problem into a
 sequence of convex problems and typically yields a solution in a few seconds or
 less.  This package is usually used as the first step in designing a
 Runge-Kutta method.
@@ -116,8 +116,8 @@ involving downwind Runge-Kutta methods and low-storage Runge-Kutta methods.
 ## `am_radius-opt`
 
 Whereas the previous two subpackages are fairly general-purpose tools,
-this package solves a very specific set of problems described by
-@2009_monotonicity.  Specifically, the provided routines determine the coefficients of
+this package solves a very specific set of problems described in
+[@2009_monotonicity].  Specifically, the provided routines determine the coefficients of
 multistep methods (including classes of general linear methods) with the
 largest possible SSP coefficient (also known
 as radius of absolute monotonicity).  The corresponding optimization problem
