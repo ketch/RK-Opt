@@ -15,14 +15,14 @@
             "orcid": "0000-0001-7300-1280"
         },
         {
-            "affiliation": "King Abdullah University of Science and Technology",
-            "name": "Hendrik Ranocha",
-            "orcid": "0000-0002-3456-2277"
-        },
-        {
             "affiliation": "Capital One",
             "name": "Aron Ahmadia",
             "orcid": "0000-0002-2573-2481"
+        },
+        {
+            "affiliation": "King Abdullah University of Science and Technology",
+            "name": "Hendrik Ranocha",
+            "orcid": "0000-0002-3456-2277"
         }
     ],
     "access_right": "open"

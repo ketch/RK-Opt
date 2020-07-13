@@ -44,7 +44,7 @@ The original (and still primary) focus of the package is on the design of
 Runge-Kutta methods, but some routines for designing other classes of methods
 are also included.
 
-# Statement of need 
+# Statement of need
 
 Over the last several decades, a great deal of work has gone into the design
 of numerical ODE solvers.  Initially this work was aimed at developing general
@@ -117,7 +117,7 @@ involving downwind Runge-Kutta methods and low-storage Runge-Kutta methods.
 
 Whereas the previous two subpackages are fairly general-purpose tools,
 this package solves a very specific set of problems described in
-[@2009_monotonicity].  Specifically, the provided routines determine the cofficients of
+[@2009_monotonicity].  Specifically, the provided routines determine the coefficients of
 multistep methods (including classes of general linear methods) with the
 largest possible SSP coefficient (also known
 as radius of absolute monotonicity).  The corresponding optimization problem
@@ -129,14 +129,14 @@ enabling its efficient solution for methods with many steps.
 
 # Related research and software
 
-`RK-Opt` development has proceeded in close connection to the `NodePy` package.
-Whereas `RK-Opt` is focused on the design of numerical methods, `NodePy` is focused 
+`RK-Opt` development has proceeded in close connection to the `NodePy` package (https://github.com/ketch/NodePy).
+Whereas `RK-Opt` is focused on the design of numerical methods, `NodePy` is focused
 more on their analysis.  A common workflow involves generating new methods with
 `RK-Opt` and then studying their properties in more detail using `NodePy`.
 
 Some of the research projects that have made use of `RK-Opt` include development of:
 
- - SSP Runge-Kutta methods 
+ - SSP Runge-Kutta methods
    [@2008_explicit_ssp;@2009_implicit_ssp;@gottlieb2015optimal]
  - SSP linear multistep methods [@2009_monotonicity]
  - SSP general linear methods [@2011_tsrk;@2017_msrk]
@@ -145,10 +145,11 @@ Some of the research projects that have made use of `RK-Opt` include development
  - Optimal Runge-Kutta stability polynomials [@2012_optimal_stability_polynomials]
  - Additive and downwind SSP Runge-Kutta methods [@2011_dwssp;@2018_perturbations]
  - Optimal Runge-Kutta methods for specific PDE semi-discretizations [@parsani-eccomas;@Parsani_finnish;@2013_sd_erk;@2014_ssp_rkdg]
+ - Optimal Runge-Kutta methods for pseudo-time stepping [@vermeire2019optimal;@vermeire2020optimal]
  - Embedded pairs for Runge-Kutta methods [@conde2018embedded]
  - Runge-Kutta methods with high weak stage order [@2018_wso]
  - SSP multistage, multiderivative methods [@christlieb2016explicit;@grant2019strong;@reynoso2017strong]
- 
+
 As can be seen from this list, applications have mostly stemmed from the
 work of the main developer's research group, but have since expanded
 beyond that.
