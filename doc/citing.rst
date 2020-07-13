@@ -7,14 +7,14 @@ Citing RK-Opt
 Are you using RK-Opt in research work to be published?  If so, please include
 explicit mention of our work in your publication.  We suggest language such as this:
 
-    "To solve problem (17), we used RK-Opt, a package for optimization of Runge-Kutta
-    methods [1],[2]"
+    "To solve problem (17), we used RK-Opt, a package for the design of
+    numerical ODE solvers [1],[2]"
 
 with the following entry in your bibliography:
 
-    [1] **RK-Opt: Software for the design of Runge-Kutta methods**, version 0.2.
-    DI Ketcheson, M Parsani, and AJ Ahmadia.
-    http://numerics.kaust.edu.sa/RK-Opt, April 2013.
+    [1] **RK-Opt: A package for the design of numerical ODE solvers**, version 0.3.
+    David I. Ketcheson, Matteo Parsani, Aron J. Ahmadia, and Hendrik Ranocha.
+    http://numerics.kaust.edu.sa/RK-Opt, July 2020.
 
 as well as one or more of those below.  Specifically,
 if you use the **RK-coeff-opt** package to optimize SSP coefficients, please reference [2].
@@ -33,11 +33,10 @@ If you use the **am_rad-opt** package, please reference [6].
     David I. Ketcheson, *Journal of Computational Physics*, 229(5):1763-1773 (2010)
 
     [4] **Optimized explicit Runge-Kutta schemes for the spectral difference method applied to wave propagation problems**.
-    Matteo Parsani, David I. Ketcheson, and W Deconinck, *SIAM Journal on
-    Scientific Computing*. In press. Pre-print available at
-    http://arxiv.org/abs/1207.5830. (2013)
+    Matteo Parsani, David I. Ketcheson, and W. Deconinck, *SIAM Journal on
+    Scientific Computing*, 35(2):A957-A986 (2013)
 
-    [5] **Optimal stability polynomials for numerical integration of initial value problems**. 
+    [5] **Optimal stability polynomials for numerical integration of initial value problems**.
     David I. Ketcheson and Aron J. Ahmadia, *Communications in
     Applied Mathematics and Computational Science*, 7(2):247-271 (2012)
 
@@ -45,7 +44,7 @@ If you use the **am_rad-opt** package, please reference [6].
     David I. Ketcheson, *Mathematics of Computation*, 78(267):1497-1513 (2009)
 
     [7] **Strong Stability Preserving Two-step Runge–Kutta Methods.**
-    DI Ketcheson, S Gottlieb, CB Macdonald, *SIAM Journal on Numerical Analysis*,
+    David I. Ketcheson, Sigal Gottlieb, CB Macdonald, *SIAM Journal on Numerical Analysis*,
     2011;49(6):2618 (2011).
 
 Also, please do let us know if you are using this software so we can add your
