@@ -18,14 +18,14 @@ p = 1;
 [h, poly_coeff] = opt_poly_bisect(lambda, s, p, 'chebyshev');
 assert(all(ismembertol(h, 2*s^2, tol, 'ByRows', true)))
 
-%% Test imaginaly axis monomial
+%% Test imaginary axis monomial
 lambda = spectrum('imagaxis', 100);
 s = randi(5);
 p = 1;
 [h, poly_coeff] = opt_poly_bisect(lambda, s, p, 'monomial');
 assert(all(ismembertol(h, s-1, tol, 'ByRows', true)))
 
-%% Test imaginaly axis Chebyshev
+%% Test imaginary axis Chebyshev
 % For some reason, SDPT3 and Sedumi sometimes fail for small s
 lambda = spectrum('imagaxis', 100);
 s = randi(10)+10;
