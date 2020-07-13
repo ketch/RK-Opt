@@ -23,7 +23,11 @@ A common workflow for designing Runge-Kutta methods is to use **polyopt** to fin
 appropriate stability function and then **RK-coeff-opt** to determine the Runge-Kutta
 method coefficients.
 
-To run the tests, execute the MATLAB script `test.m`.
+To run the tests, execute the MATLAB script `test.m`. This requires a relatively recent
+version of MATLAB (tested with R2018a and later) with the following toolboxes.
+ - MATLAB Optimization Toolbox
+ - MATLAB Global Optimization Toolbox
+ - CVX (http://cvxr.com/cvx/)
 
 
 # Authors

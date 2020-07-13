@@ -10,10 +10,8 @@ Dependencies
 ------------
  - MATLAB (relatively recent versions; tested with R2018a and later)
  - MATLAB Optimization Toolbox
-
-Optional dependencies
-------------------------------
- - MATLAB Global Optimization toolbox (for multicore search)
+ - MATLAB Global Optimization Toolbox
+ - CVX (http://cvxr.com/cvx/)
 
 
 Obtaining RK-Opt
