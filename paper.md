@@ -43,7 +43,8 @@ coefficients optimally chosen to provide desired properties.
 It is available from https://github.com/ketch/RK-Opt, with documentation
 at http://numerics.kaust.edu.sa/RK-opt/.
 The primary focus of the package is on the design of Runge-Kutta methods, but
-some routines for designing other classes of methods are also included.
+some routines for designing other classes of methods such as multistep
+Runge-Kutta and general linear methods are also included.
 
 # Statement of need
 
@@ -57,7 +58,7 @@ essential depending on the nature of the equations to be solved.
 `RK-Opt` provides code that can enforce desired properties and/or objective
 functions.  The constraints and objective are then used within an optimization
 framework, to determine coefficients of methods that best achieve the desired
-goal.  Thus `RK-Opt` is a sort of meta-software, consisting of algorithms whose
+goal.  Thus, `RK-Opt` is a sort of meta-software, consisting of algorithms whose
 purpose is to create other algorithms.
 
 Typically, the most obvious formulation of the corresponding
@@ -107,8 +108,8 @@ Runge-Kutta methods can also be optimized.
 
 The optimization problem in question is highly nonconvex and the available
 solvers may fail to find a solution, or may converge to a non-optimal solution.
-For this reason, the implementation is based on doing many local optimizations
-in parallel from different random initial points, using MATLAB's Global
+For this reason, the implementation is based on solving many local optimization
+problems in parallel from different random initial points, using MATLAB's Global
 Optimization Toolbox.
 
 The packages `dwrk-opt` and `low-storage` are specialized but less full-featured
