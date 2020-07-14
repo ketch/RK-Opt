@@ -8,22 +8,12 @@ semi-discretization of a PDE), finds an optimal stability polynomial. The
 polynomial coefficients can then be used as input to RK-coeff-opt to find a
 corresponding Runge-Kutta method.
 
-This is the implementation of the algorithm described in [ketcheson-ahmadia]_.
+This is the implementation of the algorithm described in :cite:`2012_optimal_stability_polynomials`.
 The code was written by Aron Ahmadia and David Ketcheson.
 
 
 
 .. contents::
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -43,7 +33,7 @@ Optional arguments:
                 A function used to generate the appropriate spectrum
                 at each bisection step, instead of using a fixed (scaled) spectrum.
                 Used for instance to find the longest rectangle of a fixed height
-                (see Figure 10 of the CAMCoS paper).
+                (see Figure 10 of :cite:`2012_optimal_stability_polynomials`).
 
 Examples:
 
@@ -53,7 +43,7 @@ Examples:
               s = 10; p = 2;
               [h,poly_coeff] = opt_poly_bisect(lam,s,p,'chebyshev')
 
-      - To reproduce figure 10 of [ketcheson-ahmadia]_ ::
+      - To reproduce figure 10 of :cite:`2012_optimal_stability_polynomials`)::
 
               lam_func = @(kappa) spectrum('rectangle',100,kappa,10)
               [h,poly_coeff] = opt_poly_bisect(lam,20,1,'chebyshev','lam_func',lam_func)
@@ -79,4 +69,3 @@ Acceptable values for name:
       * 'gap':          Spectrum with a gap; see Ketcheson & Ahmadia 2012
 
 kappa and beta are used only if name == 'rectangle'
-

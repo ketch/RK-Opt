@@ -2,17 +2,20 @@
 Overview
 ********
 
-`RK-Opt <https://github.com/ketch/RK-Opt>`_ is a MATLAB package for designing
-Runge-Kutta (RK) methods and stability polynomials.
+`RK-Opt` is a software package for designing numerical ODE solvers with
+coefficients optimally chosen to provide desired properties.
+It is available from https://github.com/ketch/RK-Opt, with documentation
+at http://numerics.kaust.edu.sa/RK-Opt/.
+The primary focus of the package is on the design of Runge-Kutta methods
+(including both stability polynomials and full Butcher tableaus), but
+some routines for designing other classes of methods such as multistep
+Runge-Kutta and general linear methods are also included.
 Supported objective functions include the principal
 error norm and the SSP coefficient.  Supported constraints include stability
 polynomial coefficients, low-storage formulations, and structural constraints
 (explicit, diagonally implicit, etc.)
-RK-Opt uses MATLAB's optimization toolbox, in particular *fmincon* and *linprog*.
-
-MATLAB's global optimization toolbox function *Multistart* can be used to exploit the
-benefits of parallel search on multicore machines.
-
+RK-Opt uses `CVX <http://cvxr.com/cvx/>`_ as well as MATLAB's Optimization Toolbox and Global
+Optimization Toolbox.
 
 The RK-Opt package consists of the following packages:
     + :ref:`RK-coeff-opt`:
@@ -39,13 +42,10 @@ The RK-Opt package consists of the following packages:
                         Some general utilities for analyzing Runge-Kutta methods.
 
 RK-Opt has been developed by David Ketcheson (primary developer and maintainer),
-Matteo Parsani, Aron Ahmadia, and Hendrik Ranocha.  Additional contributions include:
+Matteo Parsani, Aron Ahmadia, Zack Grant, and Hendrik Ranocha.  Additional contributions include:
 
-    + Order conditions for multistep RK methods of orders 9-11 (Christopher Bresten, Zachary Grant, and Daniel Higgs)
-
-
-It is released under a modified BSD License.
-If you use RK-Opt in published work, please see :ref:`citing`.
+RK-Opt is released under a modified BSD License.
+If you use RK-Opt in published work, please cite it; see :ref:`citing`.
 
 *******
 RK-Opt
@@ -57,6 +57,7 @@ RK-Opt
    rk-methods
    started
    citing
+   zreferences
 
 *********
 Reference
@@ -82,3 +83,4 @@ fork the `RK-Opt GitHub repository <https://github.com/ketch/RK-Opt>`_,
 implement your additions, and `issue a pull request
 <https://help.github.com/articles/using-pull-requests>`_.  You may also
 simply e-mail a patch to us.
+

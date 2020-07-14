@@ -8,7 +8,7 @@ This includes codes for optimizing stability functions of
 multistep, multistage methods and even methods with downwinding.
 
 Generally, the optimization problem is phrased as a sequence of linear 
-programming feasibility problems.  For details, see [ketcheson2009]_.
+programming feasibility problems.  For details, see :cite:`2009_monotonicity`.
 
 The optimization of rational functions is experimental.
 
@@ -28,7 +28,7 @@ multi_R_opt
 
 This function is a script to run the routines Rskp, Rkp_dw, Rkp_imp, or
 Rkp_imp_dw several times with different inputs, in order to construct tables
-of optimal values like those that appear in [ketcheson2009]_.
+of optimal values like those that appear in :cite:`2009_monotonicity`.
 different values of the input parameters, i.e.: 
 
 k = [k1, k2, ..., kK]^T, K = length(k),  ith-element = # of steps
