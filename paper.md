@@ -157,10 +157,15 @@ As can be seen from this list, applications have mostly stemmed from the
 work of the main developer's research group, but have since expanded
 beyond that.
 
+Because of the nature of `RK-Opt`, applications often involve writing some additional
+code to impose special constraints, or simply using the existing code as a template.
+A number of related optimization routines written for similar purposes in this
+vein can be found at https://github.com/SSPmethods.
+
 # Acknowledgements
 
 Much of the initial `RK-Opt` development was performed by D. Ketcheson while
-he was supported by a DOE Computational Science Graduate Fellowship.  Development
+he was supported by a DOE Computational Science Graduate Fellowship and an AFOSR grant.  Development
 has also been supported by funding from King Abdullah University of Science and Technology.
 
 # References
