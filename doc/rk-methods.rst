@@ -3,7 +3,7 @@
 ========================================
 Automated design of Runge-Kutta methods
 ========================================
-An `s`-stage Runge-Kutta method has roughly `s^2` coefficients (roughly `s^2/2` for explicit methods), 
+An `s`-stage Runge-Kutta method has roughly `s^2` coefficients (roughly `s^2/2` for explicit methods),
 which can be chosen
 so as to provide high accuracy, stability, or other properties.  Historically, most
 interest in Runge-Kutta methods has focused on methods using the minimum number of stages
@@ -24,4 +24,4 @@ algorithms will be the exception.
 RK-Opt contains a set of tools for designing Runge-Kutta methods in this paradigm.  It has been
 constructed mostly in the direct line of our research, but we have made some effort to help others
 easily understand and use it.  We hope that you find it useful, and that you will contribute any
-enhancements you may develop back to the project by sending us a pull request on Github.
+enhancements you may develop back to the project by sending us a pull request on `GitHub <https://github.com/ketch/RK-Opt>`_.

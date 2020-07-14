@@ -41,7 +41,7 @@ methods for specific applications is an important area of research.
 `RK-Opt` is a software package for designing numerical ODE solvers with
 coefficients optimally chosen to provide desired properties.
 It is available from https://github.com/ketch/RK-Opt, with documentation
-at http://numerics.kaust.edu.sa/RK-opt/.
+at http://numerics.kaust.edu.sa/RK-Opt/.
 The primary focus of the package is on the design of Runge-Kutta methods, but
 some routines for designing other classes of methods such as multistep
 Runge-Kutta and general linear methods are also included.

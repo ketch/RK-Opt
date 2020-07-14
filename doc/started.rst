@@ -27,7 +27,7 @@ After unzipping/cloning, add the subdirectory ``RK-Opt/RKtools`` to your MATLAB 
 =========================
 Testing your installation
 =========================
-You can test your RK-Opt installation by running the MATLAB script `test.m`.
+You can test your RK-Opt installation by running the MATLAB script ``test.m``.
 
 Running the tests
 -----------------

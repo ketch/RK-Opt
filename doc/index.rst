@@ -39,7 +39,7 @@ The RK-Opt package consists of the following packages:
                         Some general utilities for analyzing Runge-Kutta methods.
 
 RK-Opt has been developed by David Ketcheson (primary developer and maintainer),
-Matteo Parsani, Hendrik Ranocha, and Aron Ahmadia.  Additional contributions include:
+Matteo Parsani, Aron Ahmadia, and Hendrik Ranocha.  Additional contributions include:
 
     + Order conditions for multistep RK methods of orders 9-11 (Christopher Bresten, Zachary Grant, and Daniel Higgs)
 
