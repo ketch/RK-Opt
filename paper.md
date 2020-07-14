@@ -140,11 +140,11 @@ more on their analysis.  A common workflow involves generating new methods with
 Some of the research projects that have made use of `RK-Opt` include development of:
 
  - SSP Runge-Kutta methods
-   [@2008_explicit_ssp;@2009_implicit_ssp;@gottlieb2015optimal]
+   [@2008_explicit_ssp;@2009_implicit_ssp;@gottlieb2015optimal;@higueras2019strong]
  - SSP linear multistep methods [@2009_monotonicity]
  - SSP general linear methods [@2011_tsrk;@2017_msrk]
  - SSP IMEX Runge-Kutta methods [@conde2017implicit]
- - Low-storage Runge-Kutta methods [@2010_LSRK]
+ - Low-storage Runge-Kutta methods [@2010_LSRK;@higueras2019new]
  - Optimal Runge-Kutta stability polynomials [@2012_optimal_stability_polynomials]
  - Additive and downwind SSP Runge-Kutta methods [@2011_dwssp;@2018_perturbations]
  - Optimal Runge-Kutta methods for specific PDE semi-discretizations [@parsani-eccomas;@Parsani_finnish;@2013_sd_erk;@2014_ssp_rkdg]
