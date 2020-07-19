@@ -15,17 +15,22 @@ authors:
   - name: Matteo Parsani
     orcid: 0000-0001-7300-1280
     affiliation: 1
-  - name: Aron Ahmadia
-    orcid: 0000-0002-2573-2481
+  - name: Zachary J. Grant
+    orcid: 0000-0002-1293-4770
     affiliation: 2
+  - name: Aron J. Ahmadia
+    orcid: 0000-0002-2573-2481
+    affiliation: 3
   - name: Hendrik Ranocha
     orcid: 0000-0002-3456-2277
     affiliation: 1
 affiliations:
  - name: King Abdullah University of Science and Technology
    index: 1
- - name: Capital One
+ - name: Oak Ridge National Laboratory
    index: 2
+ - name: Capital One
+   index: 3
 date: 9 July 2020
 bibliography: paper.bib
 ---
@@ -85,10 +90,11 @@ This package computes optimal stability functions for Runge-Kutta methods.
 Here *optimal* means that the stable step size is maximized for a given ODE
 spectrum.  The corresponding optimization problem is intractable under a
 direct implementation.  The package uses the algorithm developed in
-[@2012_optimal_stability_polynomials], which transforms the problem into a
-sequence of convex problems and typically yields a solution in a few seconds.
-It relies on CVX [@cvx;@gb08] to solve the convex subproblems.
-This package is usually used as the first step in designing a
+[@2012_optimal_stability_polynomials], which relaxes the global optimization
+problem by solving a sequence of convex subproblems.  Under certain technical
+assumptions, the result is guaranteed to be the optimal solution of the
+original problem.  `polyopt` relies on CVX [@cvx;@gb08] to solve the convex
+subproblems.  This package is usually used as the first step in designing a
 Runge-Kutta method.
 
 ## `RK-Coeff-Opt`
