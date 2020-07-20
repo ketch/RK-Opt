@@ -12,18 +12,20 @@ explicit mention of our work in your publication.  We suggest language such as t
 
 with the following entry in your bibliography:
 
-    [1] **RK-Opt: A package for the design of numerical ODE solvers**, version 0.3.
-    David I. Ketcheson, Matteo Parsani, Aron J. Ahmadia, and Hendrik Ranocha.
+    [1] **RK-Opt: A package for the design of numerical ODE solvers**, version X.Y.Z.
+    David I. Ketcheson, Matteo Parsani, Zachary J. Grant, Aron J. Ahmadia, and Hendrik Ranocha.
     http://numerics.kaust.edu.sa/RK-Opt, July 2020.
 
-as well as one or more of those below.  Specifically,
-if you use the **RK-coeff-opt** package to optimize SSP coefficients, please reference [2].
-If you use the **RK-coeff-opt** package to develop low-storage methods, please reference [3].
-If you use the **RK-coeff-opt** package to optimize for accuracy, and/or enforce a given
-stability function, please reference [4].
-If you use the **RK-coeff-opt** package to develop general linear methods, please reference [7].
-If you use the **polyopt** package, please reference [5].
-If you use the **am_rad-opt** package, please reference [6].
+with the appropriate version number inserted.
+It may also be appropriate to cite one of the following:
+
+ - if you use the **RK-coeff-opt** package to optimize SSP coefficients, please reference [2].
+ - If you use the **RK-coeff-opt** package to develop low-storage methods, please reference [3].
+ - If you use the **RK-coeff-opt** package to optimize for accuracy, and/or enforce a given
+    stability function, please reference [4].
+ - If you use the **RK-coeff-opt** package to develop general linear methods, please reference [7].
+ - If you use the **polyopt** package, please reference [5].
+ - If you use the **am_rad-opt** package, please reference [6].
 
 
     [2] **Highly Efficient Strong Stability Preserving Runge-Kutta Methods with Low-Storage Implementations**.

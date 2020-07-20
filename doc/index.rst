@@ -42,7 +42,7 @@ The RK-Opt package consists of the following packages:
                         Some general utilities for analyzing Runge-Kutta methods.
 
 RK-Opt has been developed by David Ketcheson (primary developer and maintainer),
-Matteo Parsani, Aron Ahmadia, Zack Grant, and Hendrik Ranocha.  Additional contributions include:
+Matteo Parsani, Aron Ahmadia, Zack Grant, and Hendrik Ranocha.
 
 RK-Opt is released under a modified BSD License.
 If you use RK-Opt in published work, please cite it; see :ref:`citing`.
