@@ -28,6 +28,7 @@ version of MATLAB (tested with R2018a and later) with the following toolboxes.
  - MATLAB Optimization Toolbox
  - MATLAB Global Optimization Toolbox
  - CVX (http://cvxr.com/cvx/)
+ - MATLAB Parallel Computing Toolbox (optional; allows faster searching for optimal methods in RK-Coeff-Opt)
 
 
 # Authors
