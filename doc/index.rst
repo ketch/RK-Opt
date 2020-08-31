@@ -5,7 +5,7 @@ Overview
 `RK-Opt` is a software package for designing numerical ODE solvers with
 coefficients optimally chosen to provide desired properties.
 It is available from https://github.com/ketch/RK-Opt, with documentation
-at http://numerics.kaust.edu.sa/RK-Opt/.
+at http://rk-opt.readthedocs.io/en/latest/.
 The primary focus of the package is on the design of Runge-Kutta methods
 (including both stability polynomials and full Butcher tableaus), but
 some routines for designing other classes of methods such as multistep

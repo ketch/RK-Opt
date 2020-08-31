@@ -14,7 +14,7 @@ with the following entry in your bibliography:
 
     [1] **RK-Opt: A package for the design of numerical ODE solvers**, version X.Y.Z.
     David I. Ketcheson, Matteo Parsani, Zachary J. Grant, Aron J. Ahmadia, and Hendrik Ranocha.
-    http://numerics.kaust.edu.sa/RK-Opt, July 2020.
+    July 2020.
 
 with the appropriate version number inserted.
 It may also be appropriate to cite one of the following:

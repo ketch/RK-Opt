@@ -40,9 +40,9 @@ clean:
 deploy: html
 	@echo
 	@echo "Deploying generated HTML to http://numerics.kaust.edu.sa/RK-Opt"
-	@-rsync -rltvzO _build/html/* numerics.kaust.edu.sa:/var/www/html/RK-Opt
+	@-rsync -rltvzO _build/html/ l-ketchedi@10.127.4.47:/var/www/html/RK-Opt
 	@echo "Fixing up remote permissions"
-	@-ssh numerics.kaust.edu.sa "chmod -Rf g+w /var/www/html/RK-Opt"
+	@-ssh l-ketchedi@10.127.4.47 "chmod -Rf g+w /var/www/html/RK-Opt"
 	@echo "Deployed! check results at: http://numerics.kaust.edu.sa/RK-Opt"
 
 html:
