@@ -2,7 +2,7 @@ function [R,gamma]=Rskp(s,k,p)
 % function [R,gamma]=Rskp(s,k,p)
 %
 % Finds the optimal contractive k-step, s-stage GLM with order of accuracy p
-% for linear problems
+% for linear problems.
 %
 % Inputs:
 %       * s = # of stages

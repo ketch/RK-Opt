@@ -52,11 +52,11 @@ Rkp
 
 Find the optimal SSP k-step explicit LMM with order of accuracy p.
 
-Inputs: 
+Inputs:
       * k = # of steps
       * p = order of accuracy
 
-Outputs: 
+Outputs:
       * R = the SSP coefficient
       * alpha, beta = the coefficients of the method
 
@@ -90,15 +90,16 @@ Rskp
 
 
 Finds the optimal contractive k-step, s-stage GLM with order of accuracy p
-for linear problems
+for linear problems.
 
-Inputs: s = # of stages
-        k = # of steps
-        p = order of accuracy
+Inputs:
+      * s = # of stages
+      * k = # of steps
+      * p = order of accuracy
 
-Outputs: 
-       R = threshold factor
-       gamma = coefficients of the polynomials
+Outputs:
+      * R = threshold factor
+      * gamma = coefficients of the polynomials
         
        for k=1, the resulting polynomial is
        `\sum_{j=0}^m (1+z/R)^j`
@@ -119,11 +120,11 @@ Rkp_dw
 Finds the optimal SSP k-step explicit LMM with order of accuracy p
 allowing downwind operators
 
-Inputs: 
+Inputs:
       * k = # of steps
       * p = order of accuracy
 
-Outputs: 
+Outputs:
       * R = the SSP coefficient
       * alpha, beta, tbeta = the coefficients of the method
 
@@ -144,7 +145,7 @@ Rkp_imp
 
 Find the optimal SSP k-step implicit LMM with order of accuracy p
 
-Inputs: 
+Inputs:
       * k = # of steps
       * p = order of accuracy
 
@@ -166,11 +167,11 @@ Rkp_imp_dw
 Finds the optimal k-step implicit LMM with order of accuracy p
 allowing downwinding
 
-Inputs: 
+Inputs:
       * k = # of steps
       * p = order of accuracy
 
-Outputs: 
+Outputs:
       * R = the SSP coefficient
       * alpha, beta, tbeta = the coefficients of the method
    
