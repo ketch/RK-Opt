@@ -1,7 +1,8 @@
 function tau = order_conditions(x,class,s,p,Aeq,beq)
 % function tau = order_conditions(x,class,s,p,Aeq,beq)
 %
-% This is just a small wrapper, used when solveorderconditions=1.
+% This is just a small wrapper, used when the option solveorderconditions=1
+% is passed to rk_opt.  See the documentation of rk_opt for more details.
 
 oc_form = 'albrecht';
 
