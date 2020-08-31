@@ -8,8 +8,8 @@ function lamda = spectrum(name,N,kappa,beta)
 %       * 'imagaxis':     `[-i,i]`
 %       * 'disk':         `{z : |z+1|=1}`
 %       * 'rectangle':    `{x+iy : -\beta \le y \le \beta, -\kappa \le x \le 0}`
-%       * 'Niegemann-ellipse' and 'Niegemann-circle':  See Niegemann 2011
-%       * 'gap':          Spectrum with a gap; see Ketcheson & Ahmadia 2012
+%       * 'Niegemann-ellipse' and 'Niegemann-circle':  See :cite:`niegemann2011`
+%       * 'gap':          Spectrum with a gap; see :cite:`2012_optimal_stability_polynomials`
 %
 % kappa and beta are used only if name == 'rectangle'
 

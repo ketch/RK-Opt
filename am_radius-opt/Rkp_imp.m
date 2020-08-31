@@ -3,11 +3,13 @@ function [R,alpha,beta]=Rkp_imp(k,p)
 %
 % Find the optimal SSP k-step implicit LMM with order of accuracy p
 %
-% Inputs: 
+% Inputs:
 %       * k = # of steps
 %       * p = order of accuracy
 %
-% Outputs: alpha, beta = the coefficients of the method
+% Outputs:
+%       * R = the SSP coefficient
+%       * alpha, beta = the coefficients of the method
 %
 % Depends on MATLAB's optimization toolbox for the LP solver
     

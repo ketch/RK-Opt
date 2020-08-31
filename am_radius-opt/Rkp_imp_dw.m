@@ -4,10 +4,13 @@ function [R,alpha,beta,tbeta]=Rkp_imp_dw(k,p)
 % Finds the optimal k-step implicit LMM with order of accuracy p
 % allowing downwinding
 %
-% Inputs: k = # of steps
-%        p = order of accuracy
+% Inputs:
+%       * k = # of steps
+%       * p = order of accuracy
 %
-% Outputs: alpha, beta, tbeta = the coefficients of the method
+% Outputs:
+%       * R = the SSP coefficient
+%       * alpha, beta, tbeta = the coefficients of the method
 %    
 % Depends on MATLAB's optimization toolbox for the LP solver
 

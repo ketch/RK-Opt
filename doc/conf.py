@@ -233,4 +233,4 @@ man_pages = [
 #intersphinx_mapping = {'http://docs.python.org/': None}
 #jsmath_path = 'http://numerics.kaust.edu.sa/jsMath/easy/load.js'
 jsmath_path = '/Users/ketch/Software/jsMath/easy/load.js'
-keep_warnings = 'True'
+keep_warnings = True

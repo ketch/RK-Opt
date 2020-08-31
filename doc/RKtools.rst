@@ -9,37 +9,6 @@ Some general utilities for analyzing Runge-Kutta methods.
 
 .. contents::
 
-am_radius
-=======================================
-::
-
-    function r = am_radius(A,b,c,eps,rmax)
-
-
-Evaluates the Radius of absolute monotonicity
-of a Runge-Kutta method, given the Butcher array.
-
-For an `m`-stage method, `A` should be an `m \times m` matrix
-and `b` should be a column vector of length m.
-
-Accuracy can be changed by modifying the value of eps (default `10^-{10}`)
-Methods with very large radii of a.m. (>50) will require
-the default value of rmax to be increased.
-
-The radius of absolute monotonicity is the largest value of `r`
-such that
-
-.. raw:: latex
-
-   \begin{eqnarray}
-   K(I+rA)^{-1} \ge & 0    \\
-   rK(I+rA)^{-1}e_m \le & e_{m+1}
-   \end{eqnarray}
-
-   where $$ K = \left(\begin{array}{c} A \\ b^T \end{array}\right) $$
-
-
-
 internal_stab_explicit_butcher
 ====================================================================================
 ::
@@ -66,6 +35,49 @@ Runge-Kuatta method.
 
 
 
+plotstabreg_func
+===============================================================
+::
+
+    function [contour_matrix] = plotstabreg_func(p,q,bounds,ls,lw)
+
+
+plot the absolute stability region of a one-step method,
+given the stability function
+
+Inputs:
+      * p: coefficients of the numerator   of the stability function
+      * q: coefficients of the denominator of the stability function 
+
+ if q is omitted, it is assumed that the function is a polynomial
+Remaining inputs are optional:
+      * bounds: bounds for region to compute and plot (default [-9 1 -5 5])
+      * ls:   line style (default '-r')
+      * lw:   line width (default 2)
+
+
+
+plotstabreg
+=============================================================
+::
+
+    function [contour_matrix] = plotstabreg(rk,plotbounds,ls,lw)
+
+
+Plots the absolute stability region
+of a Runge-Kutta method, given the Butcher array
+
+
+
+optimal_shuosher_form
+=======================================================
+::
+
+    function [v,alpha,beta] = optimal_shuosher_form(A,b,c)
+
+
+
+
 L2_timestep_poly
 =================================================
 ::
@@ -84,46 +96,22 @@ The spectral stability condition is checked to within tol (default 10^-13).
 
 
 
-optimal_shuosher_form
-=======================================================
-::
-
-    function [v,alpha,beta] = optimal_shuosher_form(A,b,c)
-
-
-
-
-plotstabreg(rk,plotbounds,ls,lw)
-==========================================
-::
-
-    function plotstabreg(rk,plotbounds,ls,lw)
-
-
-Plots the absolute stability region
-of a Runge-Kutta method, given the Butcher array
-
-
-
-plotstabreg_func
+semispectrum
 ======================================================
 ::
 
-    function [dummy] = plotstabreg_func(p,q,bounds,ls,lw)
+    function L = semispectrum(method,order,doplot,nx,cfl)
 
+Plot spectra of various semi-discretizations of the advection equation
 
-plot the absolute stability region of a one-step method,
-given the stability function
+Current choices for method:
+      - 'fourier':   Fourier   spectral method
+      - 'chebyshev': Chebyshev spectral method
+      - 'updiff':    Upwind difference operators (linearized WENO)
+      - 'DG':        Discontinuous Galerkin method
 
-Inputs:
-      * p: coefficients of the numerator   of the stability function
-      * q: coefficients of the denominator of the stability function 
-
- if q is omitted, it is assumed that the function is a polynomial
-Remaining inputs are optional:
-      * bounds: bounds for region to compute and plot (default [-9 1 -5 5])
-      * ls:   line style (default '-r')
-      * lw:   line width (default 2)
+The value of order matters only for the 'updiff' and 'DG' methods
+and selects the order of accuracy in those cases.
 
 
 
@@ -148,22 +136,32 @@ q contains the coefficients of the denominator
 
 
 
-semispectrum
-======================================================
+am_radius
+=======================================
 ::
 
-    function L = semispectrum(method,order,doplot,nx,cfl)
+    function r = am_radius(A,b,c,eps,rmax)
 
-Plot spectra of various semi-discretizations of the advection equation
 
-Current choices for method:
-      - 'fourier':   Fourier   spectral method
-      - 'chebyshev': Chebyshev spectral method
-      - 'updiff':    Upwind difference operators (linearized WENO)
-      - 'DG':        Discontinuous Galerkin method
+Evaluates the Radius of absolute monotonicity
+of a Runge-Kutta method, given the Butcher array.
 
-The value of order matters only for the 'updiff' and 'DG' methods
-and selects the order of accuracy in those cases.
+For an `m`-stage method, `A` should be an `m \times m` matrix
+and `b` and `c` should be column vectors of length m.
+
+Accuracy can be changed by modifying the value of eps (default `10^{-10}`)
+Methods with very large radii of a.m. (>50) will require
+the default value of rmax to be increased.
+
+The radius of absolute monotonicity is the largest value of `r`
+such that
+
+   \\begin{align*}
+   K(I+rA)^{-1} \\ge & 0    \\\\\\
+   rK(I+rA)^{-1}e_m \\le & e_{m+1}
+   \\end{align*}
+
+   where $$ K = \\left(\\begin{array}{c} A \\\\\\ b^T \\end{array}\\right) $$
 
 
 

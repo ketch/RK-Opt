@@ -1,9 +1,9 @@
 function coneq=oc_albrecht(A,b,c,p)
 % function coneq=oc_albrecht(A,b,c,p)
 %
-% Order conditions for SSP RK Methods.
+% Order conditions for SSP RK methods.
 %
-% This version is based on Albrecht's approach
+% This version is based on Albrecht's approach.
 
 % ..warning:: 
 %

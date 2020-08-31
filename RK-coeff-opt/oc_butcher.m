@@ -1,7 +1,7 @@
 function coneq=oc_butcher(A,b,c,p)
 % function coneq=oc_butcher(A,b,c,p)
 %
-% Order conditions for RKMs.
+% Order conditions for Runge-Kutta methods.
 % This version is based on Butcher's approach.
 %
 % Assumes `p>1`.

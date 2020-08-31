@@ -1,12 +1,14 @@
 function rad=radimpfast(p,q)
 % function rad=radimpfast(p,q)
 %
-% Compute the radius of absolute monotonicity of a rational function.
+% Compute the radius of absolute monotonicity of the rational function
+% whose numerator has coefficients p and denominator has coefficients q.
+% The coefficients are ordered in ascending powers.
 %
 % This function is outdated and needs to be fixed.
 %
-% Uses van de Griend's algorithm, assuming multiplicity one for all roots.
-% Uses high precision arithmetic.
+% Uses van de Griend's algorithm :cite:`vandegriend1986`, assuming multiplicity
+% one for all roots.  Uses high precision arithmetic.
 
 syms x P Q phi
 

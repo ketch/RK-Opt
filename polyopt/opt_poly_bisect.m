@@ -27,7 +27,7 @@ function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
 %               s = 10; p = 2;
 %               [h,poly_coeff] = opt_poly_bisect(lam,s,p,'chebyshev')    
 %
-%       - To reproduce figure 10 of [ketcheson-ahmadia]_ ::
+%       - To reproduce figure 10 of :cite:`2012_optimal_stability_polynomials` ::
 %
 %               lam_func = @(kappa) spectrum('rectangle',100,kappa,10)
 %               [h,poly_coeff] = opt_poly_bisect(lam,20,1,'chebyshev','lam_func',lam_func)

@@ -3,28 +3,21 @@ function multi_R = multi_R_opt(k,p,class,varargin)
 %
 % This function is a script to run the routines Rskp, Rkp_dw, Rkp_imp, or
 % Rkp_imp_dw several times with different inputs, in order to construct tables
-% of optimal values like those that appear in [ketcheson2009]_.
-% different values of the input parameters, i.e.: 
-%
-% k = [k1, k2, ..., kK]^T, K = length(k),  ith-element = # of steps
-% p = [p1, p2, ..., pP]^T, P = length(p),  ith-element = order of accuracy
+% of optimal values like those that appear in :cite:`2009_monotonicity`.
 % 
-% and 
+% The inputs k, p, and (optionally) s should be vectors containing
+% the numbers of steps, orders of accuracy, and numbers of stages
+% to be considered, respectively.  The output includes results for
+% all combinations of values from the input vectors.
+% 
+% The family of methods to be considered is specified in the string 'class'.
+% Valid values are:
 %
-% s = [s1, s2, ..., sS]^T, S = length(s),  ith-element = # of stages
-%
-% when optimal contractive k-step, s-stage GLM are investigated.
-%
-% The family of method to be considered is specified in the string 'class'.
-%
-% Note that in general `S\ne K\ne P`. Fixed the order of accuracy of the time 
-%    integration scheme, one is usually interested in understanding the
-%    behavior of the threshold factor R as a function of the number of
-%    stages. Therefore, for a fixed element of the array "p", this function
-%    loops over the elements of the array "s". Thus, min(s) => max(p). The
-%    equality holds for any order of accuracy because the number of 
-%    linear order conditions that will be imposed to construct the 
-%    GLM coefficients is p. 
+%  * 'skp': find optimal general linear methods (multistep, multistage).
+%           In this case the vector s must be included in the inputs.
+%  * 'kp_imp': find optimal implicit linear multistep methods.
+%  * 'kp_dw':  find optimal explicit downwind linear multistep methods.
+%  * 'kp_imp_dw':  find optimal implicit downwind linear multistep methods.
 
 
 % Parse optional input arguments

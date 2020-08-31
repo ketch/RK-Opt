@@ -26,7 +26,7 @@ def extract_matlab_docstring(mfile):
             return docstring+'\n'
     return docstring+'\n'
 
-def compile_docstrings(directory,rstfile):
+def compile_docstrings(directory,rstfile,skip_tests=True):
     """Write all the docstrings from directory to rstfile."""
     import os
     output=open(rstfile,'w')
@@ -46,7 +46,7 @@ def compile_docstrings(directory,rstfile):
     output.write('\n.. contents::\n\n')
 
     for fname in os.listdir(directory):
-        if fname[-2:]=='.m':
+        if fname[-2:]=='.m' and not ('test' in fname.lower()):
             docstring = extract_matlab_docstring(os.path.relpath(directory+fname))
             output.write(docstring)
             output.write('\n\n')

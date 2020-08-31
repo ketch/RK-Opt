@@ -3,6 +3,6 @@ This includes codes for optimizing stability functions of
 multistep, multistage methods and even methods with downwinding.
 
 Generally, the optimization problem is phrased as a sequence of linear 
-programming feasibility problems.  For details, see [ketcheson2009]_.
+programming feasibility problems.  For details, see :cite:`2009_monotonicity`.
 
 The optimization of rational functions is experimental.
