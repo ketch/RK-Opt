@@ -5,6 +5,8 @@ corresponding Runge-Kutta method.
 
 This is the implementation of the algorithm described in :cite:`2012_optimal_stability_polynomials`.
 The code was written by Aron Ahmadia and David Ketcheson.
+Inputs to reproduce the examples from the paper are given in examples.txt.
+
 
 To run the tests, execute the MATLAB commands
 ```

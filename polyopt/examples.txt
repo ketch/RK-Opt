@@ -1,0 +1,52 @@
+The following inputs can be used to reproduce examples from the 2012 paper.
+
+%% KA12 - Fig 3 top
+lam = spectrum('realaxis',6400);
+s = 20; p = 4;
+[h,poly_coeff] = opt_poly_bisect(lam,s,p,'chebyshev')
+plotstabreg_func(poly_coeff,[1])
+
+%% KA12 - Fig 3 bottom
+lam = spectrum('realaxis',6400);
+s = 20; p = 10;
+[h,poly_coeff] = opt_poly_bisect(lam,s,p,'chebyshev')
+plotstabreg_func(poly_coeff,[1],[-140 1 -10 10])
+
+%% KA12 - Fig 4 left
+lam = spectrum('imagaxis',3200);
+s = 7; p = 1;
+[h,poly_coeff] = opt_poly_bisect(lam,s,p,'rotated chebyshev')
+plotstabreg_func(poly_coeff,[1])
+
+%% KA12 - Fig 4 right
+lam = spectrum('imagaxis',3200);
+s = 7; p = 4;
+[h,poly_coeff] = opt_poly_bisect(lam,s,p,'rotated chebyshev')
+plotstabreg_func(poly_coeff,[1])
+
+%% KA12 - Fig 6 left
+lam = spectrum('disk',500);
+s = 8; p = 3;
+[h,poly_coeff] = opt_poly_bisect(lam,s,p,'monomial')
+plotstabreg_func(poly_coeff,[1])
+
+%% KA12 - Fig 6 right
+lam = spectrum('disk',500);
+s = 15; p = 4;
+[h,poly_coeff] = opt_poly_bisect(lam,s,p,'monomial')
+plotstabreg_func(poly_coeff,[1])
+
+%% KA12 - Fig 8 (size of gap is hard coded to 20)
+lam = spectrum('gap',500);
+s = 6; p = 1;
+[h,poly_coeff] = opt_poly_bisect(lam,s,p,'chebyshev')
+plotstabreg_func(poly_coeff,[1],[-50 2 -10 10])
+
+%% KA12 - Fig 10 top
+lam_func = @(kappa) spectrum('rectangle',100,kappa,1)
+[h,poly_coeff] = opt_poly_bisect(lam,10,1,'chebyshev','lam_func',lam_func)
+plotstabreg_func(poly_coeff,[1])
+
+%% KA12 - Fig 10 bottom
+lam_func = @(kappa) spectrum('rectangle',100,kappa,10)
+[h,poly_coeff] = opt_poly_bisect(lam,20,1,'chebyshev','lam_func',lam_func)
