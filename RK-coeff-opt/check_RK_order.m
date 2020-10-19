@@ -2,8 +2,11 @@ function p = check_RK_order(A,b,c,problem_class)
 % function p = check_RK_order(A,b,c)
 % Determines order of a RK method, up to sixth order.
 %
-% For an s-stage method, input `A` should be a `s \times s` matrix;
-% `b` and `c` should be column vectors of length `s`.
+% Inputs:
+%       * A, b, c: Butcher coefficients of the method
+%       * p = order of accuracy
+%       * problem_class: 'nonlinear' (default) or 'linear'
+%         if set to 'linear', only order conditions for linear problems are checked.
 
 if nargin<4
     problem_class='nonlinear';

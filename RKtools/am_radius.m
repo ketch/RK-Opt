@@ -19,7 +19,7 @@ function r = am_radius(A,b,c,eps,rmax)
 %    rK(I+rA)^{-1}e_m \\le & e_{m+1}
 %    \\end{align*}
 %
-%    where $$ K = \\left(\\begin{array}{c} A \\\\\\ b^T \\end{array}\\right) $$
+%    where $$ K = \\left(\\begin{array}{c} A \\\\\\ b^T \\end{array}\\right).$$
 
 
 if nargin<5 rmax=50; end

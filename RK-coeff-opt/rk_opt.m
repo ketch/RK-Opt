@@ -33,7 +33,7 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * suppress_warnings: whether to suppress all warnings
 %
 %     .. note::
-%        **numerical experiments have shown that when the objective function is the minimization of the leading truncation error coefficient, the interior-point algorithm performs much better than the sqp one.**
+%        **Numerical experiments have shown that when the objective function is the minimization of the leading truncation error coefficient, the interior-point algorithm performs much better than the sqp one.**
 %
 %     * display: level of display of fmincon solver ('off', 'iter', 'notify' or 'final'). The default value is 'notify'.
 %     * problem_class: class of problems for which the RK is designed ('linear' or 'nonlinear' problems). This option changes the type of order conditions check, i.e. linear or nonlinear order conditions control. The default value is 'nonlinear'.

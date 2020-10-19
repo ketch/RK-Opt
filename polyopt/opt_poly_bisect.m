@@ -17,7 +17,7 @@ function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
 %                 A function used to generate the appropriate spectrum
 %                 at each bisection step, instead of using a fixed (scaled) spectrum.
 %                 Used for instance to find the longest rectangle of a fixed height
-%                 (see Figure 10 of the CAMCoS paper).
+%                 (see Figure 10 of :cite:`2012_optimal_stability_polynomials`).
 %
 % Examples:
 %

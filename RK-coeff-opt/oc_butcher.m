@@ -5,6 +5,10 @@ function coneq=oc_butcher(A,b,c,p)
 % This version is based on Butcher's approach.
 %
 % Assumes `p>1`.
+%
+% Inputs:
+%       * A, b, c: Butcher coefficients of the method
+%       * p = order of accuracy
 
 coneq(1)=c'*b-1/2;
 

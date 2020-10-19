@@ -4,7 +4,7 @@ Constraints on the stability polynomial (possibly obtained using **polyopt** or 
 can optionally be provided.
 
 To run the tests, execute the MATLAB commands
-```
+``
 results_rkopt = runtests('test_rkopt.m');
 table(results_rkopt)
-```
+``

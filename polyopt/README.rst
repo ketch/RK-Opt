@@ -9,7 +9,7 @@ Inputs to reproduce the examples from the paper are given in examples.txt.
 
 
 To run the tests, execute the MATLAB commands
-```
+``
 results_polyopt = runtests('test_polyopt.m');
 table(results_polyopt)
-```
+``

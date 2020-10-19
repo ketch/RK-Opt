@@ -2,6 +2,8 @@ function [A,Ahat,b,bhat,D,theta] =  unpack_msrk(X,s,k,class)
 % function [A,Ahat,b,bhat,D,theta] =  unpack_msrk(X,s,k,class)
 %
 % Extract the coefficient arrays from the optimization vector
+% See the paper :cite:`msrk_2017` for details and a description
+% of what the coefficients mean.
 
 switch class 
     % TODO: clean up the following code

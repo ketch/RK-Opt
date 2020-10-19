@@ -21,7 +21,8 @@ Obtaining RK-Opt
 
     $ git clone https://github.com/ketch/RK-Opt.git
 
-After unzipping/cloning, add the subdirectory ``RK-Opt/RKtools`` to your MATLAB path.
+After unzipping/cloning, add the subdirectory ``RK-Opt/RKtools`` to your MATLAB path
+(see https://www.mathworks.com/help/matlab/ref/addpath.html).
 
 
 =========================

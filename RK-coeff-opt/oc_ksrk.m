@@ -1,17 +1,17 @@
 function coneq= oc_ksrk(A,b,D,theta,p)
 % function coneq= oc_ksrk(A,b,D,theta,p)
 % Order conditions for multistep-RK methods.
+% See the paper :cite:`2017_msrk` for details
+% and for the meaning of the input coefficients.
 %
-% ..warning::
-%
-%         Here we assume a certain minimum stage order,
-%         which is necessarily true for methods with
-%         strictly positive abscissae (b>0).
-%         This assumption dramatically reduces the
-%         number of order conditions that must be
-%         considered for high-order methods.
-%         For methods that do not satisfy b>0, this
-%         assumption may be unnecessarily restrictive.
+%  Here we assume a certain minimum stage order,
+%  which is necessarily true for methods with
+%  strictly positive abscissae (b>0).
+%  This assumption dramatically reduces the
+%  number of order conditions that must be
+%  considered for high-order methods.
+%  For methods that do not satisfy b>0, this
+%  assumption may be unnecessarily restrictive.
 
 
 k=length(theta);
