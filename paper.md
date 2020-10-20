@@ -25,11 +25,11 @@ authors:
     orcid: 0000-0002-3456-2277
     affiliation: 1
 affiliations:
- - name: King Abdullah University of Science and Technology
+ - name: King Abdullah University of Science and Technology, Saudi Arabia
    index: 1
- - name: Oak Ridge National Laboratory
+ - name: Oak Ridge National Laboratory, USA
    index: 2
- - name: Capital One
+ - name: Capital One, USA
    index: 3
 date: 9 July 2020
 bibliography: paper.bib
@@ -193,7 +193,8 @@ vein can be found at https://github.com/SSPmethods.
 # Acknowledgements
 
 Much of the initial `RK-Opt` development was performed by D. Ketcheson while
-he was supported by a DOE Computational Science Graduate Fellowship and an AFOSR grant.  Development
+he was supported by a DOE Computational Science Graduate Fellowship and by
+AFOSR grant number FA9550-06-1-0255.  Development
 has also been supported by funding from King Abdullah University of Science and Technology.
 
 # References
