@@ -13,8 +13,8 @@ explicit mention of our work in your publication.  We suggest language such as t
 with the following entry in your bibliography:
 
     [1] **RK-Opt: A package for the design of numerical ODE solvers**, version X.Y.Z.
-    David I. Ketcheson, Matteo Parsani, Zachary J. Grant, Aron J. Ahmadia, and Hendrik Ranocha.
-    July 2020.
+    David I. Ketcheson, Matteo Parsani, Zachary J. Grant, Aron J. Ahmadia, and Hendrik Ranocha,
+    *Journal of Open Source Software*, 5(54):2514 (2020)
 
 with the appropriate version number inserted.
 It may also be appropriate to cite one of the following:

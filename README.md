@@ -1,6 +1,11 @@
 
 # RK-Opt: A Package for the Design of Numerical ODE solvers
 
+[![Docs-stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://rk-opt.readthedocs.io/en/latest/)
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-success.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4138076.svg)](https://doi.org/10.5281/zenodo.4138076)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02514/status.svg)](https://doi.org/10.21105/joss.02514)
+
 See the full documentation [here](https://rk-opt.readthedocs.io/en/latest/).
 
 RK-Opt is a collection of MATLAB codes for designing optimized numerical ODE solvers.
