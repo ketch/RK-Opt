@@ -35,6 +35,27 @@ version of MATLAB (tested with R2018a and later) with the following toolboxes.
  - CVX (http://cvxr.com/cvx/)
  - MATLAB Parallel Computing Toolbox (optional; allows faster searching for optimal methods in RK-Coeff-Opt)
 
+# Citing
+If you use RK-Opt in published work, please cite the following paper:
+
+Ketcheson et al., (2020). RK-Opt: A package for the design of numerical ODE solvers. Journal of Open Source Software, 5(54), 2514, https://doi.org/10.21105/joss.02514
+
+You can use the following bibtex entry:
+
+```
+@article{Ketcheson2020,
+  doi = {10.21105/joss.02514},
+  url = {https://doi.org/10.21105/joss.02514},
+  year = {2020},
+  publisher = {The Open Journal},
+  volume = {5},
+  number = {54},
+  pages = {2514},
+  author = {David I. Ketcheson and Matteo Parsani and Zachary J. Grant and Aron J. Ahmadia and Hendrik Ranocha},
+  title = {`RK-Opt`: A package for the design of numerical ODE solvers},
+  journal = {Journal of Open Source Software}
+}
+```
 
 # Authors
 The code is primarily developed and maintained by David Ketcheson.
