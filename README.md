@@ -8,7 +8,7 @@
 
 See the full documentation [here](https://rk-opt.readthedocs.io/en/latest/).
 
-RK-Opt is a collection of MATLAB codes for designing optimized numerical ODE solvers. 
+RK-Opt is a collection of MATLAB codes for designing optimized numerical ODE solvers.
 The main emphasis is on Runge-Kutta methods, but some routines deal with other classes of methods.
 It is primarily developed and used by the
 [KAUST Numerical Mathematics Group](http://numerics.kaust.edu.sa).
