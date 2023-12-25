@@ -123,7 +123,7 @@ end
 
 % Energy Preserving conditions
 % Choose pseudo-energy-preserving q (up to 6)
-q=6;
+q=7;
 if q>=1
     coneq(end+1) = sum(b)-1;
 end
