@@ -4,3 +4,5 @@
 one by one, in Butcher Notation.
 
 3. Finally, copy-paste the output in 'Translator.ipynb', which returns the PEP condition in Matlab format.
+
+This code was written for Julia v1.6. The versions of the Julia packages are recorded in the `Project.toml` and `Manifest.toml` files.
