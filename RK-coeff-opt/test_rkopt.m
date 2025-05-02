@@ -180,7 +180,7 @@ assert(p_hat==3)
 g_hat = errcoeff(A,bhat,c,p_hat);
 assert(abs(g_hat-0.063779596487680)<1.e-16);
 
-%% Test lower and upper bounds of c
+%% Test lower and upper bounds of c for 'erk'
 c_lower_bound = [0; 0.6; 0.5];
 rk = rk_opt(3, 2, 'erk', 'ssp', 'write_to_file', 0, 'c_lower_bound', c_lower_bound);
 assert(all(c_lower_bound - tol <= rk.c))
@@ -197,5 +197,25 @@ assert(all(rk.c <= c_upper_bound + tol))
 
 c_bound = [0; 0.6; 0.7];
 rk = rk_opt(3, 2, 'erk', 'ssp', 'write_to_file', 0, 'c_lower_bound', c_bound, 'c_upper_bound', c_bound);
+assert(all(c_bound - tol <= rk.c))
+assert(all(rk.c <= c_bound + tol))
+
+%% Test lower and upper bounds of c for '3Sstar'
+c_lower_bound = [0; 0.6; 0.5];
+rk = rk_opt(3, 2, '3Sstar', 'ssp', 'write_to_file', 0, 'c_lower_bound', c_lower_bound);
+assert(all(c_lower_bound - tol <= rk.c))
+
+c_upper_bound = [0; 0.6; 0.8];
+rk = rk_opt(3, 2, '3Sstar', 'ssp', 'write_to_file', 0, 'c_upper_bound', c_upper_bound);
+assert(all(rk.c <= c_upper_bound + tol))
+
+c_lower_bound = [0; 0.6; 0.5];
+c_upper_bound = [0; 0.7; 0.7];
+rk = rk_opt(3, 2, '3Sstar', 'ssp', 'write_to_file', 0, 'c_lower_bound', c_lower_bound, 'c_upper_bound', c_upper_bound);
+assert(all(c_lower_bound - tol <= rk.c))
+assert(all(rk.c <= c_upper_bound + tol))
+
+c_bound = [0; 0.6; 0.7];
+rk = rk_opt(3, 2, '3Sstar', 'ssp', 'write_to_file', 0, 'c_lower_bound', c_bound, 'c_upper_bound', c_bound);
 assert(all(c_bound - tol <= rk.c))
 assert(all(rk.c <= c_bound + tol))
