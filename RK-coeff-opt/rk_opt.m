@@ -22,15 +22,16 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %       Accuracy optimization is not currently supported for multistep RK methods
 %     * poly_coeff_ind: index of the polynomial coefficients to constrain (`\beta_j`) for `j > p`  (j denotes the index of the stage). The default value is an empty array.  Note that one should not include any indices `i \le p`, since those are determined by the order conditions.
 %     * poly_coeff_val: constrained values of the polynomial coefficients (`\beta_j`) for `j > p` (tall-tree elementary weights). The default value is an empty array.
+%     * emb_poly_coeff_ind: same as poly_coeff_ind but for the embedded method
+%     * emb_poly_coeff_val: same as poly_coeff_val but for the embedded method
+%     * constrain_emb_stability: a vector of complex points where the embedded method should be stable. Sometimes, fmincon cannot find solutions if emb_poly_coeff_ind,emb_poly_coeff_val are given. In these situations, there are a few parameter combinations where it can be advantageous to ask fmincon to directly constraint the value of the embedded stability function at a few points. In general, the existing approach using polyopt and emb_poly_coeff_ind,emb_poly_coeff_val seems to be better for most problems.
+%     * TODO
 %     * startvec: vector of the initial guess ('random' = random approach; 'smart' = smart approach; alternatively, the user can provide the startvec array. By default startvec is initialized with random numbers.
 %     * solveorderconditions: if set to 1, solve the order conditions first before trying to optimize. The default value is 0.
 %     * np: number of processor to use. If np `> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
 %     * num_starting_points: Number of starting points for the global optimization per processor. The default value is 10.
 %     * writeToFile: whether to write to a file. If set to 1 write the RK coefficients to a file called "ERK-p-s.txt". The default value is 1.
 %     * append_time: whether a timestamp should be added to the output file name
-%     * emb_poly_coeff_ind: same as poly_coeff_ind but for the embedded method
-%     * emb_poly_coeff_val: same as poly_coeff_val but for the embedded method
-%     * constrain_emb_stability: a vector of complex points where the embedded method should be stable. Sometimes, fmincon cannot find solutions if emb_poly_coeff_ind,emb_poly_coeff_val are given. In these situations, there are a few parameter combinations where it can be advantageous to ask fmincon to directly constraint the value of the embedded stability function at a few points. In general, the existing approach using polyopt and emb_poly_coeff_ind,emb_poly_coeff_val seems to be better for most problems.
 %     * algorithm: which algorithm to use in fmincon: 'sqp','interior-point', or 'active-set'. By default sqp is used.
 %     * suppress_warnings: whether to suppress all warnings
 %
@@ -64,8 +65,9 @@ function rk = rk_opt(s,p,class,objective,varargin)
 
 
 [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
-    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
-    algorithm,display,min_amrad,append_time,constrain_emb_stability,...
+    emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,...
+    solveorderconditions,write_to_file,...
+    algorithm,display,min_amrad,append_time,...
     suppress_warnings] = setup_params(varargin);
 
 % New random seed every time
@@ -191,8 +193,9 @@ end
 % =========================================================================
 
 function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
-    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
-    algorithm,display,min_amrad,append_time,constrain_emb_stability,...
+    emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,...
+    solveorderconditions,write_to_file,...
+    algorithm,display,min_amrad,append_time,...
     suppress_warnings] = setup_params(optional_params)
 %function [k,np,num_starting_points,startvec,poly_coeff_ind,poly_coeff_val,...
 %    emb_poly_coeff_ind,emb_poly_coeff_val,solveorderconditions,write_to_file,...
@@ -230,6 +233,7 @@ i_p.addParameter('poly_coeff_ind',[],@isnumeric);
 i_p.addParameter('poly_coeff_val',[],@isnumeric);
 i_p.addParameter('emb_poly_coeff_ind',[],@isnumeric);
 i_p.addParameter('emb_poly_coeff_val',[],@isnumeric);
+i_p.addParameter('constrain_emb_stability',default_constrain_emb_stability);
 i_p.addParameter('startvec',default_startvec);
 i_p.addParameter('solveorderconditions',default_solveorderconditions,@(x) isnumeric(x) && any(x==expected_solveorderconditions))
 i_p.addParameter('np',default_np,@isnumeric);
@@ -238,7 +242,6 @@ i_p.addParameter('write_to_file',default_write_to_file,@isnumeric);
 i_p.addParameter('algorithm',default_algorithm,@(x) ischar(x) && any(validatestring(x,expected_algorithms)));
 i_p.addParameter('display',default_display,@(x) ischar(x) && any(validatestring(x,expected_displays)));
 i_p.addParameter('append_time',true);
-i_p.addParameter('constrain_emb_stability',default_constrain_emb_stability);
 i_p.addParameter('suppress_warnings',default_suppress_warnings);
 
 
@@ -253,12 +256,12 @@ poly_coeff_ind       = i_p.Results.poly_coeff_ind;
 poly_coeff_val       = i_p.Results.poly_coeff_val;
 emb_poly_coeff_ind   = i_p.Results.emb_poly_coeff_ind;
 emb_poly_coeff_val   = i_p.Results.emb_poly_coeff_val;
+constrain_emb_stability = i_p.Results.constrain_emb_stability;
 solveorderconditions = i_p.Results.solveorderconditions;
 write_to_file        = i_p.Results.write_to_file;
 algorithm            = i_p.Results.algorithm;
 display              = i_p.Results.display;
 append_time          = i_p.Results.append_time;
-constrain_emb_stability = i_p.Results.constrain_emb_stability;
 suppress_warnings    = i_p.Results.suppress_warnings;
 end
 % =========================================================================
