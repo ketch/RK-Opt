@@ -1,5 +1,5 @@
-function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,c_lower_bound,c_upper_bound)
-% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,c_lower_bound,c_upper_bound)
+function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,c_lower_bound,c_upper_bound,c_monotone)
+% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,c_lower_bound,c_upper_bound,c_monotone)
 % Impose nonlinear constraints:
 %   - if objective = 'ssp' : both order conditions and absolute monotonicity conditions
 %   - if objective = 'acc' : order conditions
@@ -17,6 +17,7 @@ function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,
 %     * *emb_poly_coeff_val*: values of the polynomial coefficients of the embedded scheme (:math:`\beta_j`) for :math:`j > p` (tall-tree elementary weights).
 %     * *c_lower_bound*: lower bound of the Butcher coefficients c
 %     * *c_upper_bound*: upper bound of the Butcher coefficients c
+%     * *c_monotone*: set this to true if the Butcher coefficients c should be monotonically increasing
 %
 % The outputs are:
 %     * *con*: inequality constraints, i.e. absolute monotonicity conditions if objective = 'ssp' or nothing if objective = 'acc'
@@ -133,4 +134,9 @@ end
 if ~isempty(c_upper_bound)
     % The solver attempts to satisfy con <= 0 for all entries of con.
     con = [con; c - c_upper_bound];
+end
+
+if c_monotone
+    % The solver attempts to satisfy con <= 0 for all entries of con.
+    con = [con; c(1:end-1) - c(2:end)];
 end

@@ -219,3 +219,8 @@ c_bound = [0; 0.6; 0.7];
 rk = rk_opt(3, 2, '3Sstar', 'ssp', 'write_to_file', 0, 'c_lower_bound', c_bound, 'c_upper_bound', c_bound);
 assert(all(c_bound - tol <= rk.c))
 assert(all(rk.c <= c_bound + tol))
+
+%% Test monotonicity of c
+rk = rk_opt(4, 2, '3Sstar', 'ssp', 'write_to_file', 0, ...
+            'num_starting_points', 50, 'c_monotone', true); rk.c
+assert(all(rk.c(1:end-1) <= rk.c(2:end) + tol))
