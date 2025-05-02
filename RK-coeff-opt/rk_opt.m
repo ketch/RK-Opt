@@ -25,7 +25,8 @@ function rk = rk_opt(s,p,class,objective,varargin)
 %     * emb_poly_coeff_ind: same as poly_coeff_ind but for the embedded method
 %     * emb_poly_coeff_val: same as poly_coeff_val but for the embedded method
 %     * constrain_emb_stability: a vector of complex points where the embedded method should be stable. Sometimes, fmincon cannot find solutions if emb_poly_coeff_ind,emb_poly_coeff_val are given. In these situations, there are a few parameter combinations where it can be advantageous to ask fmincon to directly constraint the value of the embedded stability function at a few points. In general, the existing approach using polyopt and emb_poly_coeff_ind,emb_poly_coeff_val seems to be better for most problems.
-%     * TODO
+%     * c_lower_bound: lower bounds of the Butcher parameter c. By default, no additional bounds are used and this argument is empty. If constraints should be imposed, the vector must have the correct length s.
+%     * c_upper_bound: upper bounds of the Butcher parameter c. By default, no additional bounds are used and this argument is empty. If constraints should be imposed, the vector must have the correct length s.
 %     * startvec: vector of the initial guess ('random' = random approach; 'smart' = smart approach; alternatively, the user can provide the startvec array. By default startvec is initialized with random numbers.
 %     * solveorderconditions: if set to 1, solve the order conditions first before trying to optimize. The default value is 0.
 %     * np: number of processor to use. If np `> 1` the MATLAB global optimization toolbox *Multistart* is used. The default value is 1 (just one core).
