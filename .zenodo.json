@@ -1,7 +1,7 @@
 {
     "description": "RK-Opt: A package for the design of numerical ODE solvers",
     "license": "bsd-license",
-    "title": "ketch/RK-Opt",
+    "title": "RK-Opt: A package for the design of numerical ODE solvers",
     "upload_type": "software",
     "creators": [
         {
