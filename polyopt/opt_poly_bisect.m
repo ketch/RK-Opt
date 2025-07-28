@@ -18,6 +18,12 @@ function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
 %                 at each bisection step, instead of using a fixed (scaled) spectrum.
 %                 Used for instance to find the longest rectangle of a fixed height
 %                 (see Figure 10 of :cite:`2012_optimal_stability_polynomials`).
+%       eta:
+%                 A damping parameter, which forces the polynomial to
+%                 satisfy |R(h*lambda)| < 1-eta instead of '... < 1'
+%                 This ensures, that there is a small stable environment
+%                 around each eigenvalue
+%
 %
 % Examples:
 %
@@ -34,7 +40,7 @@ function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
 %               plotstabreg_func(poly_coeff,[1])
 
 [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true,do_plot,solvers] = opt_poly_params(s,lam,varargin);
+        h_true,do_plot,solvers,eta] = opt_poly_params(s,lam,varargin);
 
 %Diagnostics requested
 if nargout >= 3           
@@ -79,8 +85,8 @@ for i_step=1:max_steps
 
     
     for solver_idx = 1:length(solvers)
-        solver = solvers{solver_idx};
-        [status, a, v, diag_solve] = least_deviation(h,lam,s,p,basis,solver,row_scale,diag_on);
+        solver = solvers{solver_idx};  
+        [status, a, v, diag_solve] = least_deviation(h,lam,s,p,eta,basis,solver,row_scale,diag_on);
         
         if strcmp(status,'Failed') || v==Inf || isnan(v)
             fprintf('%s failed!\n', solver);
@@ -137,7 +143,7 @@ end
 
 %====================================================
 function [status,poly_coeffs,v,diag] = ...
-            least_deviation(h,lam,s,p,basis,solver,row_scaling,diag_on,precision)
+            least_deviation(h,lam,s,p,eta,basis,solver,row_scaling,diag_on,precision)
 % function [status,poly_coeffs,v,diag] = ...
 %            least_deviation(h,lam,s,p,basis,solver,row_scaling,diag_on,precision)
 %
@@ -148,11 +154,11 @@ function [status,poly_coeffs,v,diag] = ...
 % in the modified/scaled basis!
 % Perhaps we should return monomial basis coefficients instead.
 
-if nargin<9; precision='best'; end
-if nargin<8, diag_on=0; end
-if nargin<7; row_scaling=ones(1,s+1); end
-if nargin<6; solver = 'sdpt3'; end
-if nargin<5; basis = 'chebyshev'; end
+if nargin<10; precision='best'; end
+if nargin<9, diag_on=0; end
+if nargin<8; row_scaling=ones(1,s+1); end
+if nargin<7; solver = 'sdpt3'; end
+if nargin<6; basis = 'chebyshev'; end
 
 % b(j,:): coefficients of the jth basis polynomials in terms of monomials
 % c(i,j): jth basis polynomial evaluated at h*lam
@@ -186,20 +192,21 @@ if ~strcmp(basis,'monomial')
         b(:,i) = b(:,i)./row_scaling';
     end
 end
-        
+   
 cvx_begin
     cvx_quiet(true)
     cvx_precision(precision)
     cvx_solver(solver)
   
+    max_value = 1.0-eta; % previously 1.0
     if strcmp(basis,'monomial')
         variable poly_coeffs(s-p);
         fixedvec = c(:,1:p+1)*fixed_coefficients;
-        R=abs(fixedvec+c(:,p+2:end)*poly_coeffs)-1.;
+        R=abs(fixedvec+c(:,p+2:end)*poly_coeffs)-max_value; %%damping
     else
         variable poly_coeffs(s+1) 
         b(:,1:p+1)'*poly_coeffs==fixed_coefficients;
-        R=abs(c*poly_coeffs)-1;
+        R=abs(c*poly_coeffs)-max_value;
     end
     minimize max(R)
 cvx_end
@@ -319,7 +326,7 @@ end
 
 %==============================================================
 function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
-        h_true,do_plot,solvers] = opt_poly_params(s,lam,optional_params)
+        h_true,do_plot,solvers,eta] = opt_poly_params(s,lam,optional_params)
 % function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
 %        h_true,do_plot,solvers] = opt_poly_params(s,lam,optional_params);
 %
@@ -338,6 +345,7 @@ i_p.addParameter('max_steps',1000,@isnumeric);
 i_p.addParameter('h_true',[]);
 i_p.addParameter('do_plot',false,@islogical);
 i_p.addParameter('solvers',{'sdpt3','sedumi'});
+i_p.addParameter('eta', 0.0);
 
 i_p.parse(optional_params{:});
 
@@ -350,6 +358,7 @@ max_steps         = i_p.Results.max_steps;
 h_true            = i_p.Results.h_true;
 do_plot           = i_p.Results.do_plot;
 solvers           = i_p.Results.solvers;
+eta               = i_p.Results.eta;
 end
 
 
