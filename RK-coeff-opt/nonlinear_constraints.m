@@ -6,7 +6,7 @@ function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,
 % The input arguments are:
 %     * :math:`x`: vector of the decision variables.  See unpack_rk.m for details about
 %       the order in which they are stored.
-%     * *class*: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations).
+%     * *class*: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*', '2N' = low-storage formulations).
 %     * :math:`s`:number of stages.
 %     * :math:`p`: order of the RK scheme.
 %     * *objective*: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).
