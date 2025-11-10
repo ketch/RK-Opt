@@ -97,7 +97,7 @@ switch class
         B_2N = X(s:end);
         K = zeros(s+1,s);
         for i=1:s-1
-            K(i,i+1) = B_2N(i);
+            K(i+1,i) = B_2N(i);
             for j = 2:s-i+1
                 for k=0:j-1
                     K(i+j,i) = K(i+j,i) + B_2N(i+k)*prod(A_2N(i+1:i+k));
