@@ -224,3 +224,53 @@ assert(all(rk.c <= c_bound + tol))
 rk = rk_opt(4, 2, '3Sstar', 'ssp', 'write_to_file', 0, ...
             'num_starting_points', 50, 'c_monotone', true); rk.c
 assert(all(rk.c(1:end-1) <= rk.c(2:end) + tol))
+
+%% Test 2N
+function rk_order(A,b,c,p,tol)
+b = b(:); 
+c = c(:);
+s = length(b);
+e = ones(s,1);
+
+% Different Order-Checks
+assert(abs(b.'*e - 1) <= tol);
+if p >= 2
+    assert(abs(b.'*c - 1/2) <= tol);
+end
+if p >= 3
+    assert(abs(b.'*(c.^2) - 1/3) <= tol);
+    assert(abs(b.'*(A*c)   - 1/6) <= tol);
+end
+if p >= 4
+    assert(abs(b.'*(c.^3)        - 1/4)  <= tol);
+    assert(abs(b.'*(A*(c.^2))    - 1/12) <= tol);
+    assert(abs(b.'*((A*c).*c)    - 1/8)  <= tol);
+    assert(abs(b.'*(A*(A*c))     - 1/24) <= tol);
+end
+end
+
+%% Test 2N23 acc
+rk = rk_opt(3,2,'2N','acc','write_to_file',0);
+rk_order(rk.A,rk.b,rk.c,2,1e-10)
+
+%% Test 2N26 aacc
+rk = rk_opt(6,2,'2N','acc','write_to_file',0);
+rk_order(rk.A,rk.b,rk.c,2,1e-10)
+
+%% Test 2N34 acc
+rk = rk_opt(4,3,'2N','acc','write_to_file',0);
+rk_order(rk.A,rk.b,rk.c,3,1e-10)
+
+%% Test 2N36 acc
+rk = rk_opt(6,3,'2N','acc','write_to_file',0);
+rk_order(rk.A,rk.b,rk.c,3,1e-10)
+
+%% Test 2N46 acc
+rk = rk_opt(6,4,'2N','acc','write_to_file',0);
+rk_order(rk.A,rk.b,rk.c,4,1e-10)
+
+%% Test 2N48 acc
+rk = rk_opt(8,4,'2N','acc','write_to_file',0);
+rk_order(rk.A,rk.b,rk.c,4,1e-10)
+
+
