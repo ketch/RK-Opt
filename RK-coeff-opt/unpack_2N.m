@@ -15,7 +15,7 @@ function [A,b,c,A_2N,B_2N]=unpack_2N(X)
         end
     end
     A = K(1:s,:);
-    b = K(s+1,:); b=b';
+    b = K(s+1,:); b=b'; b(end)=B_2N(end);
     c=sum(A,2);
     alpha=zeros(s+1,s); beta=zeros(s+1,s); % Not yet implemented
 
