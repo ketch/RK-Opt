@@ -105,7 +105,7 @@ switch class
             end
         end
         A = K(1:s,:);
-        b = K(s+1,:); b=b';
+        b = K(s+1,:); b=b'; b(end)=B_2N(end);
         c=sum(A,2);
 
 end
