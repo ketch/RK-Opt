@@ -5,7 +5,7 @@ function [r,g]=rk_obj(x,class,s,p,objective)
 %
 % Inputs:
 %     * :math:`x`: vector of the unknowns.
-%     * class: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*' = low-storage formulations).
+%     * *class*: class of method to search ('erk' = explicit RK; 'irk' = implicit RK; 'dirk' = diagonally implicit RK; 'sdirk' = singly diagonally implicit RK; '2S', '3S', '2S*', '3S*', '2N' = low-storage formulations).
 %     * :math:`s`:number of stages.
 %     * :math:`p`: order of the RK scheme.
 %     * objective: objective function ('ssp' = maximize SSP coefficient; 'acc' = minimize leading truncation error coefficient).

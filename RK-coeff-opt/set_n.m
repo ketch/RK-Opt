@@ -34,6 +34,8 @@ switch class
       n = 4*s - 3;
     case '3SstarembFSAL'      %Low-storage 3S* embedded pairs of Ketcheson
       n = 4*s - 2;
+    case '2N'             % Williamson
+      n = 2*s -1;
 
     %=====================
     % Multistep RK classes

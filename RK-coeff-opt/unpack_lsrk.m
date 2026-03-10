@@ -50,6 +50,7 @@ switch class
     %     gamma_{53} ... gamma_{s+1,3} delta_s delta_{s+1} delta_{s+2} ]
     delta =[1 X(s:2*s-3) X(end-3:end-1)];
     betahat = X(end);
+
 end
 
 if strcmp(class(1:2),'2S')

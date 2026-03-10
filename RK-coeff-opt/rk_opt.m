@@ -153,6 +153,9 @@ end
 if strcmp(class(1:2),'2S') || strcmp(class(1:2),'3S')
     [rk.A,rk.Ahat,rk.b,rk.bhat,rk.c,rk.chat,rk.alpha,rk.beta,rk.gamma1,rk.gamma2,rk.gamma3,rk.delta] = unpack_lsrk(X,class);
     order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
+elseif strcmp(class(1:2),'2N')
+    [rk.A,rk.b,rk.c,rk.A_2N,rk.B_2N]=unpack_2N(X)
+    order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
 elseif k==1
     [rk.A,rk.b,rk.c] = unpack_rk(X,s,class);
     order = check_RK_order(rk.A,rk.b,rk.c,'nonlinear');
