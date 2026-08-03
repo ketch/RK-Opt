@@ -362,10 +362,14 @@ function [b,c,L] = chebinterp_basis(N,zmin,zmax,z)
 %  2. A matrix c, whose jth column contains the values of the jth basis
 %     function evaluated at the points z.
 %
-%  3. A matrix L with L(k+1,:)*R = R^{(k)}(0), where R is the vector of
-%     nodal values. This gives the order conditions without going through
-%     the monomial basis. It works because z = 0 is itself a node
-%     (j = 0 gives x_cheb = 1, hence x_nodes = zmax = 0).
+% 3. A matrix L that maps the nodal values r to derivatives of the
+%    interpolating polynomial R at z = 0:
+%
+%        L(k+1,:)*r = R^{(k)}(0),  where r(j) = R(z_j).
+%
+%    This gives the order conditions directly in terms of the nodal
+%    values without converting them to the monomial basis. Since z = 0
+%    is a Chebyshev-Lobatto node, R(0) is one of the nodal values.
 % The basis functions are evaluated using the barycentric interpolation
 % formula.
 
