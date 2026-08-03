@@ -224,3 +224,46 @@ assert(all(rk.c <= c_bound + tol))
 rk = rk_opt(4, 2, '3Sstar', 'ssp', 'write_to_file', 0, ...
             'num_starting_points', 50, 'c_monotone', true); rk.c
 assert(all(rk.c(1:end-1) <= rk.c(2:end) + tol))
+
+
+%% Test interpolation constraints with Butcher evaluation
+tol = 1.e-5;
+s = 3;
+p = 1;
+
+interp_nodes = [-4.5; -13.5];
+interp_values = [-1; 1];
+
+rk = rk_opt(s, p, '3Sstar', 'acc', ...
+    'num_starting_points', 10, ...
+    'interp_nodes', interp_nodes, ...
+    'interp_values', interp_values, ...
+    'interp_eval', 'butcher', ...
+    'write_to_file', 0);
+
+poly_coeff = rk_stabfun(rk);
+R = polyval(poly_coeff(end:-1:1), interp_nodes);
+
+assert(all(ismembertol( ...
+    R(:)', interp_values(:)', tol, 'ByRows', true)))
+
+%% Test interpolation constraints with low-storage evaluation
+tol = 1.e-5;
+s = 3;
+p = 1;
+
+interp_nodes = [-4.5; -13.5];
+interp_values = [-1; 1];
+
+rk = rk_opt(s, p, '3Sstar', 'acc', ...
+    'num_starting_points', 10, ...
+    'interp_nodes', interp_nodes, ...
+    'interp_values', interp_values, ...
+    'interp_eval', 'lowstorage', ...
+    'write_to_file', 0);
+
+poly_coeff = rk_stabfun(rk);
+R = polyval(poly_coeff(end:-1:1), interp_nodes);
+
+assert(all(ismembertol( ...
+    R(:)', interp_values(:)', tol, 'ByRows', true)))

@@ -17,7 +17,19 @@ s = 8;
 p = 1;
 [h, poly_coeff] = opt_poly_bisect(lambda, s, p, 'chebyshev');
 assert(all(ismembertol(h, 2*s^2, tol, 'ByRows', true)))
+%% Test real axis Chebyshev interpolation
+lambda = spectrum('realaxis', 100);
+s = 3;
+p = 1;
 
+[h, interp_values] = ...
+    opt_poly_bisect(lambda, s, p, 'chebinterp')
+
+expected_values = [1; -1; 1; -1];
+
+assert(all(ismembertol(h, 2*s^2, tol, 'ByRows', true)))
+assert(all(ismembertol( ...
+    interp_values(:)', expected_values(:)', tol, 'ByRows', true)))
 %% Test imaginary axis monomial
 lambda = spectrum('imagaxis', 100);
 s = 4;
