@@ -33,6 +33,8 @@ function [h,poly_coeff,diag_bisect] = opt_poly_bisect(lam,s,p,basis,varargin)
 %               [h,poly_coeff] = opt_poly_bisect(lam,20,1,'chebyshev','lam_func',lam_func)
 %               plotstabreg_func(poly_coeff,[1])
 
+% For basis = 'chebinterp', poly_coeff contains the values of the
+% stability polynomial at the Chebyshev interpolation nodes.
 [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...
         h_true,do_plot,solvers] = opt_poly_params(s,lam,varargin);
 
@@ -130,7 +132,20 @@ end
 h=h_min; % Return the largest known feasible value
 
 if do_plot
-    stability_plot(h*lam,poly_coeff);
+    if strcmp(basis,'chebinterp')
+        min_real_part = min(real(h*lam));
+
+        % Construct the transformation to the monomial basis.
+        [b_plot,~,~] = chebinterp_basis( ...
+            s,min_real_part,0,h*lam);
+
+        % Convert nodal values to monomial coefficients only for plotting.
+        plot_coeff = poly_coeff.' * b_plot;
+    else
+        plot_coeff = poly_coeff;
+    end
+
+    stability_plot(h*lam,plot_coeff);
 end
 end
 
@@ -171,6 +186,11 @@ elseif strcmp(basis,'rotated chebyshev')
       b(2*i,:)=1i*b(2*i,:);
       c(:,2*i) = 1i*c(:,2*i);
     end
+elseif strcmp(basis,'chebinterp')
+    % Lagrange basis at Chebyshev-Lobatto nodes.
+    % L(k+1,:) is the row that maps nodal values to R^{(k)}(0).
+    assert(min_real_part~=0,'Use chebinterp basis only with spectra that have negative real part.')
+    [b,c,L] = chebinterp_basis(s,min_real_part,0,h*lam);
 elseif strcmp(basis,'monomial')
     c = zeros(length(lam),s+1);
     for i=1:length(lam)
@@ -196,6 +216,12 @@ cvx_begin
         variable poly_coeffs(s-p);
         fixedvec = c(:,1:p+1)*fixed_coefficients;
         R=abs(fixedvec+c(:,p+2:end)*poly_coeffs)-1.;
+    elseif strcmp(basis,'chebinterp')
+        % Order conditions R^{(k)}(0) = 1, k = 0..p, imposed directly on the
+        % nodal values via L
+        variable poly_coeffs(s+1)
+        L(1:p+1,:)*poly_coeffs == ones(p+1,1);
+        R=abs(c*poly_coeffs)-1;
     else
         variable poly_coeffs(s+1) 
         b(:,1:p+1)'*poly_coeffs==fixed_coefficients;
@@ -204,10 +230,13 @@ cvx_begin
     minimize max(R)
 cvx_end
 
-% Here we convert to the monomial basis, for convenience of plotting.
-% But for high-degree polynomials, it's numerically better to work in the adapted basis.
+% Convert the coefficients to the monomial basis for plotting, except for chebinterp
 if ~strcmp(basis,'monomial')
-    poly_coeffs = poly_coeffs'*b;
+    if strcmp(basis,'chebinterp')
+        % Retain the nodal values as interpolation targets for RK-Opt.
+    else
+        poly_coeffs = poly_coeffs' * b;
+    end
 end
 status=cvx_status;
 v = cvx_optval;
@@ -316,6 +345,106 @@ for k=1:N-1
 end
 end
 
+
+%====================================================
+function [b,c,L] = chebinterp_basis(N,zmin,zmax,z)
+% function [b,c,L] = chebinterp_basis(N,zmin,zmax,z)
+% Given an arbitrary domain on the real axis [zmin,zmax],
+% chebinterp_basis generates a basis of Lagrange polynomials at
+% Chebyshev points of the second kind scaled to this interval.
+% N is the order of polynomial basis desired.
+%
+% Returns:
+%  1. A matrix b, whose jth row contains the coefficients of the jth
+%     basis function in the monomial basis, with the coefficients in
+%     order of ascending degree.
+%
+%  2. A matrix c, whose jth column contains the values of the jth basis
+%     function evaluated at the points z.
+%
+% 3. A matrix L that maps the nodal values r to derivatives of the
+%    interpolating polynomial R at z = 0:
+%
+%        L(k+1,:)*r = R^{(k)}(0),  where r(j) = R(z_j).
+%
+%    This gives the order conditions directly in terms of the nodal
+%    values without converting them to the monomial basis. Since z = 0
+%    is a Chebyshev-Lobatto node, R(0) is one of the nodal values.
+% The basis functions are evaluated using the barycentric interpolation
+% formula.
+
+% Chebyshev-Lobatto points on [-1,1]
+j = 0:N;
+x_cheb = cos(pi*j/N);
+
+% Scale the nodes to [zmin,zmax].
+x_nodes = 0.5*((zmax+zmin) + (zmax-zmin)*x_cheb);
+
+% Barycentric weights
+w = (-1).^j;
+w(1) = w(1)/2;
+w(end) = w(end)/2;
+
+% L: derivative-weight matrix. For nodal values R,
+% L(k+1,:)*R gives R^(k)(0). This is used to impose the
+% order conditions directly without monomial coefficients.
+M = N + 1;
+i0 = 1;  % First interpolation node is z = 0
+
+L = zeros(N + 1,M);
+L(1,i0) = 1;  % Zeroth derivative: R(0)
+
+for k = 1:N
+    % Off-diagonal derivative weights
+    for m = 1:M
+        if m ~= i0
+            weight_ratio = w(m)/w(i0);
+
+            L(k+1,m) = k/(x_nodes(i0) - x_nodes(m)) ...
+                * (weight_ratio*L(k,i0) - L(k,m));
+        end
+    end
+
+    % Diagonal derivative weight
+    L(k+1,i0) = -sum(L(k+1,[1:i0-1, i0+1:M]));
+end
+
+% -------------------------------------------------------------------------
+
+% Monomial coefficients of the Lagrange basis (for plotting only).
+V = zeros(N+1,N+1);
+x_col = x_nodes(:);
+for k = 0:N
+    V(:,k+1) = x_col.^k;
+end
+A = V\eye(N+1);
+b = A.';
+
+if nargin < 4
+    c = [];
+    return
+end
+
+% Values of the basis functions at the points z
+nz = length(z);
+c = zeros(nz,N+1);
+x_nodes_row = x_nodes(:).';
+tol = 1e-14*max(1,max(abs(x_nodes_row)));
+
+for i = 1:nz
+    zi = z(i);
+    idx = find(abs(zi - x_nodes_row) <= tol,1);
+    if ~isempty(idx)
+        e = zeros(1,N+1);
+        e(idx) = 1;
+        c(i,:) = e;
+    else
+        dz = zi - x_nodes_row;
+        tmp = w./dz;
+        c(i,:) = tmp/sum(tmp);
+    end
+end
+end
 
 %==============================================================
 function [lam_func,tol_bisect,tol_feasible,h_min,h_max,max_steps,...

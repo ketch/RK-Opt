@@ -1,5 +1,5 @@
-function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,c_lower_bound,c_upper_bound,c_monotone)
-% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,c_lower_bound,c_upper_bound,c_monotone)
+function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,c_lower_bound,c_upper_bound,c_monotone,interp_nodes,interp_values,interp_eval)
+% function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,poly_coeff_val,k,emb_poly_coeff_ind,emb_poly_coeff_val,constrain_emb_stability,c_lower_bound,c_upper_bound,c_monotone,interp_nodes,interp_values,interp_eval)
 % Impose nonlinear constraints:
 %   - if objective = 'ssp' : both order conditions and absolute monotonicity conditions
 %   - if objective = 'acc' : order conditions
@@ -18,10 +18,13 @@ function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,
 %     * *c_lower_bound*: lower bound of the Butcher coefficients c
 %     * *c_upper_bound*: upper bound of the Butcher coefficients c
 %     * *c_monotone*: set this to true if the Butcher coefficients c should be monotonically increasing
+%     * *interp_nodes*: nodes used for stability-function matching.
+%     * *interp_values*: values of the stability function at interp_nodes
+%     * *interp_eval*: evaluation used for the interpolation constraints, either 'butcher' or 'lowstorage'.
 %
 % The outputs are:
 %     * *con*: inequality constraints, i.e. absolute monotonicity conditions if objective = 'ssp' or nothing if objective = 'acc'
-%     * *coneq*: order conditions plus stability function coefficients constraints (tall-tree elementary weights)
+%     * *coneq*: order conditions plus stability function coefficients constraints (tall-tree elementary weights) and interpolation constraints
 % 
 % Two forms of the order conditions are implemented: one based on **Butcher's
 % approach**, and one based on **Albrecht's approach**. One or the other may lead 
@@ -33,6 +36,11 @@ function [con,coneq]=nonlinear_constraints(x,class,s,p,objective,poly_coeff_ind,
 
 
 oc_form = 'albrecht';
+
+% If interp_eval is not provided, use the classic Butcher-form evaluation by default.
+if nargin < 17 || isempty(interp_eval)
+    interp_eval = 'butcher';
+end
 
 if k==1
     [A,b,c,Ahat,bhat,chat] = unpack_rk(x,s,class);
@@ -114,7 +122,56 @@ for i=1:length(emb_poly_coeff_ind)
     coneq(end+1) = bhat'*Ahat^(j-2)*chat - emb_poly_coeff_val(i);
 end
 %=====================================================
+% Interpolation constraints for the stability function
+if ~isempty(interp_nodes)
+    z_nodes  = interp_nodes(:);
+    R_target = interp_values(:);
 
+    if numel(z_nodes) ~= numel(R_target)
+        error('interp_nodes and interp_values must have same length.');
+    end
+
+    R_rk = zeros(numel(z_nodes),1);
+
+    switch lower(interp_eval)
+    case 'butcher'
+        % Evaluate R(z) from the Butcher coefficients.
+        e = ones(s,1);
+        for j = 1:numel(z_nodes)
+            z = z_nodes(j);
+            Y = (eye(s) - z*A)\e;
+            R_rk(j) = 1 + z*(b.'*Y);
+        end
+
+    case 'lowstorage'
+        if ~strcmp(class,'3Sstar')
+            error(['interp_eval = ''lowstorage'' is currently supported ', ...
+                   'only for class = ''3Sstar''.']);
+        end
+
+        % Evaluate R(z) by applying the 3S* low-storage recursion to the
+        % scalar test equation u' = z*u with initial value u^n = 1.
+        [~,~,~,~,~,~,~,beta,gamma1,gamma2,gamma3,delta] = unpack_lsrk(x,class);
+        for j = 1:numel(z_nodes)
+            z = z_nodes(j);
+            S1 = 1; S2 = 0; S3 = 1;
+            for i = 2:(s+1)
+                S2 = S2 + delta(i-1)*S1;
+                S1 = gamma1(i)*S1 + gamma2(i)*S2 + gamma3(i)*S3 + beta(i,i-1)*z*S1;
+            end
+            R_rk(j) = S1;
+        end
+
+    otherwise
+        error('Unknown interp_eval value: %s.', interp_eval);
+    end
+
+    % Match the real parts of the stability-function values at the interpolation nodes.
+    coneq_interp = (real(R_rk) - real(R_target)).';
+    coneq        = [coneq  coneq_interp];
+end
+
+%=====================================================
 if ~isempty(constrain_emb_stability)
     rk_tmp.A = Ahat; rk_tmp.b = bhat; rk_tmp.c = chat;
     % matlab stores polynomial coefficients for polyval etc. in another order
